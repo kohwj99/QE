@@ -1,6 +1,9 @@
 package com.example.qe.util;
 
+import com.example.qe.annotation.OperatorAnnotation;
 import com.example.qe.model.operator.GenericOperator;
+
+import java.util.Arrays;
 
 public class OperatorFactory {
 
@@ -20,6 +23,19 @@ public class OperatorFactory {
             throw new IllegalArgumentException(
                     "No operator found for name: " + operatorName + " and type: " + valueType.getName());
         }
+        Class<?> operatorClass = operator.getClass();
+        OperatorAnnotation annotation = operatorClass.getAnnotation(OperatorAnnotation.class);
+
+        if (annotation != null && annotation.types().length > 0) {
+            boolean typeSupported = Arrays.asList(annotation.types()).contains(valueType);
+            if (!typeSupported) {
+                throw new IllegalArgumentException(
+                        String.format("Operator '%s' does not support type '%s'. Supported types: %s",
+                                operatorName, valueType.getSimpleName(),
+                                Arrays.toString(annotation.types())));
+            }
+        }
+
         return operator;
     }
 }
