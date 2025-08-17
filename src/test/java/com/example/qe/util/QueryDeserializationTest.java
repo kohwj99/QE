@@ -576,4 +576,84 @@ public class QueryDeserializationTest {
                         exception.getMessage().toLowerCase().contains("invalid"),
                 "Exception message should mention invalid operator");
     }
+
+    //havent merge into dev yet
+    @Test
+    public void testOperatorTypeEnforcementPreventsLikeOnDate() throws Exception {
+        String json = """
+{
+  "type": "DateQuery",
+  "column": "order_date",
+  "operator": "like",
+  "value": "2025-01-01"
+}
+""";
+
+        Query query = assertDoesNotThrow(() -> mapper.readValue(json, Query.class),
+                "JSON deserialization should succeed");
+
+        // The type enforcement should prevent LIKE operator on Date fields
+        Exception exception = assertThrows(Exception.class, () -> {
+            query.toCondition(dsl, context);
+        }, "Should throw exception when using LIKE operator on Date field");
+
+        String message = exception.getMessage().toLowerCase();
+        logger.info("Exception type: {}", exception.getClass().getSimpleName());
+        logger.info("Exception message: {}", exception.getMessage());
+
+        assertAll("Type enforcement validation",
+                () -> assertNotNull(exception.getMessage(), "Exception should have a message"),
+                () -> assertTrue(message.contains("like") ||
+                                message.contains("operator") ||
+                                message.contains("no") ||
+                                message.contains("not found") ||
+                                message.contains("localdate") ||
+                                message.contains("date"),
+                        "Exception message should mention the operator/type issue: " + exception.getMessage())
+        );
+
+        logger.info("Successfully prevented LIKE operator on Date field with message: {}",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testOperatorTypeEnforcementAllowsValidCombinations() throws Exception {
+        // Test that valid operator-type combinations still work
+        String stringLikeJson = """
+    {
+      "type": "StringQuery",
+      "column": "name",
+      "operator": "like",
+      "value": "John%"
+    }
+    """;
+
+        String dateComparisonJson = """
+    {
+      "type": "DateQuery",
+      "column": "order_date",
+      "operator": "greaterThan",
+      "value": "2025-01-01"
+    }
+    """;
+
+        // These should work without throwing exceptions
+        Query stringQuery = mapper.readValue(stringLikeJson, Query.class);
+        Query dateQuery = mapper.readValue(dateComparisonJson, Query.class);
+
+        assertDoesNotThrow(() -> {
+            Condition stringCondition = stringQuery.toCondition(dsl, context);
+            String stringSql = dsl.renderInlined(stringCondition);
+            logger.info("Valid String LIKE SQL: {}", stringSql);
+            assertTrue(stringSql.toLowerCase().contains("like"), "Should generate LIKE for String");
+        }, "LIKE operator should work with String fields");
+
+        assertDoesNotThrow(() -> {
+            Condition dateCondition = dateQuery.toCondition(dsl, context);
+            String dateSql = dsl.renderInlined(dateCondition);
+            logger.info("Valid Date comparison SQL: {}", dateSql);
+            assertTrue(dateSql.contains(">") || dateSql.toLowerCase().contains("greater"),
+                    "Should generate comparison for Date");
+        }, "Comparison operators should work with Date fields");
+    }
 }
