@@ -8,17 +8,17 @@ import org.jooq.Field;
 import java.time.LocalDate;
 
 @OperatorAnnotation(
-        value = "daysBefore",
+        value = "monthsAfter",
         types = {LocalDate.class},
-        description = "Checks if a date field is a specified number of days before today"
+        description = "Checks if a date field is a specified number of months after today"
 )
 @SuppressWarnings("rawtypes")
-public class DaysBeforeOperator implements GenericOperator<Integer> {
+public class MonthsAfterOperator implements GenericOperator<Integer> {
     @Override
     @SuppressWarnings("unchecked")
-    public Condition apply(Field field, Integer days) {
+    public Condition apply(Field field, Integer months) {
         Field<LocalDate> dateField = field;
-        LocalDate targetDate = LocalDate.now().minusDays(days);
+        LocalDate targetDate = LocalDate.now().plusMonths(months);
         return dateField.eq(targetDate);
     }
 }

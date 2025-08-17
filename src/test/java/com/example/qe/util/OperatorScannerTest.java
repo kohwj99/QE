@@ -47,7 +47,12 @@ class OperatorScannerTest {
         // Expected active operators (non-commented ones)
         List<String> expectedOperators = Arrays.asList(
             "equals", "notEquals", "greaterThan", "lessThan",
-            "like", "isNull", "isNotNull"
+            "greaterThanEqual", "lessThanEqual",
+            "like", "startsWith", "endsWith", "isNull", "isNotNull",
+            "daysBefore", "monthsBefore", "yearsBefore",
+            "dayEqual", "monthEqual", "yearEqual",
+            "daysAfter", "monthsAfter", "yearsAfter",
+            "dayOfMonth"
         );
 
         for (String expectedOperator : expectedOperators) {
@@ -122,12 +127,72 @@ class OperatorScannerTest {
             logger.info("✓ LessThanOperator registered for: {}", type.getSimpleName());
         }
 
+        // Test GreaterThanEqualOperator
+        logger.info("Testing GreaterThanEqualOperator registrations...");
+        Class<?>[] greaterThanEqualTypes = {Integer.class, LocalDate.class};
+        for (Class<?> type : greaterThanEqualTypes) {
+            GenericOperator<?> operator = registry.get("greaterThanEqual", type);
+            assertNotNull(operator, "Should find greaterThanEqual operator for " + type.getSimpleName());
+            assertInstanceOf(GreaterThanEqualOperator.class, operator);
+            logger.info("✓ GreaterThanEqualOperator registered for: {}", type.getSimpleName());
+        }
+
+        // Test LessThanEqualOperator
+        logger.info("Testing LessThanEqualOperator registrations...");
+        Class<?>[] lessThanEqualTypes = {Integer.class, LocalDate.class};
+        for (Class<?> type : lessThanEqualTypes) {
+            GenericOperator<?> operator = registry.get("lessThanEqual", type);
+            assertNotNull(operator, "Should find lessThanEqual operator for " + type.getSimpleName());
+            assertInstanceOf(LessThanEqualOperator.class, operator);
+            logger.info("✓ LessThanEqualOperator registered for: {}", type.getSimpleName());
+        }
+
         // Test LikeOperator
         logger.info("Testing LikeOperator registrations...");
         GenericOperator<String> likeOperator = registry.get("like", String.class);
         assertNotNull(likeOperator, "Should find like operator for String");
         assertInstanceOf(LikeOperator.class, likeOperator);
         logger.info("✓ LikeOperator registered for: String");
+
+        // Test StartsWithOperator
+        logger.info("Testing StartsWithOperator registrations...");
+        GenericOperator<String> startsWithOperator = registry.get("startsWith", String.class);
+        assertNotNull(startsWithOperator, "Should find startsWith operator for String");
+        assertInstanceOf(StartsWithOperator.class, startsWithOperator);
+        logger.info("✓ StartsWithOperator registered for: String");
+
+        // Test EndsWithOperator
+        logger.info("Testing EndsWithOperator registrations...");
+        GenericOperator<String> endsWithOperator = registry.get("endsWith", String.class);
+        assertNotNull(endsWithOperator, "Should find endsWith operator for String");
+        assertInstanceOf(EndsWithOperator.class, endsWithOperator);
+        logger.info("✓ EndsWithOperator registered for: String");
+
+        // Test Date Operators - Before operators
+        logger.info("Testing Date Before Operators registrations...");
+        String[] beforeOperators = {"daysBefore", "monthsBefore", "yearsBefore"};
+        for (String operatorName : beforeOperators) {
+            GenericOperator<?> operator = registry.get(operatorName, LocalDate.class);
+            assertNotNull(operator, "Should find " + operatorName + " operator for LocalDate");
+            logger.info("✓ {} registered for: LocalDate", operatorName);
+        }
+
+        // Test Date Operators - Equal operators
+        String[] equalOperators = {"dayEqual", "monthEqual", "yearEqual", "dayOfMonth"};
+        for (String operatorName : equalOperators) {
+            GenericOperator<?> operator = registry.get(operatorName, LocalDate.class);
+            assertNotNull(operator, "Should find " + operatorName + " operator for LocalDate");
+            logger.info("✓ {} registered for: LocalDate", operatorName);
+        }
+
+        // Test Date Operators - After operators
+        logger.info("Testing Date After Operators registrations...");
+        String[] afterOperators = {"daysAfter", "monthsAfter", "yearsAfter"};
+        for (String operatorName : afterOperators) {
+            GenericOperator<?> operator = registry.get(operatorName, LocalDate.class);
+            assertNotNull(operator, "Should find " + operatorName + " operator for LocalDate");
+            logger.info("✓ {} registered for: LocalDate", operatorName);
+        }
 
         // Test IsNullOperator
         logger.info("Testing IsNullOperator registrations...");
@@ -204,7 +269,12 @@ class OperatorScannerTest {
 
         List<String> expectedOperators = Arrays.asList(
             "equals", "notEquals", "greaterThan", "lessThan",
-            "like", "isNull", "isNotNull"
+            "greaterThanEqual", "lessThanEqual",
+            "like", "startsWith", "endsWith", "isNull", "isNotNull",
+            "daysBefore", "monthsBefore", "yearsBefore",
+            "dayEqual", "monthEqual", "yearEqual",
+            "daysAfter", "monthsAfter", "yearsAfter",
+            "dayOfMonth"
         );
 
         for (String expectedOperator : expectedOperators) {

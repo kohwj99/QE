@@ -2,13 +2,18 @@ package com.example.qe.model.query;
 
 import com.example.qe.model.operator.GenericOperator;
 import com.example.qe.util.QueryExecutionContext;
+import lombok.Getter;
+import lombok.Setter;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import static org.jooq.impl.DSL.field;
 
+@Setter
+@Getter
 public abstract class FieldQuery<T> implements Query {
 
+    // Getters and setters (needed for JSON deserialization)
     protected String column;
     protected String operator;
     protected T value; // Nullable for IS NULL / IS NOT NULL
@@ -41,13 +46,4 @@ public abstract class FieldQuery<T> implements Query {
 
     protected abstract Class<T> getValueClass();
 
-    // Getters and setters (needed for JSON deserialization)
-    public String getColumn() { return column; }
-    public void setColumn(String column) { this.column = column; }
-
-    public String getOperator() { return operator; }
-    public void setOperator(String operator) { this.operator = operator; }
-
-    public T getValue() { return value; }
-    public void setValue(T value) { this.value = value; }
 }
