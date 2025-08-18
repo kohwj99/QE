@@ -5,9 +5,12 @@ import com.example.qe.model.operator.GenericOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @OperatorAnnotation(
         value = "lessThanEqual",
-        types = {Integer.class, java.time.LocalDate.class},
+        types = {BigDecimal.class, LocalDate.class},
         description = "Checks if a field is less than or equal to the given value"
 )
 public class LessThanEqualOperator<T extends Comparable<T>> implements GenericOperator<T> {

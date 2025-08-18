@@ -5,9 +5,12 @@ import com.example.qe.model.operator.GenericOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @OperatorAnnotation(
         value = "greaterThan",
-        types = {Integer.class, java.time.LocalDate.class},
+        types = {BigDecimal.class, LocalDate.class},
         description = "Checks if a field is greater than the given value"
 )
 public class GreaterThanOperator<T extends Comparable<T>> implements GenericOperator<T> {

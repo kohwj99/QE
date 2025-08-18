@@ -58,7 +58,7 @@ public class QueryDeserializationTest {
             "type": "AndQuery",
             "children": [
               {
-                "type": "IntQuery",
+                "type": "NumericQuery",
                 "column": "revenue",
                 "operator": "greaterThan",
                 "value": 10000
@@ -113,7 +113,7 @@ public class QueryDeserializationTest {
         "type": "AndQuery",
         "children": [
           {
-            "type": "IntQuery",
+            "type": "NumericQuery",
             "column": "revenue",
             "operator": "greaterThan",
             "value": 10000
@@ -242,10 +242,10 @@ public class QueryDeserializationTest {
     }
 
     @Test
-    public void testSimpleIntQuery() throws Exception {
+    public void testSimpleNumericQuery() throws Exception {
         String json = """
     {
-      "type": "IntQuery",
+      "type": "NumericQuery",
       "column": "age",
       "operator": "equals",
       "value": 25
@@ -256,7 +256,7 @@ public class QueryDeserializationTest {
         Condition condition = query.toCondition(dsl, context);
         String sql = dsl.renderInlined(condition);
 
-        logger.info("Simple IntQuery SQL: {}", sql);
+        logger.info("Simple NumericQuery SQL: {}", sql);
 
         // Assert the SQL contains expected elements
         assertTrue(sql.contains("age"), "SQL should contain column name 'age'");
@@ -266,13 +266,13 @@ public class QueryDeserializationTest {
     }
 
     @Test
-    public void testSimpleStringQuery() throws Exception {
+    public void testNumericQueryWithDecimal() throws Exception {
         String json = """
     {
-      "type": "StringQuery",
-      "column": "name",
-      "operator": "like",
-      "value": "John%"
+      "type": "NumericQuery",
+      "column": "price",
+      "operator": "greaterThan",
+      "value": 99.99
     }
     """;
 
@@ -280,12 +280,37 @@ public class QueryDeserializationTest {
         Condition condition = query.toCondition(dsl, context);
         String sql = dsl.renderInlined(condition);
 
-        logger.info("Simple StringQuery SQL: {}", sql);
+        logger.info("NumericQuery with decimal SQL: {}", sql);
 
-        assertAll("String query validation",
-                () -> assertTrue(sql.contains("name"), "SQL should contain column 'name'"),
-                () -> assertTrue(sql.toLowerCase().contains("like"), "SQL should contain LIKE operator"),
-                () -> assertTrue(sql.contains("John%"), "SQL should contain pattern 'John%'")
+        assertAll("Decimal numeric query validation",
+                () -> assertTrue(sql.contains("price"), "SQL should contain column 'price'"),
+                () -> assertTrue(sql.contains("99.99"), "SQL should contain decimal value '99.99'"),
+                () -> assertTrue(sql.contains(">") || sql.toLowerCase().contains("greater"),
+                        "SQL should contain greater than operator")
+        );
+    }
+
+    @Test
+    public void testNumericQueryWithLargeInteger() throws Exception {
+        String json = """
+    {
+      "type": "NumericQuery",
+      "column": "user_id",
+      "operator": "equals",
+      "value": 123456789
+    }
+    """;
+
+        Query query = mapper.readValue(json, Query.class);
+        Condition condition = query.toCondition(dsl, context);
+        String sql = dsl.renderInlined(condition);
+
+        logger.info("NumericQuery with large integer SQL: {}", sql);
+
+        assertAll("Large integer numeric query validation",
+                () -> assertTrue(sql.contains("user_id"), "SQL should contain column 'user_id'"),
+                () -> assertTrue(sql.contains("123456789"), "SQL should contain large integer value"),
+                () -> assertTrue(sql.contains("="), "SQL should contain equals operator")
         );
     }
 
@@ -305,7 +330,7 @@ public class QueryDeserializationTest {
           "type": "OrQuery",
           "children": [
             {
-              "type": "IntQuery",
+              "type": "NumericQuery",
               "column": "price",
               "operator": "lessThan",
               "value": 100
@@ -410,7 +435,7 @@ public class QueryDeserializationTest {
               "type": "AndQuery",
               "children": [
                 {
-                  "type": "IntQuery",
+                  "type": "NumericQuery",
                   "column": "experience",
                   "operator": "greaterThan",
                   "value": 2
@@ -427,7 +452,7 @@ public class QueryDeserializationTest {
               "type": "AndQuery",
               "children": [
                 {
-                  "type": "IntQuery",
+                  "type": "NumericQuery",
                   "column": "salary",
                   "operator": "greaterThan",
                   "value": 50000
@@ -559,7 +584,7 @@ public class QueryDeserializationTest {
     public void testInvalidOperatorHandling() {
         String json = """
     {
-      "type": "IntQuery",
+      "type": "NumericQuery",
       "column": "age",
       "operator": "invalidOperator",
       "value": 25

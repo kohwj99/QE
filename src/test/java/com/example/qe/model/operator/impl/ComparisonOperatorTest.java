@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,9 +18,9 @@ class ComparisonOperatorTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ComparisonOperatorTest.class);
 
-    private GreaterThanEqualOperator<Integer> greaterThanEqualOperator;
-    private LessThanEqualOperator<Integer> lessThanEqualOperator;
-    private Field<Integer> intField;
+    private GreaterThanEqualOperator<BigDecimal> greaterThanEqualOperator;
+    private LessThanEqualOperator<BigDecimal> lessThanEqualOperator;
+    private Field<BigDecimal> intField;
     private Field<LocalDate> dateField;
 
     @BeforeEach
@@ -29,17 +30,17 @@ class ComparisonOperatorTest {
         lessThanEqualOperator = new LessThanEqualOperator<>();
 
         // Create test fields using jOOQ DSL
-        intField = DSL.field("age", Integer.class);
+        intField = DSL.field("age", BigDecimal.class);
         dateField = DSL.field("birth_date", LocalDate.class);
         logger.info("Created test operators and fields");
     }
 
     @Test
-    @DisplayName("GreaterThanEqualOperator should create correct >= condition for integers")
-    void testGreaterThanEqualOperatorInteger() {
-        logger.info("=== Testing GreaterThanEqualOperator with Integer ===");
+    @DisplayName("GreaterThanEqualOperator should create correct >= condition for numbers")
+    void testGreaterThanEqualOperatorNumeric() {
+        logger.info("=== Testing GreaterThanEqualOperator with BigDecimal ===");
 
-        Integer testValue = 25;
+        BigDecimal testValue = new BigDecimal("25");
         var condition = greaterThanEqualOperator.apply(intField, testValue);
 
         assertNotNull(condition, "Condition should not be null");
@@ -50,15 +51,15 @@ class ComparisonOperatorTest {
         assertTrue(sql.contains(">=") || sql.contains("ge"), "SQL should contain '>=' or 'ge' operator");
         assertTrue(sql.contains("25"), "SQL should contain the test value");
 
-        logger.info("✓ GreaterThanEqualOperator correctly generates >= condition for Integer");
+        logger.info("✓ GreaterThanEqualOperator correctly generates >= condition for BigDecimal");
     }
 
     @Test
-    @DisplayName("LessThanEqualOperator should create correct <= condition for integers")
-    void testLessThanEqualOperatorInteger() {
-        logger.info("=== Testing LessThanEqualOperator with Integer ===");
+    @DisplayName("LessThanEqualOperator should create correct <= condition for numbers")
+    void testLessThanEqualOperatorNumeric() {
+        logger.info("=== Testing LessThanEqualOperator with BigDecimal ===");
 
-        Integer testValue = 65;
+        BigDecimal testValue = new BigDecimal("65");
         var condition = lessThanEqualOperator.apply(intField, testValue);
 
         assertNotNull(condition, "Condition should not be null");
@@ -69,7 +70,7 @@ class ComparisonOperatorTest {
         assertTrue(sql.contains("<=") || sql.contains("le"), "SQL should contain '<=' or 'le' operator");
         assertTrue(sql.contains("65"), "SQL should contain the test value");
 
-        logger.info("✓ LessThanEqualOperator correctly generates <= condition for Integer");
+        logger.info("✓ LessThanEqualOperator correctly generates <= condition for BigDecimal");
     }
 
     @Test
@@ -120,18 +121,18 @@ class ComparisonOperatorTest {
         logger.info("=== Testing edge cases ===");
 
         // Test with zero
-        var zeroCondition = greaterThanEqualOperator.apply(intField, 0);
+        var zeroCondition = greaterThanEqualOperator.apply(intField, BigDecimal.ZERO);
         assertNotNull(zeroCondition, "Should handle zero value");
         logger.info("Zero value condition: {}", zeroCondition);
 
         // Test with negative numbers
-        var negativeCondition = lessThanEqualOperator.apply(intField, -10);
+        var negativeCondition = lessThanEqualOperator.apply(intField, new BigDecimal("-10"));
         assertNotNull(negativeCondition, "Should handle negative value");
         logger.info("Negative value condition: {}", negativeCondition);
 
         // Test with null field (should still work)
-        Field<Integer> nullField = DSL.field("null_field", Integer.class);
-        var nullFieldCondition = greaterThanEqualOperator.apply(nullField, 5);
+        Field<BigDecimal> nullField = DSL.field("null_field", BigDecimal.class);
+        var nullFieldCondition = greaterThanEqualOperator.apply(nullField, new BigDecimal("5"));
         assertNotNull(nullFieldCondition, "Should handle different field names");
         logger.info("Different field condition: {}", nullFieldCondition);
 
@@ -144,14 +145,14 @@ class ComparisonOperatorTest {
         logger.info("=== Testing operators with different field names and types ===");
 
         // Test with different field names
-        Field<Integer> scoreField = DSL.field("score", Integer.class);
-        Field<Integer> levelField = DSL.field("level", Integer.class);
+        Field<BigDecimal> scoreField = DSL.field("score", BigDecimal.class);
+        Field<BigDecimal> levelField = DSL.field("level", BigDecimal.class);
 
-        var scoreCondition = greaterThanEqualOperator.apply(scoreField, 80);
+        var scoreCondition = greaterThanEqualOperator.apply(scoreField, new BigDecimal("80"));
         assertNotNull(scoreCondition);
         logger.info("Score field condition: {}", scoreCondition);
 
-        var levelCondition = lessThanEqualOperator.apply(levelField, 10);
+        var levelCondition = lessThanEqualOperator.apply(levelField, new BigDecimal("10"));
         assertNotNull(levelCondition);
         logger.info("Level field condition: {}", levelCondition);
 

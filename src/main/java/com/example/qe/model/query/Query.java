@@ -19,7 +19,7 @@ import org.jooq.DSLContext;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = AndQuery.class, name = "AndQuery"),
         @JsonSubTypes.Type(value = OrQuery.class, name = "OrQuery"),
-        @JsonSubTypes.Type(value = IntQuery.class, name = "IntQuery"),
+        @JsonSubTypes.Type(value = NumericQuery.class, name = "NumericQuery"),
         @JsonSubTypes.Type(value = StringQuery.class, name = "StringQuery"),
         @JsonSubTypes.Type(value = DateQuery.class, name = "DateQuery"),
         @JsonSubTypes.Type(value = BoolQuery.class, name = "BoolQuery")

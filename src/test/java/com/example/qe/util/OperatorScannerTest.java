@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
@@ -89,7 +90,7 @@ class OperatorScannerTest {
 
         // Test EqualsOperator
         logger.info("Testing EqualsOperator registrations...");
-        Class<?>[] equalsTypes = {String.class, Integer.class, Boolean.class, LocalDate.class};
+        Class<?>[] equalsTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
         for (Class<?> type : equalsTypes) {
             GenericOperator<?> operator = registry.get("equals", type);
             assertNotNull(operator, "Should find equals operator for " + type.getSimpleName());
@@ -99,7 +100,7 @@ class OperatorScannerTest {
 
         // Test NotEqualsOperator
         logger.info("Testing NotEqualsOperator registrations...");
-        Class<?>[] notEqualsTypes = {String.class, Integer.class, Boolean.class, LocalDate.class};
+        Class<?>[] notEqualsTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
         for (Class<?> type : notEqualsTypes) {
             GenericOperator<?> operator = registry.get("notEquals", type);
             assertNotNull(operator, "Should find notEquals operator for " + type.getSimpleName());
@@ -109,7 +110,7 @@ class OperatorScannerTest {
 
         // Test GreaterThanOperator
         logger.info("Testing GreaterThanOperator registrations...");
-        Class<?>[] greaterThanTypes = {Integer.class, LocalDate.class};
+        Class<?>[] greaterThanTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : greaterThanTypes) {
             GenericOperator<?> operator = registry.get("greaterThan", type);
             assertNotNull(operator, "Should find greaterThan operator for " + type.getSimpleName());
@@ -119,7 +120,7 @@ class OperatorScannerTest {
 
         // Test LessThanOperator
         logger.info("Testing LessThanOperator registrations...");
-        Class<?>[] lessThanTypes = {Integer.class, Double.class, LocalDate.class};
+        Class<?>[] lessThanTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : lessThanTypes) {
             GenericOperator<?> operator = registry.get("lessThan", type);
             assertNotNull(operator, "Should find lessThan operator for " + type.getSimpleName());
@@ -129,7 +130,7 @@ class OperatorScannerTest {
 
         // Test GreaterThanEqualOperator
         logger.info("Testing GreaterThanEqualOperator registrations...");
-        Class<?>[] greaterThanEqualTypes = {Integer.class, LocalDate.class};
+        Class<?>[] greaterThanEqualTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : greaterThanEqualTypes) {
             GenericOperator<?> operator = registry.get("greaterThanEqual", type);
             assertNotNull(operator, "Should find greaterThanEqual operator for " + type.getSimpleName());
@@ -139,7 +140,7 @@ class OperatorScannerTest {
 
         // Test LessThanEqualOperator
         logger.info("Testing LessThanEqualOperator registrations...");
-        Class<?>[] lessThanEqualTypes = {Integer.class, LocalDate.class};
+        Class<?>[] lessThanEqualTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : lessThanEqualTypes) {
             GenericOperator<?> operator = registry.get("lessThanEqual", type);
             assertNotNull(operator, "Should find lessThanEqual operator for " + type.getSimpleName());

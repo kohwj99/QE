@@ -5,11 +5,12 @@ import com.example.qe.model.operator.GenericOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "notEquals",
-        types = {String.class, Integer.class, Boolean.class, LocalDate.class},
+        types = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
         description = "Checks if a field does not equal the given value"
 )
 public class NotEqualsOperator<T> implements GenericOperator<T> {

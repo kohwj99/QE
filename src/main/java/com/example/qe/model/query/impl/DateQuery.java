@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.time.LocalDate;
 @JsonTypeName("DateQuery")
-public class DateQuery extends FieldQuery<java.time.LocalDate> {
+public class DateQuery extends FieldQuery<LocalDate> {
 
     @JsonCreator
     public DateQuery(@JsonProperty("column") String column,
