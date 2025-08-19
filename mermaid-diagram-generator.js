@@ -1,6 +1,7 @@
 /**
  * JavaScript code to generate Mermaid UML Class Diagram for Query Engine (QE) Codebase
  * This code follows UML standard conventions and visualizes the complete architecture
+ * Updated: August 19, 2025 - Reflects current codebase with all operators and query types
  */
 
 const mermaidDiagram = `
@@ -13,72 +14,171 @@ classDiagram
         +String description()
     }
 
-    %% === CONFIGURATION CLASSES ===
-    class ConversionServiceConfig {
-        <<@Configuration>>
-        +ConversionService conversionService()
+    %% === MAIN APPLICATION ===
+    class QeApplication {
+        <<@SpringBootApplication>>
+        +main(String[] args)$
     }
 
-    class QueryEngineConfig {
-        <<@Configuration>>
-        -String OPERATOR_BASE_PACKAGE
-        +OperatorRegistry operatorRegistry()
-        +OperatorScanner operatorScanner(OperatorRegistry)
-        +OperatorFactory operatorFactory(OperatorRegistry)
-        +ConversionService conversionService()
-        +QueryExecutionContext queryExecutionContext(OperatorFactory, ConversionService)
+    %% === SERVICE LAYER ===
+    class QueryExecutionService {
+        <<@Service>>
+        -QueryExecutionContext context
+        +QueryExecutionService(QueryExecutionContext)
+        +Condition executeQuery(Query query, DSLContext dsl)
+    }
+
+    %% === UTILITY CLASSES ===
+    class QueryExecutionContext {
+        -OperatorFactory operatorFactory
+        -ConversionService conversionService
+        +QueryExecutionContext(OperatorFactory, ConversionService)
+        +OperatorFactory getOperatorFactory()
+        +ConversionService getConversionService()
+    }
+
+    class OperatorRegistry {
+        -Map~String, Map~Class, GenericOperator~~ operators
+        +registerOperator(String, Class, GenericOperator)
+        +GenericOperator getOperator(String, Class)
+        +boolean hasOperator(String, Class)
+        +Set~String~ getOperatorNames()
+        +Map~Class, GenericOperator~ getOperatorsForName(String)
+    }
+
+    class OperatorFactory {
+        -OperatorRegistry registry
+        +OperatorFactory(OperatorRegistry)
+        +GenericOperator getOperator(String, Class)
+    }
+
+    class OperatorScanner {
+        -OperatorRegistry registry
+        +OperatorScanner(OperatorRegistry)
+        +scanAndRegister(String packageName)
+        -processOperatorClass(Class)
+        -extractOperatorInfo(OperatorAnnotation)
     }
 
     %% === OPERATOR MODEL ===
     class GenericOperator~T~ {
         <<interface>>
-        +Condition apply(Field~T~ field, T value)*
+        +Condition apply(Field field, T value)*
     }
 
-    %% Operator Implementations
-    class EqualsOperator~T~ {
+    %% === COMPARISON OPERATORS ===
+    class EqualsOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~T~ field, T value)
+        +Condition apply(Field field, Object value)
     }
 
-    class NotEqualsOperator~T~ {
+    class NotEqualsOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~T~ field, T value)
+        +Condition apply(Field field, Object value)
     }
 
-    class GreaterThanOperator~T~ {
+    class GreaterThanOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~T~ field, T value)
+        +Condition apply(Field field, Comparable value)
     }
 
-    class LessThanOperator~T~ {
+    class GreaterThanEqualOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~T~ field, T value)
+        +Condition apply(Field field, Comparable value)
     }
 
+    class LessThanOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field field, Comparable value)
+    }
+
+    class LessThanEqualOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field field, Comparable value)
+    }
+
+    %% === STRING OPERATORS ===
     class LikeOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~String~ field, String value)
+        +Condition apply(Field field, String value)
     }
 
-    class InOperator~T~ {
+    class StartsWithOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~T~ field, T value)
+        +Condition apply(Field field, String value)
     }
 
-    class IsNullOperator~T~ {
+    class EndsWithOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~T~ field, T value)
+        +Condition apply(Field field, String value)
     }
 
-    class IsNotNullOperator~T~ {
+    %% === NULL CHECK OPERATORS ===
+    class IsNullOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~T~ field, T value)
+        +Condition apply(Field field, Object value)
     }
 
+    class IsNotNullOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field field, Object value)
+    }
+
+    %% === COLLECTION OPERATORS ===
+    class InOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field field, Collection value)
+    }
+
+    %% === DATE OPERATORS (with Integer parameters) ===
     class DaysBeforeOperator {
         <<@OperatorAnnotation>>
-        +Condition apply(Field~LocalDate~ field, LocalDate value)
+        +Condition apply(Field~LocalDate~ field, Integer days)
+    }
+
+    class DaysAfterOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer days)
+    }
+
+    class MonthsBeforeOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer months)
+    }
+
+    class MonthsAfterOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer months)
+    }
+
+    class YearsBeforeOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer years)
+    }
+
+    class YearsAfterOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer years)
+    }
+
+    class MonthEqualOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer month)
+    }
+
+    class YearEqualOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer year)
+    }
+
+    class DayEqualOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer day)
+    }
+
+    class DayOfMonthOperator {
+        <<@OperatorAnnotation>>
+        +Condition apply(Field~LocalDate~ field, Integer dayOfMonth)
     }
 
     %% === QUERY MODEL ===
@@ -90,332 +190,164 @@ classDiagram
 
     class FieldQuery~T~ {
         <<abstract>>
+        <<@JsonTypeName>>
         #String column
-        #String operator
+        #String operatorName
         #T value
-        #FieldQuery()
-        #FieldQuery(String column, String operator, T value)
+        +FieldQuery(String column, String operatorName, T value)
         +Condition toCondition(DSLContext dsl, QueryExecutionContext context)
         #Class~T~ getValueClass()*
+        +String getColumn()
+        +String getOperatorName()
+        +T getValue()
     }
 
     class CompositeQuery {
         <<abstract>>
-        -List~Query~ children
+        <<@JsonTypeName>>
+        #List~Query~ children
         +CompositeQuery(List~Query~ children)
-        +List~Query~ getChildren()
         +Condition toCondition(DSLContext dsl, QueryExecutionContext context)
         #Condition combineConditions(List~Condition~ conditions)*
+        +List~Query~ getChildren()
     }
 
-    %% Field Query Implementations
+    %% === FIELD QUERY IMPLEMENTATIONS ===
     class StringQuery {
-        <<@JsonTypeName>>
-        +StringQuery()
-        +StringQuery(String column, String operator, String value)
+        <<@JsonTypeName("StringQuery")>>
+        +StringQuery(String column, String operatorName, String value)
         #Class~String~ getValueClass()
     }
 
     class NumericQuery {
-        <<@JsonTypeName>>
-        +NumericQuery()
-        +NumericQuery(String column, String operator, BigDecimal value)
+        <<@JsonTypeName("NumericQuery")>>
+        +NumericQuery(String column, String operatorName, BigDecimal value)
         #Class~BigDecimal~ getValueClass()
     }
 
     class DateQuery {
-        <<@JsonTypeName>>
-        +DateQuery()
-        +DateQuery(String column, String operator, LocalDate value)
+        <<@JsonTypeName("DateQuery")>>
+        +DateQuery(String column, String operatorName, LocalDate value)
         #Class~LocalDate~ getValueClass()
     }
 
     class BoolQuery {
-        <<@JsonTypeName>>
-        +BoolQuery()
-        +BoolQuery(String column, String operator, Boolean value)
+        <<@JsonTypeName("BoolQuery")>>
+        +BoolQuery(String column, String operatorName, Boolean value)
         #Class~Boolean~ getValueClass()
     }
 
-    %% Composite Query Implementations
+    %% === COMPOSITE QUERY IMPLEMENTATIONS ===
     class AndQuery {
-        <<@JsonTypeName>>
+        <<@JsonTypeName("AndQuery")>>
         +AndQuery(List~Query~ children)
         #Condition combineConditions(List~Condition~ conditions)
     }
 
     class OrQuery {
-        <<@JsonTypeName>>
+        <<@JsonTypeName("OrQuery")>>
         +OrQuery(List~Query~ children)
         #Condition combineConditions(List~Condition~ conditions)
     }
 
-    %% === UTILITY CLASSES ===
-    class OperatorRegistry {
-        -Logger logger
-        -Map~String, Map~Class, GenericOperator~~ operators
-        +void register(String operatorName, Class~T~ valueType, GenericOperator~T~ operator)
-        +GenericOperator~T~ get(String operatorName, Class~T~ valueType)
-        +Set~String~ getAllOperatorNames()
-        +Map~Class, GenericOperator~ getOperatorsForName(String operatorName)
-        +int getTotalOperatorCount()
-    }
-
-    class OperatorFactory {
-        -OperatorRegistry registry
-        +OperatorFactory(OperatorRegistry registry)
-        +GenericOperator~T~ resolve(String operatorName, Class~T~ valueType)
-    }
-
-    class OperatorScanner {
-        -OperatorRegistry registry
-        +OperatorScanner(OperatorRegistry registry)
-        +void scanAndRegister(String basePackage)
-        -void processOperatorClass(Class clazz)
-        -void registerOperatorForTypes(Class operatorClass, String operatorName, Class[] supportedTypes)
-    }
-
-    class QueryExecutionContext {
-        -OperatorFactory operatorFactory
-        -ConversionService conversionService
-        +QueryExecutionContext(OperatorFactory operatorFactory, ConversionService conversionService)
-        +OperatorFactory getOperatorFactory()
-        +ConversionService getConversionService()
-    }
-
-    %% === SERVICE CLASSES ===
-    class QueryExecutionService {
-        <<@Service>>
-    }
-
-    %% === MAIN APPLICATION ===
-    class QeApplication {
-        <<@SpringBootApplication>>
-        +void main(String[] args)
-    }
-
     %% === RELATIONSHIPS ===
+    %% Application and Service Layer
+    QeApplication ..> QueryExecutionService : uses
 
-    %% Operator Relationships
-    GenericOperator <|.. EqualsOperator : implements
-    GenericOperator <|.. NotEqualsOperator : implements
-    GenericOperator <|.. GreaterThanOperator : implements
-    GenericOperator <|.. LessThanOperator : implements
-    GenericOperator <|.. LikeOperator : implements
-    GenericOperator <|.. InOperator : implements
-    GenericOperator <|.. IsNullOperator : implements
-    GenericOperator <|.. IsNotNullOperator : implements
-    GenericOperator <|.. DaysBeforeOperator : implements
+    %% Service Dependencies
+    QueryExecutionService --> QueryExecutionContext : depends on
+    QueryExecutionContext --> OperatorFactory : contains
+    QueryExecutionContext --> ConversionService : contains
 
-    %% Query Relationships
-    Query <|.. FieldQuery : implements
-    Query <|.. CompositeQuery : implements
+    %% Utility Class Relationships
+    OperatorFactory --> OperatorRegistry : uses
+    OperatorScanner --> OperatorRegistry : registers operators
+    OperatorScanner ..> OperatorAnnotation : scans for
 
-    FieldQuery <|-- StringQuery : extends
-    FieldQuery <|-- NumericQuery : extends
-    FieldQuery <|-- DateQuery : extends
-    FieldQuery <|-- BoolQuery : extends
+    %% Operator Inheritance
+    GenericOperator <|.. EqualsOperator
+    GenericOperator <|.. NotEqualsOperator
+    GenericOperator <|.. GreaterThanOperator
+    GenericOperator <|.. GreaterThanEqualOperator
+    GenericOperator <|.. LessThanOperator
+    GenericOperator <|.. LessThanEqualOperator
+    GenericOperator <|.. LikeOperator
+    GenericOperator <|.. StartsWithOperator
+    GenericOperator <|.. EndsWithOperator
+    GenericOperator <|.. IsNullOperator
+    GenericOperator <|.. IsNotNullOperator
+    GenericOperator <|.. InOperator
+    GenericOperator <|.. DaysBeforeOperator
+    GenericOperator <|.. DaysAfterOperator
+    GenericOperator <|.. MonthsBeforeOperator
+    GenericOperator <|.. MonthsAfterOperator
+    GenericOperator <|.. YearsBeforeOperator
+    GenericOperator <|.. YearsAfterOperator
+    GenericOperator <|.. MonthEqualOperator
+    GenericOperator <|.. YearEqualOperator
+    GenericOperator <|.. DayEqualOperator
+    GenericOperator <|.. DayOfMonthOperator
 
-    CompositeQuery <|-- AndQuery : extends
-    CompositeQuery <|-- OrQuery : extends
+    %% Query Inheritance
+    Query <|.. FieldQuery
+    Query <|.. CompositeQuery
+    FieldQuery <|-- StringQuery
+    FieldQuery <|-- NumericQuery
+    FieldQuery <|-- DateQuery
+    FieldQuery <|-- BoolQuery
+    CompositeQuery <|-- AndQuery
+    CompositeQuery <|-- OrQuery
 
-    %% Composition Relationships
-    CompositeQuery *-- Query : contains
-    OperatorRegistry *-- GenericOperator : stores
-    OperatorFactory *-- OperatorRegistry : uses
-    QueryExecutionContext *-- OperatorFactory : uses
-    QueryExecutionContext *-- ConversionService : uses
-    OperatorScanner *-- OperatorRegistry : uses
+    %% Registry Storage
+    OperatorRegistry o-- GenericOperator : stores
 
-    %% Configuration Dependencies
-    QueryEngineConfig ..> OperatorRegistry : creates
-    QueryEngineConfig ..> OperatorScanner : creates
-    QueryEngineConfig ..> OperatorFactory : creates
-    QueryEngineConfig ..> QueryExecutionContext : creates
-    QueryEngineConfig ..> ConversionService : creates
+    %% Query Processing
+    Query ..> QueryExecutionContext : uses
+    FieldQuery ..> OperatorFactory : uses via context
 
-    %% Annotation Usage
-    OperatorAnnotation ..> EqualsOperator : annotates
-    OperatorAnnotation ..> NotEqualsOperator : annotates
-    OperatorAnnotation ..> GreaterThanOperator : annotates
-    OperatorAnnotation ..> LessThanOperator : annotates
-    OperatorAnnotation ..> LikeOperator : annotates
-    OperatorAnnotation ..> InOperator : annotates
-    OperatorAnnotation ..> IsNullOperator : annotates
-    OperatorAnnotation ..> IsNotNullOperator : annotates
-    OperatorAnnotation ..> DaysBeforeOperator : annotates
+    %% External Dependencies (shown as notes)
+    note for Query "Uses JOOQ DSLContext\\nfor SQL generation"
+    note for GenericOperator "Returns JOOQ Condition\\nobjects for SQL building"
+    note for OperatorAnnotation "Defines operator metadata:\\n- name, supported types,\\n- description"
 
-    %% External Dependencies (shown for context)
-    class DSLContext {
-        <<external>>
-        <<jOOQ>>
-    }
+    %% Styling
+    classDef operatorClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef queryClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef utilClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef serviceClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
 
-    class Condition {
-        <<external>>
-        <<jOOQ>>
-    }
+    class EqualsOperator,NotEqualsOperator,GreaterThanOperator,GreaterThanEqualOperator,LessThanOperator,LessThanEqualOperator,LikeOperator,StartsWithOperator,EndsWithOperator,IsNullOperator,IsNotNullOperator,InOperator,DaysBeforeOperator,DaysAfterOperator,MonthsBeforeOperator,MonthsAfterOperator,YearsBeforeOperator,YearsAfterOperator,MonthEqualOperator,YearEqualOperator,DayEqualOperator,DayOfMonthOperator operatorClass
 
-    class Field~T~ {
-        <<external>>
-        <<jOOQ>>
-    }
+    class Query,FieldQuery,CompositeQuery,StringQuery,NumericQuery,DateQuery,BoolQuery,AndQuery,OrQuery queryClass
 
-    class ConversionService {
-        <<external>>
-        <<Spring>>
-    }
+    class OperatorRegistry,OperatorFactory,OperatorScanner,QueryExecutionContext utilClass
 
-    Query ..> DSLContext : uses
-    Query ..> Condition : returns
-    GenericOperator ..> Field : uses
-    GenericOperator ..> Condition : returns
-
-    %% Package Structure Notes
-    note for OperatorAnnotation "Package: annotation"
-    note for ConversionServiceConfig "Package: config"
-    note for QueryEngineConfig "Package: config"
-    note for GenericOperator "Package: model.operator"
-    note for EqualsOperator "Package: model.operator.impl"
-    note for Query "Package: model.query"
-    note for StringQuery "Package: model.query.impl"
-    note for OperatorRegistry "Package: util"
-    note for QueryExecutionService "Package: service"
+    class QeApplication,QueryExecutionService serviceClass
 `;
 
-/**
- * Function to render the Mermaid diagram
- * This can be called from an HTML page with Mermaid.js loaded
- */
-function renderMermaidDiagram() {
-    return mermaidDiagram;
-}
+// Export the diagram for use in Mermaid Live Editor or documentation
+console.log('=== QE (Query Engine) Codebase Architecture Diagram ===');
+console.log('Copy the following Mermaid code to visualize the architecture:');
+console.log('');
+console.log(mermaidDiagram);
+console.log('');
+console.log('=== Usage Instructions ===');
+console.log('1. Copy the diagram code above');
+console.log('2. Go to https://mermaid.live/');
+console.log('3. Paste the code in the editor');
+console.log('4. View the generated UML class diagram');
+console.log('');
+console.log('=== Architecture Overview ===');
+console.log('• Main Application: QeApplication (Spring Boot)');
+console.log('• Service Layer: QueryExecutionService for query processing');
+console.log('• Query Model: Hierarchical query types (Field, Composite)');
+console.log('• Operator Model: 21+ operators for different data types and operations');
+console.log('• Utility Layer: Registry, Factory, Scanner for operator management');
+console.log('• Date Operators: Special operators with LocalDate fields + Integer parameters');
+console.log('• JSON Serialization: Jackson annotations for query deserialization');
+console.log('• SQL Generation: JOOQ integration for database query building');
 
-/**
- * Function to generate HTML page with the diagram
- */
-function generateHTMLPage() {
-    return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Query Engine (QE) - Architecture Diagram</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 100%;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .diagram-container {
-            text-align: center;
-            overflow-x: auto;
-        }
-        .legend {
-            margin-top: 30px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        .legend h3 {
-            margin-top: 0;
-            color: #495057;
-        }
-        .legend ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .legend li {
-            margin-bottom: 5px;
-            padding: 5px;
-            background-color: white;
-            border-left: 4px solid #007bff;
-            margin-bottom: 8px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Query Engine (QE) - UML Class Diagram</h1>
-
-        <div class="diagram-container">
-            <div class="mermaid">
-${mermaidDiagram}
-            </div>
-        </div>
-
-        <div class="legend">
-            <h3>Architecture Overview</h3>
-            <ul>
-                <li><strong>Annotations:</strong> OperatorAnnotation - Used to mark and configure operator implementations</li>
-                <li><strong>Configuration:</strong> Spring Boot configuration classes for dependency injection</li>
-                <li><strong>Operators:</strong> Implementation of various database query operations (equals, like, etc.)</li>
-                <li><strong>Queries:</strong> Hierarchical query structure supporting both field-based and composite queries</li>
-                <li><strong>Utilities:</strong> Registry, factory, and scanning utilities for operator management</li>
-                <li><strong>Services:</strong> Business logic layer for query execution</li>
-            </ul>
-
-            <h3>Key Design Patterns</h3>
-            <ul>
-                <li><strong>Strategy Pattern:</strong> GenericOperator interface with multiple implementations</li>
-                <li><strong>Composite Pattern:</strong> CompositeQuery for building complex query trees</li>
-                <li><strong>Factory Pattern:</strong> OperatorFactory for creating operator instances</li>
-                <li><strong>Registry Pattern:</strong> OperatorRegistry for managing operator instances</li>
-                <li><strong>Template Method:</strong> FieldQuery abstract class with concrete implementations</li>
-            </ul>
-        </div>
-    </div>
-
-    <script>
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'default',
-            flowchart: {
-                useMaxWidth: true,
-                htmlLabels: true
-            },
-            classDiagram: {
-                useMaxWidth: true
-            }
-        });
-    </script>
-</body>
-</html>
-    `;
-}
-
-// Export functions for use
+// Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        renderMermaidDiagram,
-        generateHTMLPage,
-        mermaidDiagram
-    };
+    module.exports = { mermaidDiagram };
 }
-
-// If running in browser, make functions available globally
-if (typeof window !== 'undefined') {
-    window.QEDiagram = {
-        renderMermaidDiagram,
-        generateHTMLPage,
-        mermaidDiagram
-    };
-}
-
-console.log('Query Engine UML Diagram Generator loaded successfully!');
-console.log('Use renderMermaidDiagram() to get the Mermaid diagram string');
-console.log('Use generateHTMLPage() to get a complete HTML page with the diagram');

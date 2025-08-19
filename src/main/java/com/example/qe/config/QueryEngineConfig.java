@@ -7,12 +7,11 @@ import com.example.qe.util.QueryExecutionContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 
 @Configuration
 public class QueryEngineConfig {
 
-    private static final String OPERATOR_BASE_PACKAGE = "com.example.qe.operator.impl";
+    private static final String OPERATOR_BASE_PACKAGE = "com.example.qe.model.operator.impl";
 
     @Bean
     public OperatorRegistry operatorRegistry() {
@@ -32,11 +31,6 @@ public class QueryEngineConfig {
     }
 
     @Bean
-    public ConversionService conversionService() {
-        return new DefaultConversionService();
-    }
-
-    @Bean
     public QueryExecutionContext queryExecutionContext(
             OperatorFactory operatorFactory,
             ConversionService conversionService
@@ -44,4 +38,3 @@ public class QueryEngineConfig {
         return new QueryExecutionContext(operatorFactory, conversionService);
     }
 }
-
