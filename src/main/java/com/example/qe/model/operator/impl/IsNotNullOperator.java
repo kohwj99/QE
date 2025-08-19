@@ -5,9 +5,12 @@ import com.example.qe.model.operator.GenericOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @OperatorAnnotation(
         value = "isNotNull",
-        types = {Object.class},  // supports any type
+        types = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
         description = "Checks if a field is not null"
 )
 public class IsNotNullOperator<T> implements GenericOperator<T> {

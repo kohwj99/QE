@@ -1,5 +1,6 @@
-package com.example.qe.model.operator.impl;
+package com.example.qe.model.operator.impl.old;
 
+import com.example.qe.model.operator.impl.DayOfMonthOperator;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.BeforeEach;

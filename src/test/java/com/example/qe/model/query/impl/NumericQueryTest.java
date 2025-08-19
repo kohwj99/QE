@@ -30,7 +30,7 @@ public class NumericQueryTest {
     @BeforeEach
     void setUp() {
         mapper = new ObjectMapper();
-        dsl = DSL.using(SQLDialect.H2);
+        dsl = DSL.using(SQLDialect.DEFAULT);
 
         // Setup OperatorRegistry and scan operators
         OperatorRegistry registry = new OperatorRegistry();

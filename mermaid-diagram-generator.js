@@ -116,11 +116,11 @@ classDiagram
         #Class~String~ getValueClass()
     }
 
-    class IntQuery {
+    class NumericQuery {
         <<@JsonTypeName>>
-        +IntQuery()
-        +IntQuery(String column, String operator, Integer value)
-        #Class~Integer~ getValueClass()
+        +NumericQuery()
+        +NumericQuery(String column, String operator, BigDecimal value)
+        #Class~BigDecimal~ getValueClass()
     }
 
     class DateQuery {
@@ -212,7 +212,7 @@ classDiagram
     Query <|.. CompositeQuery : implements
 
     FieldQuery <|-- StringQuery : extends
-    FieldQuery <|-- IntQuery : extends
+    FieldQuery <|-- NumericQuery : extends
     FieldQuery <|-- DateQuery : extends
     FieldQuery <|-- BoolQuery : extends
 

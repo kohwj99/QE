@@ -6,6 +6,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "greaterThanEqual",

@@ -32,8 +32,8 @@ public class QueryDeserializationTest {
 
         // TODO: register polymorphic config or modules if you use @JsonTypeInfo on Query hierarchy
 
-        // Use H2 dialect for SQL generation
-        dsl = DSL.using(SQLDialect.H2);
+        // Use Default dialect for SQL generation
+        dsl = DSL.using(SQLDialect.DEFAULT);
 
         // Setup OperatorRegistry and scan operators
         OperatorRegistry registry = new OperatorRegistry();
