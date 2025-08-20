@@ -6,16 +6,23 @@ import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequestMapping("/api/query")
 @Controller
 public class QueryExecutionController {
 
     @Autowired
     private QueryExecutionService queryExecutionService;
 
-    public ResponseEntity<Condition> executeQuery(String json) throws JsonProcessingException {
+    @PostMapping("/executeQuery")
+    public ResponseEntity<String> executeQuery(@RequestBody String json) throws JsonProcessingException {
         try {
-            return ResponseEntity.ok(queryExecutionService.parseJsonToCondition(json));
+            Condition jooq = queryExecutionService.parseJsonToCondition(json);
+
+            return ResponseEntity.ok("works");
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
