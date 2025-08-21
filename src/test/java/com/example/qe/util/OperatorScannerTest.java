@@ -197,17 +197,23 @@ class OperatorScannerTest {
 
         // Test IsNullOperator
         logger.info("Testing IsNullOperator registrations...");
-        GenericOperator<Object> isNullOperator = registry.get("isNull", Object.class);
-        assertNotNull(isNullOperator, "Should find isNull operator for Object");
-        assertInstanceOf(IsNullOperator.class, isNullOperator);
-        logger.info("✓ IsNullOperator registered for: Object");
+        Class<?>[] isNullTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
+        for (Class<?> type : isNullTypes) {
+            GenericOperator<?> operator = registry.get("isNull", type);
+            assertNotNull(operator, "Should find isNull operator for " + type.getSimpleName());
+            assertInstanceOf(IsNullOperator.class, operator);
+            logger.info("✓ IsNullOperator registered for: {}", type.getSimpleName());
+        }
 
         // Test IsNotNullOperator
         logger.info("Testing IsNotNullOperator registrations...");
-        GenericOperator<Object> isNotNullOperator = registry.get("isNotNull", Object.class);
-        assertNotNull(isNotNullOperator, "Should find isNotNull operator for Object");
-        assertInstanceOf(IsNotNullOperator.class, isNotNullOperator);
-        logger.info("✓ IsNotNullOperator registered for: Object");
+        Class<?>[] isNotNullTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
+        for (Class<?> type : isNotNullTypes) {
+            GenericOperator<?> operator = registry.get("isNotNull", type);
+            assertNotNull(operator, "Should find isNotNull operator for " + type.getSimpleName());
+            assertInstanceOf(IsNotNullOperator.class, operator);
+            logger.info("✓ IsNotNullOperator registered for: {}", type.getSimpleName());
+        }
 
         logger.info("All operator type mappings verified successfully!");
     }
