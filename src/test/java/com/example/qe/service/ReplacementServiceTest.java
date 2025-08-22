@@ -41,16 +41,16 @@ class ReplacementServiceTest {
           "type": "StringQuery",
           "column": "created_by",
           "operator": "equals",
-          "value": "current_user"
+          "value": "12345"
         }
         """;
 
         String result = replacementService.processJsonPlaceholders(jsonWithPlaceholder);
-        
+
         // Remove whitespace for comparison
         String cleanResult = result.replaceAll("\\s", "");
         String cleanExpected = expectedJson.replaceAll("\\s", "");
-        
+
         assertEquals(cleanExpected, cleanResult);
     }
 
@@ -67,8 +67,8 @@ class ReplacementServiceTest {
         """;
 
         String result = replacementService.processJsonPlaceholders(jsonWithPlaceholder);
-        
-        assertTrue(result.contains("\"" + todayString + "\""), 
+
+        assertTrue(result.contains("\"" + todayString + "\""),
                    "Result should contain today's date: " + todayString);
         assertTrue(result.contains("DateQuery"));
         assertTrue(result.contains("created_date"));
@@ -99,9 +99,9 @@ class ReplacementServiceTest {
         """;
 
         String result = replacementService.processJsonPlaceholders(jsonWithPlaceholders);
-        
+
         // Should replace both placeholders
-        assertTrue(result.contains("\"current_user\""), "Should replace [me] with current_user");
+        assertTrue(result.contains("\"12345\""), "Should replace [me] with 12345");
         assertTrue(result.contains("\"" + todayString + "\""), "Should replace [today] with today's date");
         assertFalse(result.contains("[me]"), "Should not contain original [me] placeholder");
         assertFalse(result.contains("[today]"), "Should not contain original [today] placeholder");
@@ -120,11 +120,11 @@ class ReplacementServiceTest {
         """;
 
         String result = replacementService.processJsonPlaceholders(originalJson);
-        
+
         // Should be unchanged (ignoring whitespace)
         String cleanResult = result.replaceAll("\\s", "");
         String cleanOriginal = originalJson.replaceAll("\\s", "");
-        
+
         assertEquals(cleanOriginal, cleanResult);
     }
 
@@ -141,7 +141,7 @@ class ReplacementServiceTest {
         """;
 
         String result = replacementService.processJsonPlaceholders(jsonWithUnsupportedPlaceholder);
-        
+
         // Should keep the unsupported placeholder unchanged
         assertTrue(result.contains("[unknown]"), "Should keep unsupported placeholder");
     }
@@ -160,7 +160,7 @@ class ReplacementServiceTest {
         assertTrue(replacementService.hasResolvablePlaceholder("[me]"));
         assertTrue(replacementService.hasResolvablePlaceholder("[today]"));
         assertTrue(replacementService.hasResolvablePlaceholder("some text [me] more text"));
-        
+
         assertFalse(replacementService.hasResolvablePlaceholder("[unknown]"));
         assertFalse(replacementService.hasResolvablePlaceholder("regular text"));
         assertFalse(replacementService.hasResolvablePlaceholder(null));

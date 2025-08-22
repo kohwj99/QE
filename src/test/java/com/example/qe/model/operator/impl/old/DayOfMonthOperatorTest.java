@@ -36,8 +36,7 @@ class DayOfMonthOperatorTest {
         logger.info("=== Testing DayOfMonthOperator ===");
 
         Integer dayValue = 15;
-        @SuppressWarnings("unchecked")
-        var condition = dayOfMonthOperator.apply(dateField, BigDecimal.valueOf(dayValue));
+        var condition = dayOfMonthOperator.applyToField(dateField, BigDecimal.valueOf(dayValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -59,8 +58,7 @@ class DayOfMonthOperatorTest {
         Integer[] testDays = {1, 15, 31};
 
         for (Integer day : testDays) {
-            @SuppressWarnings("unchecked")
-            var condition = dayOfMonthOperator.apply(dateField, BigDecimal.valueOf(day));
+            var condition = dayOfMonthOperator.applyToField(dateField, BigDecimal.valueOf(day));
 
             assertNotNull(condition, "Condition should not be null for day " + day);
             String sql = condition.toString();
@@ -84,15 +82,13 @@ class DayOfMonthOperatorTest {
         Integer dayValue = 10;
 
         // Test with birth_date field
-        @SuppressWarnings("unchecked")
-        var birthDateCondition = dayOfMonthOperator.apply(birthDateField, BigDecimal.valueOf(dayValue));
+        var birthDateCondition = dayOfMonthOperator.applyToField(birthDateField, BigDecimal.valueOf(dayValue));
         assertNotNull(birthDateCondition);
         String birthDateSql = birthDateCondition.toString();
         logger.info("Birth date condition: {}", birthDateSql);
 
         // Test with updated_at field
-        @SuppressWarnings("unchecked")
-        var updatedAtCondition = dayOfMonthOperator.apply(updatedAtField, BigDecimal.valueOf(dayValue));
+        var updatedAtCondition = dayOfMonthOperator.applyToField(updatedAtField, BigDecimal.valueOf(dayValue));
         assertNotNull(updatedAtCondition);
         String updatedAtSql = updatedAtCondition.toString();
         logger.info("Updated at condition: {}", updatedAtSql);
@@ -113,8 +109,7 @@ class DayOfMonthOperatorTest {
         Integer[] edgeCases = {1, 31}; // First and last possible days of month
 
         for (Integer day : edgeCases) {
-            @SuppressWarnings("unchecked")
-            var condition = dayOfMonthOperator.apply(dateField, BigDecimal.valueOf(day));
+            var condition = dayOfMonthOperator.applyToField(dateField, BigDecimal.valueOf(day));
 
             assertNotNull(condition, "Condition should not be null for edge case day " + day);
             String sql = condition.toString();

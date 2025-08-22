@@ -1,6 +1,7 @@
 package com.example.qe.model.operator.impl;
 
 import com.example.qe.annotation.OperatorAnnotation;
+import com.example.qe.model.operator.CustomOperator;
 import com.example.qe.model.operator.GenericOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -14,12 +15,9 @@ import java.time.LocalDate;
         types = {BigDecimal.class},
         description = "Checks if the day of the month component of a date field equals the specified day"
 )
-@SuppressWarnings("rawtypes")
-public class DayOfMonthOperator implements GenericOperator<BigDecimal> {
+public class DayOfMonthOperator implements CustomOperator<BigDecimal> {
     @Override
-    @SuppressWarnings("unchecked")
-    public Condition apply(Field field, BigDecimal day) {
-        Field<LocalDate> dateField = field;
-        return DSL.day(dateField).eq(day.intValue());
+    public Condition applyToField(Field<?> field, BigDecimal day) {
+        return DSL.day(field).eq(day.intValue());
     }
 }

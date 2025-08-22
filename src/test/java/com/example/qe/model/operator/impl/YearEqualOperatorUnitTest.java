@@ -25,56 +25,60 @@ class YearEqualOperatorUnitTest {
     }
 
     @Test
-    @DisplayName("apply_givenCurrentYear_shouldReturnYearEqualCondition")
-    void apply_givenCurrentYear_shouldReturnYearEqualCondition() {
+    @DisplayName("applyToField_givenCurrentYear_shouldReturnYearEqualCondition")
+    void applyToField_givenCurrentYear_shouldReturnYearEqualCondition() {
         Integer year = 2025;
         
-        Condition condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(year));
+        Condition condition = yearEqualOperator.applyToField(dateField, BigDecimal.valueOf(year));
         
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("hire_date"), "SQL should contain field name");
         assertTrue(sql.contains("=") || sql.contains("eq"), "SQL should contain equals operator");
         assertTrue(sql.contains("2025") || sql.toLowerCase().contains("year"), "SQL should reference year 2025");
+        System.out.println(sql);
     }
 
     @Test
-    @DisplayName("apply_givenPastYear_shouldReturnYearEqualCondition")
-    void apply_givenPastYear_shouldReturnYearEqualCondition() {
+    @DisplayName("applyToField_givenPastYear_shouldReturnYearEqualCondition")
+    void applyToField_givenPastYear_shouldReturnYearEqualCondition() {
         Integer year = 2020;
         
-        Condition condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(year));
+        Condition condition = yearEqualOperator.applyToField(dateField, BigDecimal.valueOf(year));
         
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("hire_date"), "SQL should contain field name");
         assertTrue(sql.contains("=") || sql.contains("eq"), "SQL should contain equals operator");
         assertTrue(sql.contains("2020") || sql.toLowerCase().contains("year"), "SQL should reference year 2020");
+        System.out.println(sql);
     }
 
     @Test
-    @DisplayName("apply_givenFutureYear_shouldReturnYearEqualCondition")
-    void apply_givenFutureYear_shouldReturnYearEqualCondition() {
+    @DisplayName("applyToField_givenFutureYear_shouldReturnYearEqualCondition")
+    void applyToField_givenFutureYear_shouldReturnYearEqualCondition() {
         Integer year = 2030;
         
-        Condition condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(year));
+        Condition condition = yearEqualOperator.applyToField(dateField, BigDecimal.valueOf(year));
         
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("hire_date"), "SQL should contain field name");
         assertTrue(sql.contains("2030") || sql.toLowerCase().contains("year"), "SQL should reference year 2030");
+        System.out.println(sql);
     }
 
     @Test
-    @DisplayName("apply_givenDifferentFieldName_shouldReturnYearEqualCondition")
-    void apply_givenDifferentFieldName_shouldReturnYearEqualCondition() {
+    @DisplayName("applyToField_givenDifferentFieldName_shouldReturnYearEqualCondition")
+    void applyToField_givenDifferentFieldName_shouldReturnYearEqualCondition() {
         Field<LocalDate> customField = DSL.field("graduation_date", LocalDate.class);
         Integer year = 2023;
         
-        Condition condition = yearEqualOperator.apply(customField, BigDecimal.valueOf(year));
+        Condition condition = yearEqualOperator.applyToField(customField, BigDecimal.valueOf(year));
         
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("graduation_date"), "SQL should contain custom field name");
+        System.out.println(sql);
     }
 }

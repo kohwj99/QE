@@ -25,12 +25,12 @@ class DaysBeforeOperatorUnitTest {
     }
 
     @Test
-    @DisplayName("apply_givenPositiveDays_shouldReturnDaysBeforeCondition")
-    void apply_givenPositiveDays_shouldReturnDaysBeforeCondition() {
+    @DisplayName("applyToField_givenPositiveDays_shouldReturnDaysBeforeCondition")
+    void applyToField_givenPositiveDays_shouldReturnDaysBeforeCondition() {
         Integer days = 7;
         LocalDate expectedDate = LocalDate.now().minusDays(7);
 
-        Condition condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(days));
+        Condition condition = daysBeforeOperator.applyToField(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -40,12 +40,12 @@ class DaysBeforeOperatorUnitTest {
     }
 
     @Test
-    @DisplayName("apply_givenZeroDays_shouldReturnDaysBeforeCondition")
-    void apply_givenZeroDays_shouldReturnDaysBeforeCondition() {
+    @DisplayName("applyToField_givenZeroDays_shouldReturnDaysBeforeCondition")
+    void applyToField_givenZeroDays_shouldReturnDaysBeforeCondition() {
         Integer days = 0;
         LocalDate expectedDate = LocalDate.now();
 
-        Condition condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(days));
+        Condition condition = daysBeforeOperator.applyToField(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -54,12 +54,12 @@ class DaysBeforeOperatorUnitTest {
     }
 
     @Test
-    @DisplayName("apply_givenLargeNumberOfDays_shouldReturnDaysBeforeCondition")
-    void apply_givenLargeNumberOfDays_shouldReturnDaysBeforeCondition() {
+    @DisplayName("applyToField_givenLargeNumberOfDays_shouldReturnDaysBeforeCondition")
+    void applyToField_givenLargeNumberOfDays_shouldReturnDaysBeforeCondition() {
         Integer days = 365;
         LocalDate expectedDate = LocalDate.now().minusDays(365);
 
-        Condition condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(days));
+        Condition condition = daysBeforeOperator.applyToField(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -68,12 +68,12 @@ class DaysBeforeOperatorUnitTest {
     }
 
     @Test
-    @DisplayName("apply_givenDifferentFieldName_shouldReturnDaysBeforeCondition")
-    void apply_givenDifferentFieldName_shouldReturnDaysBeforeCondition() {
+    @DisplayName("applyToField_givenDifferentFieldName_shouldReturnDaysBeforeCondition")
+    void applyToField_givenDifferentFieldName_shouldReturnDaysBeforeCondition() {
         Field<LocalDate> customField = DSL.field("updated_at", LocalDate.class);
         Integer days = 30;
 
-        Condition condition = daysBeforeOperator.apply(customField, BigDecimal.valueOf(days));
+        Condition condition = daysBeforeOperator.applyToField(customField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();

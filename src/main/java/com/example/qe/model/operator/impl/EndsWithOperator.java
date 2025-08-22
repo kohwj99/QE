@@ -13,7 +13,6 @@ import org.jooq.Field;
 public class EndsWithOperator implements GenericOperator<String> {
     @Override
     public Condition apply(Field<String> field, String value) {
-        // Use LIKE with pattern '%value' to check if field ends with the value
         return field.like("%" + value);
     }
 }

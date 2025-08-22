@@ -1,25 +1,21 @@
 package com.example.qe.model.operator.impl;
 
 import com.example.qe.annotation.OperatorAnnotation;
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.CustomOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "dayEqual",
         types = {BigDecimal.class},
         description = "Checks if the day component of a date field equals the specified day"
 )
-@SuppressWarnings("rawtypes")
-public class DayEqualOperator implements GenericOperator<BigDecimal> {
+public class DayEqualOperator implements CustomOperator<BigDecimal> {
     @Override
-    @SuppressWarnings("unchecked")
-    public Condition apply(Field field, BigDecimal day) {
-        Field<LocalDate> dateField = field;
-        return DSL.day(dateField).eq(day.intValue());
+    public Condition applyToField(Field<?> field, BigDecimal day) {
+        return DSL.day(field).eq(day.intValue());
     }
 }

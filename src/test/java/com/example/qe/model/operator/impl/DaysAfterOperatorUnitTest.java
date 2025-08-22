@@ -25,12 +25,12 @@ class DaysAfterOperatorUnitTest {
     }
 
     @Test
-    @DisplayName("apply_givenPositiveDays_shouldReturnDaysAfterCondition")
-    void apply_givenPositiveDays_shouldReturnDaysAfterCondition() {
+    @DisplayName("applyToField_givenPositiveDays_shouldReturnDaysAfterCondition")
+    void applyToField_givenPositiveDays_shouldReturnDaysAfterCondition() {
         Integer days = 14;
         LocalDate expectedDate = LocalDate.now().plusDays(14);
 
-        Condition condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(days));
+        Condition condition = daysAfterOperator.applyToField(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -45,7 +45,7 @@ class DaysAfterOperatorUnitTest {
         Integer days = 0;
         LocalDate expectedDate = LocalDate.now();
 
-        Condition condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(days));
+        Condition condition = daysAfterOperator.applyToField(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -59,7 +59,7 @@ class DaysAfterOperatorUnitTest {
         Integer days = 90;
         LocalDate expectedDate = LocalDate.now().plusDays(90);
 
-        Condition condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(days));
+        Condition condition = daysAfterOperator.applyToField(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -73,7 +73,7 @@ class DaysAfterOperatorUnitTest {
         Field<LocalDate> customField = DSL.field("scheduled_date", LocalDate.class);
         Integer days = 7;
 
-        Condition condition = daysAfterOperator.apply(customField, BigDecimal.valueOf(days));
+        Condition condition = daysAfterOperator.applyToField(customField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();

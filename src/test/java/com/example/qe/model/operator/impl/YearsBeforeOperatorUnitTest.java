@@ -25,11 +25,11 @@ class YearsBeforeOperatorUnitTest {
     }
 
     @Test
-    @DisplayName("apply_givenPositiveYears_shouldReturnYearsBeforeCondition")
-    void apply_givenPositiveYears_shouldReturnYearsBeforeCondition() {
+    @DisplayName("applyToField_givenPositiveYears_shouldReturnYearsBeforeCondition")
+    void applyToField_givenPositiveYears_shouldReturnYearsBeforeCondition() {
         Integer yearsValue = 5;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
+        Condition condition = yearsBeforeOperator.applyToField(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -37,14 +37,15 @@ class YearsBeforeOperatorUnitTest {
         assertTrue(sql.contains("created_date"), "SQL should contain field name");
         assertTrue(sql.contains("=") || sql.contains("eq"), "SQL should contain equals operator");
         assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the calculated date");
+        System.out.println(sql);
     }
 
     @Test
-    @DisplayName("apply_givenZeroYears_shouldReturnTodayCondition")
-    void apply_givenZeroYears_shouldReturnTodayCondition() {
+    @DisplayName("applyToField_givenZeroYears_shouldReturnTodayCondition")
+    void applyToField_givenZeroYears_shouldReturnTodayCondition() {
         Integer yearsValue = 0;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
+        Condition condition = yearsBeforeOperator.applyToField(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -52,14 +53,15 @@ class YearsBeforeOperatorUnitTest {
         assertTrue(sql.contains("created_date"), "SQL should contain field name");
         assertTrue(sql.contains("=") || sql.contains("eq"), "SQL should contain equals operator");
         assertTrue(sql.contains(expectedDate.toString()), "SQL should contain today's date");
+        System.out.println(sql);
     }
 
     @Test
-    @DisplayName("apply_givenSingleYear_shouldReturnYearBeforeCondition")
-    void apply_givenSingleYear_shouldReturnYearBeforeCondition() {
+    @DisplayName("applyToField_givenSingleYear_shouldReturnYearBeforeCondition")
+    void applyToField_givenSingleYear_shouldReturnYearBeforeCondition() {
         Integer yearsValue = 1;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
+        Condition condition = yearsBeforeOperator.applyToField(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -67,14 +69,15 @@ class YearsBeforeOperatorUnitTest {
         assertTrue(sql.contains("created_date"), "SQL should contain field name");
         assertTrue(sql.contains("=") || sql.contains("eq"), "SQL should contain equals operator");
         assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the calculated date");
+        System.out.println(sql);
     }
 
     @Test
-    @DisplayName("apply_givenLargeYears_shouldReturnDistantPastCondition")
-    void apply_givenLargeYears_shouldReturnDistantPastCondition() {
+    @DisplayName("applyToField_givenLargeYears_shouldReturnDistantPastCondition")
+    void applyToField_givenLargeYears_shouldReturnDistantPastCondition() {
         Integer yearsValue = 100;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
+        Condition condition = yearsBeforeOperator.applyToField(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -82,5 +85,6 @@ class YearsBeforeOperatorUnitTest {
         assertTrue(sql.contains("created_date"), "SQL should contain field name");
         assertTrue(sql.contains("=") || sql.contains("eq"), "SQL should contain equals operator");
         assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the calculated date");
+        System.out.println(sql);
     }
 }

@@ -66,8 +66,7 @@ class DateOperatorTest {
         logger.info("=== Testing DaysBeforeOperator ===");
 
         Integer daysValue = 7;
-        @SuppressWarnings("unchecked")
-        var condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(daysValue));
+        var condition = daysBeforeOperator.applyToField(dateField, BigDecimal.valueOf(daysValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -86,8 +85,7 @@ class DateOperatorTest {
         logger.info("=== Testing MonthsBeforeOperator ===");
 
         Integer monthsValue = 3;
-        @SuppressWarnings("unchecked")
-        var condition = monthsBeforeOperator.apply(dateField, BigDecimal.valueOf(monthsValue));
+        var condition = monthsBeforeOperator.applyToField(dateField, BigDecimal.valueOf(monthsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -106,8 +104,7 @@ class DateOperatorTest {
         logger.info("=== Testing YearsBeforeOperator ===");
 
         Integer yearsValue = 2;
-        @SuppressWarnings("unchecked")
-        var condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
+        var condition = yearsBeforeOperator.applyToField(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -126,8 +123,7 @@ class DateOperatorTest {
         logger.info("=== Testing DayEqualOperator ===");
 
         Integer dayValue = 15;
-        @SuppressWarnings("unchecked")
-        var condition = dayEqualOperator.apply(dateField, BigDecimal.valueOf(dayValue));
+        var condition = dayEqualOperator.applyToField(dateField, BigDecimal.valueOf(dayValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -145,8 +141,7 @@ class DateOperatorTest {
         logger.info("=== Testing MonthEqualOperator ===");
 
         Integer monthValue = 6;
-        @SuppressWarnings("unchecked")
-        var condition = monthEqualOperator.apply(dateField, BigDecimal.valueOf(monthValue));
+        var condition = monthEqualOperator.applyToField(dateField, BigDecimal.valueOf(monthValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -164,8 +159,7 @@ class DateOperatorTest {
         logger.info("=== Testing YearEqualOperator ===");
 
         Integer yearValue = 2023;
-        @SuppressWarnings("unchecked")
-        var condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(yearValue));
+        var condition = yearEqualOperator.applyToField(dateField, BigDecimal.valueOf(yearValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -183,8 +177,7 @@ class DateOperatorTest {
         logger.info("=== Testing DaysAfterOperator ===");
 
         Integer daysValue = 10;
-        @SuppressWarnings("unchecked")
-        var condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(daysValue));
+        var condition = daysAfterOperator.applyToField(dateField, BigDecimal.valueOf(daysValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -203,8 +196,7 @@ class DateOperatorTest {
         logger.info("=== Testing MonthsAfterOperator ===");
 
         Integer monthsValue = 6;
-        @SuppressWarnings("unchecked")
-        var condition = monthsAfterOperator.apply(dateField, BigDecimal.valueOf(monthsValue));
+        var condition = monthsAfterOperator.applyToField(dateField, BigDecimal.valueOf(monthsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -223,8 +215,7 @@ class DateOperatorTest {
         logger.info("=== Testing YearsAfterOperator ===");
 
         Integer yearsValue = 5;
-        @SuppressWarnings("unchecked")
-        var condition = yearsAfterOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
+        var condition = yearsAfterOperator.applyToField(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -246,13 +237,11 @@ class DateOperatorTest {
         Field<LocalDate> updatedField = DSL.field("updated_at", LocalDate.class);
 
         // Test a few operators with different fields
-        @SuppressWarnings("unchecked")
-        var createdCondition = daysBeforeOperator.apply(createdField, BigDecimal.valueOf(30));
+        var createdCondition = daysBeforeOperator.applyToField(createdField, BigDecimal.valueOf(30));
         assertNotNull(createdCondition);
         logger.info("Days before with created_at field: {}", createdCondition);
 
-        @SuppressWarnings("unchecked")
-        var updatedCondition = monthEqualOperator.apply(updatedField, BigDecimal.valueOf(12));
+        var updatedCondition = monthEqualOperator.applyToField(updatedField, BigDecimal.valueOf(12));
         assertNotNull(updatedCondition);
         logger.info("Month equal with updated_at field: {}", updatedCondition);
 

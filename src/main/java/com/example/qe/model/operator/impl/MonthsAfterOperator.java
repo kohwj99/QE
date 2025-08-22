@@ -1,9 +1,10 @@
 package com.example.qe.model.operator.impl;
 
 import com.example.qe.annotation.OperatorAnnotation;
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.CustomOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,13 +14,10 @@ import java.time.LocalDate;
         types = {BigDecimal.class},
         description = "Checks if a date field is a specified number of months after today"
 )
-@SuppressWarnings("rawtypes")
-public class MonthsAfterOperator implements GenericOperator<BigDecimal> {
+public class MonthsAfterOperator implements CustomOperator<BigDecimal> {
     @Override
-    @SuppressWarnings("unchecked")
-    public Condition apply(Field field, BigDecimal months) {
-        Field<LocalDate> dateField = field;
+    public Condition applyToField(Field<?> field, BigDecimal months) {
         LocalDate targetDate = LocalDate.now().plusMonths(months.longValue());
-        return dateField.eq(targetDate);
+        return DSL.condition("{0} = {1}", field, targetDate);
     }
 }
