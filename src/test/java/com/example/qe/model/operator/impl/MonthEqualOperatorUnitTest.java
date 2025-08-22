@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ class MonthEqualOperatorUnitTest {
     void apply_givenJanuaryMonth_shouldReturnMonthEqualCondition() {
         Integer month = 1;
 
-        Condition condition = monthEqualOperator.apply(dateField, month);
+        Condition condition = monthEqualOperator.apply(dateField, BigDecimal.valueOf(month));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -42,7 +43,7 @@ class MonthEqualOperatorUnitTest {
     void apply_givenDecemberMonth_shouldReturnMonthEqualCondition() {
         Integer month = 12;
 
-        Condition condition = monthEqualOperator.apply(dateField, month);
+        Condition condition = monthEqualOperator.apply(dateField, BigDecimal.valueOf(month));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -56,7 +57,7 @@ class MonthEqualOperatorUnitTest {
     void apply_givenMiddleMonth_shouldReturnMonthEqualCondition() {
         Integer month = 6;
 
-        Condition condition = monthEqualOperator.apply(dateField, month);
+        Condition condition = monthEqualOperator.apply(dateField, BigDecimal.valueOf(month));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -70,7 +71,7 @@ class MonthEqualOperatorUnitTest {
         Field<LocalDate> customField = DSL.field("event_date", LocalDate.class);
         Integer month = 3;
 
-        Condition condition = monthEqualOperator.apply(customField, month);
+        Condition condition = monthEqualOperator.apply(customField, BigDecimal.valueOf(month));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();

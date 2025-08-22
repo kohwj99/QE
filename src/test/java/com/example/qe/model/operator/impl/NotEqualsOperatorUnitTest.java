@@ -27,9 +27,9 @@ class NotEqualsOperatorUnitTest {
     @DisplayName("apply_givenStringValue_shouldReturnNotEqualsCondition")
     void apply_givenStringValue_shouldReturnNotEqualsCondition() {
         String value = "deleted";
-
+        
         Condition condition = notEqualsOperator.apply(stringField, value);
-
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("status"), "SQL should contain field name");
@@ -41,9 +41,9 @@ class NotEqualsOperatorUnitTest {
     @DisplayName("apply_givenIntegerValue_shouldReturnNotEqualsCondition")
     void apply_givenIntegerValue_shouldReturnNotEqualsCondition() {
         Integer value = 0;
-
+        
         Condition condition = notEqualsOperator.apply(integerField, value);
-
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("count"), "SQL should contain field name");
@@ -55,7 +55,7 @@ class NotEqualsOperatorUnitTest {
     @DisplayName("apply_givenNullValue_shouldReturnNotEqualsCondition")
     void apply_givenNullValue_shouldReturnNotEqualsCondition() {
         Condition condition = notEqualsOperator.apply(stringField, null);
-
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("status"), "SQL should contain field name");
@@ -65,9 +65,9 @@ class NotEqualsOperatorUnitTest {
     @DisplayName("apply_givenEmptyString_shouldReturnNotEqualsCondition")
     void apply_givenEmptyString_shouldReturnNotEqualsCondition() {
         String value = "";
-
+        
         Condition condition = notEqualsOperator.apply(stringField, value);
-
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("status"), "SQL should contain field name");

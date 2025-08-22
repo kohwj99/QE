@@ -6,19 +6,20 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "yearEqual",
-        types = {LocalDate.class},
+        types = {BigDecimal.class},
         description = "Checks if the year component of a date field equals the specified year"
 )
 @SuppressWarnings("rawtypes")
-public class YearEqualOperator implements GenericOperator<Integer> {
+public class YearEqualOperator implements GenericOperator<BigDecimal> {
     @Override
     @SuppressWarnings("unchecked")
-    public Condition apply(Field field, Integer year) {
+    public Condition apply(Field field, BigDecimal year) {
         Field<LocalDate> dateField = field;
-        return DSL.year(dateField).eq(year);
+        return DSL.year(dateField).eq(year.intValue());
     }
 }

@@ -5,20 +5,20 @@ import com.example.qe.model.operator.GenericOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "daysBefore",
-        types = {LocalDate.class},
+        types = {BigDecimal.class},
         description = "Checks if a date field is a specified number of days before today"
 )
 @SuppressWarnings("rawtypes")
-public class DaysBeforeOperator implements GenericOperator<Integer> {
+public class DaysBeforeOperator implements GenericOperator<BigDecimal> {
     @Override
     @SuppressWarnings("unchecked")
-    public Condition apply(Field field, Integer days) {
-        Field<LocalDate> dateField = field;
-        LocalDate targetDate = LocalDate.now().minusDays(days);
-        return dateField.eq(targetDate);
+    public Condition apply(Field field, BigDecimal days) {
+        LocalDate targetDate = LocalDate.now().minusDays(days.longValue());
+        return ((Field<LocalDate>) field).eq(targetDate);
     }
 }

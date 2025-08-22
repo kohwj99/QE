@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ class YearsAfterOperatorUnitTest {
     void apply_givenPositiveYears_shouldReturnYearsAfterCondition() {
         Integer yearsValue = 3;
 
-        Condition condition = yearsAfterOperator.apply(dateField, yearsValue);
+        Condition condition = yearsAfterOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -43,7 +44,7 @@ class YearsAfterOperatorUnitTest {
     void apply_givenZeroYears_shouldReturnTodayCondition() {
         Integer yearsValue = 0;
 
-        Condition condition = yearsAfterOperator.apply(dateField, yearsValue);
+        Condition condition = yearsAfterOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -58,7 +59,7 @@ class YearsAfterOperatorUnitTest {
     void apply_givenSingleYear_shouldReturnYearAfterCondition() {
         Integer yearsValue = 1;
 
-        Condition condition = yearsAfterOperator.apply(dateField, yearsValue);
+        Condition condition = yearsAfterOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -73,7 +74,7 @@ class YearsAfterOperatorUnitTest {
     void apply_givenLargeYears_shouldReturnDistantFutureCondition() {
         Integer yearsValue = 50;
 
-        Condition condition = yearsAfterOperator.apply(dateField, yearsValue);
+        Condition condition = yearsAfterOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();

@@ -1,7 +1,7 @@
 package com.example.qe.model.query;
 
 import com.example.qe.model.operator.GenericOperator;
-import com.example.qe.util.QueryExecutionContext;
+import com.example.qe.util.OperatorFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.jooq.Condition;
@@ -29,12 +29,12 @@ public abstract class FieldQuery<T> implements Query {
     }
 
     @Override
-    public Condition toCondition(DSLContext dsl, QueryExecutionContext context) {
+    public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
         // Get the jOOQ field with the right type
         Field<T> field = field(column, getValueClass());
 
-        // Resolve operator from the factory
-        GenericOperator<T> op = context.resolveOperator(operator, getValueClass());
+        // Resolve operator from the factory directly
+        GenericOperator<T> op = operatorFactory.resolve(operator, getValueClass());
 
         if (op == null) {
             throw new IllegalArgumentException("Unknown operator: " + operator);

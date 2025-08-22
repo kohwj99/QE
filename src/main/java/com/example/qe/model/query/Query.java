@@ -1,6 +1,6 @@
 package com.example.qe.model.query;
 import com.example.qe.model.query.impl.*;
-import com.example.qe.util.QueryExecutionContext;
+import com.example.qe.util.OperatorFactory;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jooq.Condition;
@@ -26,6 +26,6 @@ import org.jooq.DSLContext;
 })
 public interface Query {
 
-    Condition toCondition(DSLContext dsl, QueryExecutionContext context);
+    Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory);
 
 }

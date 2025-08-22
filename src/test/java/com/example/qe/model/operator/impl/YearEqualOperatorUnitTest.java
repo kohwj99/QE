@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,9 +28,9 @@ class YearEqualOperatorUnitTest {
     @DisplayName("apply_givenCurrentYear_shouldReturnYearEqualCondition")
     void apply_givenCurrentYear_shouldReturnYearEqualCondition() {
         Integer year = 2025;
-
-        Condition condition = yearEqualOperator.apply(dateField, year);
-
+        
+        Condition condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(year));
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("hire_date"), "SQL should contain field name");
@@ -41,9 +42,9 @@ class YearEqualOperatorUnitTest {
     @DisplayName("apply_givenPastYear_shouldReturnYearEqualCondition")
     void apply_givenPastYear_shouldReturnYearEqualCondition() {
         Integer year = 2020;
-
-        Condition condition = yearEqualOperator.apply(dateField, year);
-
+        
+        Condition condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(year));
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("hire_date"), "SQL should contain field name");
@@ -55,9 +56,9 @@ class YearEqualOperatorUnitTest {
     @DisplayName("apply_givenFutureYear_shouldReturnYearEqualCondition")
     void apply_givenFutureYear_shouldReturnYearEqualCondition() {
         Integer year = 2030;
-
-        Condition condition = yearEqualOperator.apply(dateField, year);
-
+        
+        Condition condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(year));
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("hire_date"), "SQL should contain field name");
@@ -69,9 +70,9 @@ class YearEqualOperatorUnitTest {
     void apply_givenDifferentFieldName_shouldReturnYearEqualCondition() {
         Field<LocalDate> customField = DSL.field("graduation_date", LocalDate.class);
         Integer year = 2023;
-
-        Condition condition = yearEqualOperator.apply(customField, year);
-
+        
+        Condition condition = yearEqualOperator.apply(customField, BigDecimal.valueOf(year));
+        
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
         assertTrue(sql.contains("graduation_date"), "SQL should contain custom field name");

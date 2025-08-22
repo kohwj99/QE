@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ class YearsBeforeOperatorUnitTest {
     void apply_givenPositiveYears_shouldReturnYearsBeforeCondition() {
         Integer yearsValue = 5;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, yearsValue);
+        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -43,7 +44,7 @@ class YearsBeforeOperatorUnitTest {
     void apply_givenZeroYears_shouldReturnTodayCondition() {
         Integer yearsValue = 0;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, yearsValue);
+        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -58,7 +59,7 @@ class YearsBeforeOperatorUnitTest {
     void apply_givenSingleYear_shouldReturnYearBeforeCondition() {
         Integer yearsValue = 1;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, yearsValue);
+        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -73,7 +74,7 @@ class YearsBeforeOperatorUnitTest {
     void apply_givenLargeYears_shouldReturnDistantPastCondition() {
         Integer yearsValue = 100;
 
-        Condition condition = yearsBeforeOperator.apply(dateField, yearsValue);
+        Condition condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();

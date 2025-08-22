@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ class DaysBeforeOperatorUnitTest {
         Integer days = 7;
         LocalDate expectedDate = LocalDate.now().minusDays(7);
 
-        Condition condition = daysBeforeOperator.apply(dateField, days);
+        Condition condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -44,7 +45,7 @@ class DaysBeforeOperatorUnitTest {
         Integer days = 0;
         LocalDate expectedDate = LocalDate.now();
 
-        Condition condition = daysBeforeOperator.apply(dateField, days);
+        Condition condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -58,7 +59,7 @@ class DaysBeforeOperatorUnitTest {
         Integer days = 365;
         LocalDate expectedDate = LocalDate.now().minusDays(365);
 
-        Condition condition = daysBeforeOperator.apply(dateField, days);
+        Condition condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -72,7 +73,7 @@ class DaysBeforeOperatorUnitTest {
         Field<LocalDate> customField = DSL.field("updated_at", LocalDate.class);
         Integer days = 30;
 
-        Condition condition = daysBeforeOperator.apply(customField, days);
+        Condition condition = daysBeforeOperator.apply(customField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();

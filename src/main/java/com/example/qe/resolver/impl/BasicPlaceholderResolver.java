@@ -22,8 +22,8 @@ public class BasicPlaceholderResolver implements ValueResolver {
     @Override
     public Object resolve(String placeholder, Class<?> targetType) {
         return switch (placeholder.toLowerCase()) {
-            case "me" -> "current_user";
-            case "today" -> LocalDate.now().toString(); // Always return as string for JSON compatibility
+            case "me" -> "12345";
+            case "today" -> LocalDate.now().toString();
             default -> throw new IllegalArgumentException("Unsupported placeholder: " + placeholder);
         };
     }

@@ -6,19 +6,20 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "dayOfMonth",
-        types = {LocalDate.class},
+        types = {BigDecimal.class},
         description = "Checks if the day of the month component of a date field equals the specified day"
 )
 @SuppressWarnings("rawtypes")
-public class DayOfMonthOperator implements GenericOperator<Integer> {
+public class DayOfMonthOperator implements GenericOperator<BigDecimal> {
     @Override
     @SuppressWarnings("unchecked")
-    public Condition apply(Field field, Integer day) {
+    public Condition apply(Field field, BigDecimal day) {
         Field<LocalDate> dateField = field;
-        return DSL.day(dateField).eq(day);
+        return DSL.day(dateField).eq(day.intValue());
     }
 }

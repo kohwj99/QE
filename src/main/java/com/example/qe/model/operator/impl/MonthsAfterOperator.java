@@ -5,20 +5,21 @@ import com.example.qe.model.operator.GenericOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "monthsAfter",
-        types = {LocalDate.class},
+        types = {BigDecimal.class},
         description = "Checks if a date field is a specified number of months after today"
 )
 @SuppressWarnings("rawtypes")
-public class MonthsAfterOperator implements GenericOperator<Integer> {
+public class MonthsAfterOperator implements GenericOperator<BigDecimal> {
     @Override
     @SuppressWarnings("unchecked")
-    public Condition apply(Field field, Integer months) {
+    public Condition apply(Field field, BigDecimal months) {
         Field<LocalDate> dateField = field;
-        LocalDate targetDate = LocalDate.now().plusMonths(months);
+        LocalDate targetDate = LocalDate.now().plusMonths(months.longValue());
         return dateField.eq(targetDate);
     }
 }

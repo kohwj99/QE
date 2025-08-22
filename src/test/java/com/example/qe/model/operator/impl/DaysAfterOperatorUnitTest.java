@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ class DaysAfterOperatorUnitTest {
         Integer days = 14;
         LocalDate expectedDate = LocalDate.now().plusDays(14);
 
-        Condition condition = daysAfterOperator.apply(dateField, days);
+        Condition condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -44,7 +45,7 @@ class DaysAfterOperatorUnitTest {
         Integer days = 0;
         LocalDate expectedDate = LocalDate.now();
 
-        Condition condition = daysAfterOperator.apply(dateField, days);
+        Condition condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -58,7 +59,7 @@ class DaysAfterOperatorUnitTest {
         Integer days = 90;
         LocalDate expectedDate = LocalDate.now().plusDays(90);
 
-        Condition condition = daysAfterOperator.apply(dateField, days);
+        Condition condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -72,7 +73,7 @@ class DaysAfterOperatorUnitTest {
         Field<LocalDate> customField = DSL.field("scheduled_date", LocalDate.class);
         Integer days = 7;
 
-        Condition condition = daysAfterOperator.apply(customField, days);
+        Condition condition = daysAfterOperator.apply(customField, BigDecimal.valueOf(days));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();

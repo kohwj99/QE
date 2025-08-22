@@ -3,10 +3,8 @@ package com.example.qe.config;
 import com.example.qe.util.OperatorFactory;
 import com.example.qe.util.OperatorRegistry;
 import com.example.qe.util.OperatorScanner;
-import com.example.qe.util.QueryExecutionContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.ConversionService;
 
 @Configuration
 public class QueryEngineConfig {
@@ -28,13 +26,5 @@ public class QueryEngineConfig {
     @Bean
     public OperatorFactory operatorFactory(OperatorRegistry operatorRegistry) {
         return new OperatorFactory(operatorRegistry);
-    }
-
-    @Bean
-    public QueryExecutionContext queryExecutionContext(
-            OperatorFactory operatorFactory,
-            ConversionService conversionService
-    ) {
-        return new QueryExecutionContext(operatorFactory, conversionService);
     }
 }

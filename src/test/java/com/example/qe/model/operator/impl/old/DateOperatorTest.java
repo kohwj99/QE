@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,7 +67,7 @@ class DateOperatorTest {
 
         Integer daysValue = 7;
         @SuppressWarnings("unchecked")
-        var condition = daysBeforeOperator.apply(dateField, daysValue);
+        var condition = daysBeforeOperator.apply(dateField, BigDecimal.valueOf(daysValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -86,7 +87,7 @@ class DateOperatorTest {
 
         Integer monthsValue = 3;
         @SuppressWarnings("unchecked")
-        var condition = monthsBeforeOperator.apply(dateField, monthsValue);
+        var condition = monthsBeforeOperator.apply(dateField, BigDecimal.valueOf(monthsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -106,7 +107,7 @@ class DateOperatorTest {
 
         Integer yearsValue = 2;
         @SuppressWarnings("unchecked")
-        var condition = yearsBeforeOperator.apply(dateField, yearsValue);
+        var condition = yearsBeforeOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -126,7 +127,7 @@ class DateOperatorTest {
 
         Integer dayValue = 15;
         @SuppressWarnings("unchecked")
-        var condition = dayEqualOperator.apply(dateField, dayValue);
+        var condition = dayEqualOperator.apply(dateField, BigDecimal.valueOf(dayValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -145,7 +146,7 @@ class DateOperatorTest {
 
         Integer monthValue = 6;
         @SuppressWarnings("unchecked")
-        var condition = monthEqualOperator.apply(dateField, monthValue);
+        var condition = monthEqualOperator.apply(dateField, BigDecimal.valueOf(monthValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -164,7 +165,7 @@ class DateOperatorTest {
 
         Integer yearValue = 2023;
         @SuppressWarnings("unchecked")
-        var condition = yearEqualOperator.apply(dateField, yearValue);
+        var condition = yearEqualOperator.apply(dateField, BigDecimal.valueOf(yearValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -183,7 +184,7 @@ class DateOperatorTest {
 
         Integer daysValue = 10;
         @SuppressWarnings("unchecked")
-        var condition = daysAfterOperator.apply(dateField, daysValue);
+        var condition = daysAfterOperator.apply(dateField, BigDecimal.valueOf(daysValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -203,7 +204,7 @@ class DateOperatorTest {
 
         Integer monthsValue = 6;
         @SuppressWarnings("unchecked")
-        var condition = monthsAfterOperator.apply(dateField, monthsValue);
+        var condition = monthsAfterOperator.apply(dateField, BigDecimal.valueOf(monthsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -223,7 +224,7 @@ class DateOperatorTest {
 
         Integer yearsValue = 5;
         @SuppressWarnings("unchecked")
-        var condition = yearsAfterOperator.apply(dateField, yearsValue);
+        var condition = yearsAfterOperator.apply(dateField, BigDecimal.valueOf(yearsValue));
 
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
@@ -246,12 +247,12 @@ class DateOperatorTest {
 
         // Test a few operators with different fields
         @SuppressWarnings("unchecked")
-        var createdCondition = daysBeforeOperator.apply(createdField, 30);
+        var createdCondition = daysBeforeOperator.apply(createdField, BigDecimal.valueOf(30));
         assertNotNull(createdCondition);
         logger.info("Days before with created_at field: {}", createdCondition);
 
         @SuppressWarnings("unchecked")
-        var updatedCondition = monthEqualOperator.apply(updatedField, 12);
+        var updatedCondition = monthEqualOperator.apply(updatedField, BigDecimal.valueOf(12));
         assertNotNull(updatedCondition);
         logger.info("Month equal with updated_at field: {}", updatedCondition);
 

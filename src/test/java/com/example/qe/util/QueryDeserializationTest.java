@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.convert.support.DefaultConversionService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +21,7 @@ public class QueryDeserializationTest {
 
     private ObjectMapper mapper;
     private DSLContext dsl;
-    private QueryExecutionContext context;
+    private OperatorFactory operatorFactory;
 
     @BeforeEach
     public void setup() {
@@ -40,9 +39,8 @@ public class QueryDeserializationTest {
         OperatorScanner scanner = new OperatorScanner(registry);
         scanner.scanAndRegister("com.example.qe.model.operator");
 
-        // Create factory and context with Spring ConversionService (or default)
-        OperatorFactory factory = new OperatorFactory(registry);
-        context = new QueryExecutionContext(factory, new DefaultConversionService());
+        // Create factory
+        operatorFactory = new OperatorFactory(registry);
 
         logger.info("Setup complete: OperatorRegistry size = {}, Total operators = {}",
                 registry.getAllOperatorNames().size(),
@@ -98,7 +96,7 @@ public class QueryDeserializationTest {
         Query query = mapper.treeToValue(conditionsNode, Query.class);
 
         // Generate the jOOQ Condition recursively
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
 
         logger.info("Generated jOOQ Condition object: {}", condition);
         logger.info("Rendered SQL Condition: {}", dsl.renderInlined(condition));
@@ -154,7 +152,7 @@ public class QueryDeserializationTest {
         logger.info("Deserialized Query type: {}", query.getClass().getSimpleName());
 
         // Generate the jOOQ Condition recursively
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         // Comprehensive logging
@@ -232,7 +230,7 @@ public class QueryDeserializationTest {
         // Performance validation
         long startTime = System.nanoTime();
         for (int i = 0; i < 1000; i++) {
-            query.toCondition(dsl, context);
+            query.toCondition(dsl, operatorFactory);
         }
         long endTime = System.nanoTime();
         long avgTimeNs = (endTime - startTime) / 1000;
@@ -253,7 +251,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Simple NumericQuery SQL: {}", sql);
@@ -277,7 +275,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("NumericQuery with decimal SQL: {}", sql);
@@ -302,7 +300,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("NumericQuery with large integer SQL: {}", sql);
@@ -348,7 +346,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Nested AndOr SQL: {}", sql);
@@ -400,7 +398,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Complex Date Query SQL: {}", sql);
@@ -472,7 +470,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Deep Nesting SQL: {}", sql);
@@ -509,7 +507,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Single Child AndQuery SQL: {}", sql);
@@ -545,7 +543,7 @@ public class QueryDeserializationTest {
     """;
 
         Query query = mapper.readValue(json, Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Boolean Operators SQL: {}", sql);
@@ -574,7 +572,7 @@ public class QueryDeserializationTest {
         Query query = assertDoesNotThrow(() -> mapper.readValue(json, Query.class));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            query.toCondition(dsl, context);
+            query.toCondition(dsl, operatorFactory);
         }, "Should throw exception for empty AndQuery");
 
         assertNotNull(exception.getMessage(), "Exception should have a descriptive message");
@@ -594,7 +592,7 @@ public class QueryDeserializationTest {
         Query query = assertDoesNotThrow(() -> mapper.readValue(json, Query.class));
 
         Exception exception = assertThrows(Exception.class, () -> {
-            query.toCondition(dsl, context);
+            query.toCondition(dsl, operatorFactory);
         }, "Should throw exception for invalid operator");
 
         assertTrue(exception.getMessage().toLowerCase().contains("operator") ||
@@ -619,7 +617,7 @@ public class QueryDeserializationTest {
 
         // The type enforcement should prevent LIKE operator on Date fields
         Exception exception = assertThrows(Exception.class, () -> {
-            query.toCondition(dsl, context);
+            query.toCondition(dsl, operatorFactory);
         }, "Should throw exception when using LIKE operator on Date field");
 
         String message = exception.getMessage().toLowerCase();
@@ -667,14 +665,14 @@ public class QueryDeserializationTest {
         Query dateQuery = mapper.readValue(dateComparisonJson, Query.class);
 
         assertDoesNotThrow(() -> {
-            Condition stringCondition = stringQuery.toCondition(dsl, context);
+            Condition stringCondition = stringQuery.toCondition(dsl, operatorFactory);
             String stringSql = dsl.renderInlined(stringCondition);
             logger.info("Valid String LIKE SQL: {}", stringSql);
             assertTrue(stringSql.toLowerCase().contains("like"), "Should generate LIKE for String");
         }, "LIKE operator should work with String fields");
 
         assertDoesNotThrow(() -> {
-            Condition dateCondition = dateQuery.toCondition(dsl, context);
+            Condition dateCondition = dateQuery.toCondition(dsl, operatorFactory);
             String dateSql = dsl.renderInlined(dateCondition);
             logger.info("Valid Date comparison SQL: {}", dateSql);
             assertTrue(dateSql.contains(">") || dateSql.toLowerCase().contains("greater"),

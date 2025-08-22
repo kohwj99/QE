@@ -169,30 +169,30 @@ class OperatorScannerTest {
         assertInstanceOf(EndsWithOperator.class, endsWithOperator);
         logger.info("✓ EndsWithOperator registered for: String");
 
-        // Test Date Operators - Before operators
+        // Test Date Operators - Before operators (now accept BigDecimal for day/month/year counts)
         logger.info("Testing Date Before Operators registrations...");
         String[] beforeOperators = {"daysBefore", "monthsBefore", "yearsBefore"};
         for (String operatorName : beforeOperators) {
-            GenericOperator<?> operator = registry.get(operatorName, LocalDate.class);
-            assertNotNull(operator, "Should find " + operatorName + " operator for LocalDate");
-            logger.info("✓ {} registered for: LocalDate", operatorName);
+            GenericOperator<?> operator = registry.get(operatorName, BigDecimal.class);
+            assertNotNull(operator, "Should find " + operatorName + " operator for BigDecimal");
+            logger.info("✓ {} registered for: BigDecimal", operatorName);
         }
 
-        // Test Date Operators - Equal operators
+        // Test Date Operators - Equal operators (now accept BigDecimal for day/month/year values)
         String[] equalOperators = {"dayEqual", "monthEqual", "yearEqual", "dayOfMonth"};
         for (String operatorName : equalOperators) {
-            GenericOperator<?> operator = registry.get(operatorName, LocalDate.class);
-            assertNotNull(operator, "Should find " + operatorName + " operator for LocalDate");
-            logger.info("✓ {} registered for: LocalDate", operatorName);
+            GenericOperator<?> operator = registry.get(operatorName, BigDecimal.class);
+            assertNotNull(operator, "Should find " + operatorName + " operator for BigDecimal");
+            logger.info("✓ {} registered for: BigDecimal", operatorName);
         }
 
-        // Test Date Operators - After operators
+        // Test Date Operators - After operators (now accept BigDecimal for day/month/year counts)
         logger.info("Testing Date After Operators registrations...");
         String[] afterOperators = {"daysAfter", "monthsAfter", "yearsAfter"};
         for (String operatorName : afterOperators) {
-            GenericOperator<?> operator = registry.get(operatorName, LocalDate.class);
-            assertNotNull(operator, "Should find " + operatorName + " operator for LocalDate");
-            logger.info("✓ {} registered for: LocalDate", operatorName);
+            GenericOperator<?> operator = registry.get(operatorName, BigDecimal.class);
+            assertNotNull(operator, "Should find " + operatorName + " operator for BigDecimal");
+            logger.info("✓ {} registered for: BigDecimal", operatorName);
         }
 
         // Test IsNullOperator

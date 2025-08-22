@@ -3,7 +3,7 @@ package com.example.qe.model.query.impl;
 import com.example.qe.util.OperatorFactory;
 import com.example.qe.util.OperatorRegistry;
 import com.example.qe.util.OperatorScanner;
-import com.example.qe.util.QueryExecutionContext;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.convert.support.DefaultConversionService;
+
 
 import java.math.BigDecimal;
 
@@ -25,7 +25,7 @@ public class NumericQueryTest {
 
     private ObjectMapper mapper;
     private DSLContext dsl;
-    private QueryExecutionContext context;
+    private OperatorFactory operatorFactory;
 
     @BeforeEach
     void setUp() {
@@ -37,9 +37,8 @@ public class NumericQueryTest {
         OperatorScanner scanner = new OperatorScanner(registry);
         scanner.scanAndRegister("com.example.qe.model.operator");
 
-        // Create factory and context
         OperatorFactory factory = new OperatorFactory(registry);
-        context = new QueryExecutionContext(factory, new DefaultConversionService());
+        operatorFactory = factory;
 
         logger.info("Setup complete for NumericQuery testing");
     }
@@ -56,7 +55,7 @@ public class NumericQueryTest {
         """;
 
         NumericQuery query = mapper.readValue(json, NumericQuery.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Integer NumericQuery SQL: {}", sql);
@@ -81,7 +80,7 @@ public class NumericQueryTest {
         """;
 
         NumericQuery query = mapper.readValue(json, NumericQuery.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Decimal NumericQuery SQL: {}", sql);
@@ -106,7 +105,7 @@ public class NumericQueryTest {
         """;
 
         NumericQuery query = mapper.readValue(json, NumericQuery.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Large decimal NumericQuery SQL: {}", sql);
@@ -131,7 +130,7 @@ public class NumericQueryTest {
         """;
 
         NumericQuery query = mapper.readValue(json, NumericQuery.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Negative value NumericQuery SQL: {}", sql);
@@ -156,7 +155,7 @@ public class NumericQueryTest {
         """;
 
         NumericQuery query = mapper.readValue(json, NumericQuery.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Zero value NumericQuery SQL: {}", sql);
@@ -181,7 +180,7 @@ public class NumericQueryTest {
         """;
 
         NumericQuery query = mapper.readValue(json, NumericQuery.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("High precision NumericQuery SQL: {}", sql);
@@ -234,7 +233,7 @@ public class NumericQueryTest {
         """;
 
         var query = mapper.readValue(json, com.example.qe.model.query.Query.class);
-        Condition condition = query.toCondition(dsl, context);
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(condition);
 
         logger.info("Complex numeric query combination SQL: {}", sql);
