@@ -17,7 +17,6 @@ import org.jooq.impl.DSL;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.convert.support.DefaultConversionService;
 
 import java.util.List;
 
@@ -66,13 +65,12 @@ class QueryProcessingIntegrationTest {
             // Create ValueResolver list for ReplacementService
             List<ValueResolver> resolvers = List.of(new BasicPlaceholderResolver());
             replacementService = new ReplacementService(resolvers);
-
+            dsl = DSL.using(SQLDialect.DEFAULT);
             // Initialize QueryExecutionService with correct constructor
             queryExecutionService = new QueryExecutionService(
-                operatorFactory,
-                new DefaultConversionService(),
-                "DEFAULT",
-                replacementService
+                    operatorFactory,
+                    dsl,
+                    replacementService
             );
 
             // Initialize DSL context for direct testing

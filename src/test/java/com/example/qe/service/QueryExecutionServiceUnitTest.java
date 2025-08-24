@@ -6,7 +6,9 @@ import com.example.qe.util.OperatorRegistry;
 import com.example.qe.util.OperatorScanner;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,7 @@ class QueryExecutionServiceUnitTest {
 
     private QueryExecutionService queryExecutionService;
     private OperatorFactory operatorFactory;
-    private ConversionService conversionService;
+    private DSLContext dsl;
 
     @Mock
     private ReplacementService mockReplacementService;
@@ -41,15 +43,12 @@ class QueryExecutionServiceUnitTest {
         OperatorScanner scanner = new OperatorScanner(registry);
         scanner.scanAndRegister("com.example.qe.model.operator");
         operatorFactory = new OperatorFactory(registry);
-
-        // Set up conversion service
-        conversionService = new DefaultConversionService();
+        dsl = DSL.using(SQLDialect.DEFAULT);
 
         // Create service with mock replacement service
         queryExecutionService = new QueryExecutionService(
             operatorFactory,
-            conversionService,
-            "DEFAULT",
+            dsl,
             mockReplacementService
         );
     }

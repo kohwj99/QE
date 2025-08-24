@@ -36,7 +36,7 @@ class SimpleQueryProcessingIntegrationTest {
     private QueryExecutionService queryExecutionService;
     private OperatorRegistry operatorRegistry;
     private OperatorFactory operatorFactory;
-
+    private DSLContext dsl;
     @BeforeEach
     void setUp() {
         logger.info("=== Setting up Integration Test ===");
@@ -54,12 +54,11 @@ class SimpleQueryProcessingIntegrationTest {
         // Create ValueResolver list for ReplacementService
         List<ValueResolver> resolvers = List.of(new BasicPlaceholderResolver());
         ReplacementService replacementService = new ReplacementService(resolvers);
-
+        dsl = DSL.using(SQLDialect.DEFAULT);
         // Initialize service
         queryExecutionService = new QueryExecutionService(
             operatorFactory,
-            new DefaultConversionService(),
-            "DEFAULT",
+            dsl,
             replacementService
         );
 

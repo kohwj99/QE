@@ -7,10 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.convert.ConversionService;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,15 +20,15 @@ public class QueryExecutionService {
     private final DSLContext dsl;
     private final ReplacementService replacementService;
 
-    public QueryExecutionService(OperatorFactory operatorFactory, ConversionService conversionService,
-                                @Value("${spring.jooq.sql-dialect:DEFAULT}") String sqlDialect,
+    @Autowired
+    public QueryExecutionService(OperatorFactory operatorFactory,
+                                DSLContext dsl,
                                 ReplacementService replacementService) {
         this.operatorFactory = operatorFactory;
         this.replacementService = replacementService;
+        this.dsl = dsl;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
-        SQLDialect dialect = SQLDialect.valueOf(sqlDialect.toUpperCase());
-        this.dsl = DSL.using(dialect);
     }
 
     public Condition parseJsonToCondition(String json) throws JsonProcessingException {
@@ -51,5 +50,12 @@ public class QueryExecutionService {
         System.out.println("Generated SQL: " + sql);
 
         return condition;
+    }
+
+    public Result<Record> executeQuery(String tableName, Condition condition) {
+        return dsl.select()
+                  .from(tableName)
+                  .where(condition)
+                  .fetch();
     }
 }
