@@ -1,6 +1,6 @@
 package com.example.qe.util;
 
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.Operator;
 import com.example.qe.model.operator.impl.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,25 +59,18 @@ class OperatorScannerTest {
         for (String expectedOperator : expectedOperators) {
             assertTrue(operatorNames.contains(expectedOperator),
                       "Should contain '" + expectedOperator + "' operator");
-            logger.info("✓ Found expected operator: {}", expectedOperator);
         }
 
-        int totalOperators = registry.getTotalOperatorCount();
-        logger.info("Total operators registered: {}", totalOperators);
-        assertTrue(totalOperators > 0, "Should have registered at least some operators");
+        // Example: Check registry for a specific operator type
+        Map<Class<?>, Operator<?, ?>> equalsOps = registry.getOperatorsForName("equals");
+        assertNotNull(equalsOps);
+        assertTrue(equalsOps.containsKey(String.class));
+        assertTrue(equalsOps.containsKey(BigDecimal.class));
+        assertTrue(equalsOps.containsKey(LocalDate.class));
 
-        // Log detailed registration info
-        for (String operatorName : operatorNames) {
-            Map<Class<?>, GenericOperator<?>> operatorsByType = registry.getOperatorsForName(operatorName);
-            logger.info("Operator '{}' registered for {} types:", operatorName, operatorsByType.size());
-            for (Class<?> type : operatorsByType.keySet()) {
-                logger.info("  - {}: {}", type.getSimpleName(), operatorsByType.get(type).getClass().getSimpleName());
-            }
-        }
-
-        // Verify minimum expected registrations
-        assertTrue(totalOperators >= 15,
-                  "Should have at least 15 type-specific registrations based on operator definitions");
+        Operator<String, String> stringEqualsOp = (Operator<String, String>) equalsOps.get(String.class);
+        assertNotNull(stringEqualsOp);
+        assertEquals("EqualsOperator", stringEqualsOp.getClass().getSimpleName());
     }
 
     @Test
@@ -92,7 +85,7 @@ class OperatorScannerTest {
         logger.info("Testing EqualsOperator registrations...");
         Class<?>[] equalsTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
         for (Class<?> type : equalsTypes) {
-            GenericOperator<?> operator = registry.get("equals", type);
+            Operator<?, ?> operator = registry.get("equals", type);
             assertNotNull(operator, "Should find equals operator for " + type.getSimpleName());
             assertInstanceOf(EqualsOperator.class, operator);
             logger.info("✓ EqualsOperator registered for: {}", type.getSimpleName());
@@ -102,7 +95,7 @@ class OperatorScannerTest {
         logger.info("Testing NotEqualsOperator registrations...");
         Class<?>[] notEqualsTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
         for (Class<?> type : notEqualsTypes) {
-            GenericOperator<?> operator = registry.get("notEquals", type);
+            Operator<?, ?> operator = registry.get("notEquals", type);
             assertNotNull(operator, "Should find notEquals operator for " + type.getSimpleName());
             assertInstanceOf(NotEqualsOperator.class, operator);
             logger.info("✓ NotEqualsOperator registered for: {}", type.getSimpleName());
@@ -112,7 +105,7 @@ class OperatorScannerTest {
         logger.info("Testing GreaterThanOperator registrations...");
         Class<?>[] greaterThanTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : greaterThanTypes) {
-            GenericOperator<?> operator = registry.get("greaterThan", type);
+            Operator<?, ?> operator = registry.get("greaterThan", type);
             assertNotNull(operator, "Should find greaterThan operator for " + type.getSimpleName());
             assertInstanceOf(GreaterThanOperator.class, operator);
             logger.info("✓ GreaterThanOperator registered for: {}", type.getSimpleName());
@@ -122,7 +115,7 @@ class OperatorScannerTest {
         logger.info("Testing LessThanOperator registrations...");
         Class<?>[] lessThanTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : lessThanTypes) {
-            GenericOperator<?> operator = registry.get("lessThan", type);
+            Operator<?, ?> operator = registry.get("lessThan", type);
             assertNotNull(operator, "Should find lessThan operator for " + type.getSimpleName());
             assertInstanceOf(LessThanOperator.class, operator);
             logger.info("✓ LessThanOperator registered for: {}", type.getSimpleName());
@@ -132,7 +125,7 @@ class OperatorScannerTest {
         logger.info("Testing GreaterThanEqualOperator registrations...");
         Class<?>[] greaterThanEqualTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : greaterThanEqualTypes) {
-            GenericOperator<?> operator = registry.get("greaterThanEqual", type);
+            Operator<?, ?> operator = registry.get("greaterThanEqual", type);
             assertNotNull(operator, "Should find greaterThanEqual operator for " + type.getSimpleName());
             assertInstanceOf(GreaterThanEqualOperator.class, operator);
             logger.info("✓ GreaterThanEqualOperator registered for: {}", type.getSimpleName());
@@ -142,7 +135,7 @@ class OperatorScannerTest {
         logger.info("Testing LessThanEqualOperator registrations...");
         Class<?>[] lessThanEqualTypes = {BigDecimal.class, LocalDate.class};
         for (Class<?> type : lessThanEqualTypes) {
-            GenericOperator<?> operator = registry.get("lessThanEqual", type);
+            Operator<?, ?> operator = registry.get("lessThanEqual", type);
             assertNotNull(operator, "Should find lessThanEqual operator for " + type.getSimpleName());
             assertInstanceOf(LessThanEqualOperator.class, operator);
             logger.info("✓ LessThanEqualOperator registered for: {}", type.getSimpleName());
@@ -150,21 +143,21 @@ class OperatorScannerTest {
 
         // Test LikeOperator
         logger.info("Testing LikeOperator registrations...");
-        GenericOperator<String> likeOperator = registry.get("like", String.class);
+        Operator<String, ?> likeOperator = registry.get("like", String.class);
         assertNotNull(likeOperator, "Should find like operator for String");
         assertInstanceOf(LikeOperator.class, likeOperator);
         logger.info("✓ LikeOperator registered for: String");
 
         // Test StartsWithOperator
         logger.info("Testing StartsWithOperator registrations...");
-        GenericOperator<String> startsWithOperator = registry.get("startsWith", String.class);
+        Operator<String, ?> startsWithOperator = registry.get("startsWith", String.class);
         assertNotNull(startsWithOperator, "Should find startsWith operator for String");
         assertInstanceOf(StartsWithOperator.class, startsWithOperator);
         logger.info("✓ StartsWithOperator registered for: String");
 
         // Test EndsWithOperator
         logger.info("Testing EndsWithOperator registrations...");
-        GenericOperator<String> endsWithOperator = registry.get("endsWith", String.class);
+        Operator<String, ?> endsWithOperator = registry.get("endsWith", String.class);
         assertNotNull(endsWithOperator, "Should find endsWith operator for String");
         assertInstanceOf(EndsWithOperator.class, endsWithOperator);
         logger.info("✓ EndsWithOperator registered for: String");
@@ -173,7 +166,7 @@ class OperatorScannerTest {
         logger.info("Testing Date Before Operators registrations...");
         String[] beforeOperators = {"daysBefore", "monthsBefore", "yearsBefore"};
         for (String operatorName : beforeOperators) {
-            GenericOperator<?> operator = registry.get(operatorName, BigDecimal.class);
+            Operator<?, ?> operator = registry.get(operatorName, BigDecimal.class);
             assertNotNull(operator, "Should find " + operatorName + " operator for BigDecimal");
             logger.info("✓ {} registered for: BigDecimal", operatorName);
         }
@@ -181,7 +174,7 @@ class OperatorScannerTest {
         // Test Date Operators - Equal operators (now accept BigDecimal for day/month/year values)
         String[] equalOperators = {"dayEqual", "monthEqual", "yearEqual", "dayOfMonth"};
         for (String operatorName : equalOperators) {
-            GenericOperator<?> operator = registry.get(operatorName, BigDecimal.class);
+            Operator<?, ?> operator = registry.get(operatorName, BigDecimal.class);
             assertNotNull(operator, "Should find " + operatorName + " operator for BigDecimal");
             logger.info("✓ {} registered for: BigDecimal", operatorName);
         }
@@ -190,7 +183,7 @@ class OperatorScannerTest {
         logger.info("Testing Date After Operators registrations...");
         String[] afterOperators = {"daysAfter", "monthsAfter", "yearsAfter"};
         for (String operatorName : afterOperators) {
-            GenericOperator<?> operator = registry.get(operatorName, BigDecimal.class);
+            Operator<?, ?> operator = registry.get(operatorName, BigDecimal.class);
             assertNotNull(operator, "Should find " + operatorName + " operator for BigDecimal");
             logger.info("✓ {} registered for: BigDecimal", operatorName);
         }
@@ -199,7 +192,7 @@ class OperatorScannerTest {
         logger.info("Testing IsNullOperator registrations...");
         Class<?>[] isNullTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
         for (Class<?> type : isNullTypes) {
-            GenericOperator<?> operator = registry.get("isNull", type);
+            Operator<?, ?> operator = registry.get("isNull", type);
             assertNotNull(operator, "Should find isNull operator for " + type.getSimpleName());
             assertInstanceOf(IsNullOperator.class, operator);
             logger.info("✓ IsNullOperator registered for: {}", type.getSimpleName());
@@ -209,7 +202,7 @@ class OperatorScannerTest {
         logger.info("Testing IsNotNullOperator registrations...");
         Class<?>[] isNotNullTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class};
         for (Class<?> type : isNotNullTypes) {
-            GenericOperator<?> operator = registry.get("isNotNull", type);
+            Operator<?, ?> operator = registry.get("isNotNull", type);
             assertNotNull(operator, "Should find isNotNull operator for " + type.getSimpleName());
             assertInstanceOf(IsNotNullOperator.class, operator);
             logger.info("✓ IsNotNullOperator registered for: {}", type.getSimpleName());
@@ -227,21 +220,21 @@ class OperatorScannerTest {
         scanner.scanAndRegister("com.example.qe.model.operator");
 
         // Assert: Test non-existent operator
-        GenericOperator<String> nonExistent = registry.get("nonExistentOperator", String.class);
+        Operator<String, ?> nonExistent = registry.get("nonExistentOperator", String.class);
         assertNull(nonExistent, "Should return null for non-existent operator");
         logger.info("✓ Correctly returned null for non-existent operator");
 
         // Assert: Test existing operator with unsupported type
-        GenericOperator<Double> equalsForDouble = registry.get("equals", Double.class);
+        Operator<Double, ?> equalsForDouble = registry.get("equals", Double.class);
         assertNull(equalsForDouble, "Should return null for unsupported type");
         logger.info("✓ Correctly returned null for unsupported type (Double) with equals operator");
 
         // Test commented-out operators that should not be registered
-        GenericOperator<?> inOperator = registry.get("in", Object.class);
+        Operator<?, ?> inOperator = registry.get("in", Object.class);
         assertNull(inOperator, "Should return null for commented-out 'in' operator");
         logger.info("✓ Correctly excluded commented-out 'in' operator");
 
-        GenericOperator<?> daysBeforeOperator = registry.get("daysBefore", Integer.class);
+        Operator<?, ?> daysBeforeOperator = registry.get("daysBefore", Integer.class);
         assertNull(daysBeforeOperator, "Should return null for commented-out 'daysBefore' operator");
         logger.info("✓ Correctly excluded commented-out 'daysBefore' operator");
     }
@@ -295,10 +288,10 @@ class OperatorScannerTest {
         int successfulRetrievals = 0;
         for (String operatorName : operatorNames) {
             logger.info("Testing operator: '{}'", operatorName);
-            Map<Class<?>, GenericOperator<?>> operatorsByType = registry.getOperatorsForName(operatorName);
+            Map<Class<?>, Operator<?, ?>> operatorsByType = registry.getOperatorsForName(operatorName);
 
             for (Class<?> type : operatorsByType.keySet()) {
-                GenericOperator<?> operator = registry.get(operatorName, type);
+                Operator<?, ?> operator = registry.get(operatorName, type);
                 assertNotNull(operator, "Operator should be retrievable");
                 successfulRetrievals++;
                 logger.info("  ✓ Successfully retrieved '{}' operator for type: {} (Implementation: {})",

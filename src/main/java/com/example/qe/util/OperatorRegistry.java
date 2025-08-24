@@ -1,5 +1,5 @@
 package com.example.qe.util;
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.Operator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,24 +10,23 @@ public class OperatorRegistry {
     private static final Logger logger = LoggerFactory.getLogger(OperatorRegistry.class);
 
     // Map: operatorName -> (valueType -> operator instance)
-    private final Map<String, Map<Class<?>, GenericOperator<?>>> operators = new HashMap<>();
+    private final Map<String, Map<Class<?>, Operator<?, ?>>> operators = new HashMap<>();
 
-    public <T> void register(String operatorName, Class<T> valueType, GenericOperator<T> operator) {
+    public void register(String operatorName, Class<?> valueType, Operator<?, ?> operator) {
         operators.computeIfAbsent(operatorName, k -> new HashMap<>())
                 .put(valueType, operator);
         logger.debug("Registered operator '{}' for type '{}' using implementation '{}'",
                     operatorName, valueType.getSimpleName(), operator.getClass().getSimpleName());
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> GenericOperator<T> get(String operatorName, Class<T> valueType) {
-        Map<Class<?>, GenericOperator<?>> byType = operators.get(operatorName);
+    public Operator<?, ?> get(String operatorName, Class<?> valueType) {
+        Map<Class<?>, Operator<?, ?>> byType = operators.get(operatorName);
         if (byType == null) {
             logger.warn("No operator found for name: '{}'", operatorName);
             return null;
         }
 
-        GenericOperator<T> operator = (GenericOperator<T>) byType.get(valueType);
+        Operator<?, ?> operator = byType.get(valueType);
         if (operator == null) {
             logger.warn("No operator '{}' found for type: '{}'", operatorName, valueType.getSimpleName());
         } else {
@@ -41,7 +40,7 @@ public class OperatorRegistry {
         return operators.keySet();
     }
 
-    public Map<Class<?>, GenericOperator<?>> getOperatorsForName(String operatorName) {
+    public Map<Class<?>, Operator<?, ?>> getOperatorsForName(String operatorName) {
         return operators.get(operatorName);
     }
 

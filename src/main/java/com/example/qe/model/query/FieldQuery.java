@@ -1,6 +1,6 @@
 package com.example.qe.model.query;
 
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.Operator;
 import com.example.qe.util.OperatorFactory;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import static org.jooq.impl.DSL.field;
 
 @Setter
 @Getter
-public abstract class FieldQuery<T> implements Query {
+public abstract class FieldQuery<F, T> implements Query {
 
     // Getters and setters (needed for JSON deserialization)
     protected String column;
@@ -31,10 +31,15 @@ public abstract class FieldQuery<T> implements Query {
     @Override
     public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
         // Get the jOOQ field with the right type
-        Field<T> field = field(column, getValueClass());
+        Field<F> field = field(column, getFieldClass());
 
-        // Resolve operator from the factory directly
-        GenericOperator<T> op = operatorFactory.resolve(operator, getValueClass());
+        // Resolve operator from the factory directly and cast to correct type
+        Operator<F, T> op;
+        try {
+            op = (Operator<F, T>) operatorFactory.resolve(operator, getValueClass());
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Operator type mismatch for: " + operator, e);
+        }
 
         if (op == null) {
             throw new IllegalArgumentException("Unknown operator: " + operator);
@@ -44,6 +49,7 @@ public abstract class FieldQuery<T> implements Query {
         return op.apply(field, value);
     }
 
+    protected abstract Class<F> getFieldClass();
     protected abstract Class<T> getValueClass();
 
 }

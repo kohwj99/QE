@@ -1,6 +1,6 @@
 package com.example.qe.util;
 import com.example.qe.annotation.OperatorAnnotation;
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.Operator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +27,12 @@ public class OperatorScanner {
             try {
                 logger.debug("Processing operator class: {}", clazz.getName());
                 OperatorAnnotation annotation = clazz.getAnnotation(OperatorAnnotation.class);
-                GenericOperator<?> operatorInstance = (GenericOperator<?>) clazz.getDeclaredConstructor().newInstance();
+                Operator<?, ?> operatorInstance = (Operator<?, ?>) clazz.getDeclaredConstructor().newInstance();
 
                 logger.info("Registering operator '{}' from class: {}", annotation.value(), clazz.getSimpleName());
 
                 for (Class<?> type : annotation.types()) {
-                    registry.register(annotation.value(), type, (GenericOperator) operatorInstance);
+                    registry.register(annotation.value(), type, operatorInstance);
                     logger.debug("  - Registered for type: {}", type.getSimpleName());
                 }
 

@@ -1,7 +1,7 @@
 package com.example.qe.util;
 
 import com.example.qe.annotation.OperatorAnnotation;
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.Operator;
 
 import java.util.Arrays;
 
@@ -17,8 +17,8 @@ public class OperatorFactory {
      * Resolves the operator by name and value type.
      * Throws an exception if no matching operator is found.
      */
-    public <T> GenericOperator<T> resolve(String operatorName, Class<T> valueType) {
-        GenericOperator<T> operator = registry.get(operatorName, valueType);
+    public Operator<?, ?> resolve(String operatorName, Class<?> valueType) {
+        Operator<?, ?> operator = registry.get(operatorName, valueType);
         if (operator == null) {
             throw new IllegalArgumentException(
                     "No operator found for name: " + operatorName + " and type: " + valueType.getName());
@@ -39,4 +39,3 @@ public class OperatorFactory {
         return operator;
     }
 }
-

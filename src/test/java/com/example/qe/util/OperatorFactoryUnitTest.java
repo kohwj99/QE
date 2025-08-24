@@ -1,6 +1,6 @@
 package com.example.qe.util;
 
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.model.operator.Operator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidStringEqualsOperator_shouldReturnOperator")
     void resolve_givenValidStringEqualsOperator_shouldReturnOperator() {
-        GenericOperator<String> operator = operatorFactory.resolve("equals", String.class);
+        Operator<String, String> operator = (Operator<String, String>) operatorFactory.resolve("equals", String.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("EqualsOperator", operator.getClass().getSimpleName());
@@ -36,7 +36,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalEqualsOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalEqualsOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("equals", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("equals", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("EqualsOperator", operator.getClass().getSimpleName());
@@ -45,7 +45,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidStringLikeOperator_shouldReturnOperator")
     void resolve_givenValidStringLikeOperator_shouldReturnOperator() {
-        GenericOperator<String> operator = operatorFactory.resolve("like", String.class);
+        Operator<String, String> operator = (Operator<String, String>) operatorFactory.resolve("like", String.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("LikeOperator", operator.getClass().getSimpleName());
@@ -54,7 +54,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidStringStartsWithOperator_shouldReturnOperator")
     void resolve_givenValidStringStartsWithOperator_shouldReturnOperator() {
-        GenericOperator<String> operator = operatorFactory.resolve("startsWith", String.class);
+        Operator<String, String> operator = (Operator<String, String>) operatorFactory.resolve("startsWith", String.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("StartsWithOperator", operator.getClass().getSimpleName());
@@ -63,7 +63,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidStringEndsWithOperator_shouldReturnOperator")
     void resolve_givenValidStringEndsWithOperator_shouldReturnOperator() {
-        GenericOperator<String> operator = operatorFactory.resolve("endsWith", String.class);
+        Operator<String, String> operator = (Operator<String, String>) operatorFactory.resolve("endsWith", String.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("EndsWithOperator", operator.getClass().getSimpleName());
@@ -72,7 +72,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalGreaterThanOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalGreaterThanOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("greaterThan", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("greaterThan", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("GreaterThanOperator", operator.getClass().getSimpleName());
@@ -81,7 +81,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalLessThanOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalLessThanOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("lessThan", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("lessThan", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("LessThanOperator", operator.getClass().getSimpleName());
@@ -90,7 +90,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalDayEqualOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalDayEqualOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("dayEqual", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("dayEqual", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("DayEqualOperator", operator.getClass().getSimpleName());
@@ -99,7 +99,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalMonthEqualOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalMonthEqualOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("monthEqual", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("monthEqual", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("MonthEqualOperator", operator.getClass().getSimpleName());
@@ -108,7 +108,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalYearEqualOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalYearEqualOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("yearEqual", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("yearEqual", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("YearEqualOperator", operator.getClass().getSimpleName());
@@ -117,7 +117,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalDaysAfterOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalDaysAfterOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("daysAfter", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("daysAfter", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("DaysAfterOperator", operator.getClass().getSimpleName());
@@ -126,7 +126,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBigDecimalDaysBeforeOperator_shouldReturnOperator")
     void resolve_givenValidBigDecimalDaysBeforeOperator_shouldReturnOperator() {
-        GenericOperator<BigDecimal> operator = operatorFactory.resolve("daysBefore", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> operator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("daysBefore", BigDecimal.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("DaysBeforeOperator", operator.getClass().getSimpleName());
@@ -135,7 +135,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidStringIsNullOperator_shouldReturnOperator")
     void resolve_givenValidStringIsNullOperator_shouldReturnOperator() {
-        GenericOperator<String> operator = operatorFactory.resolve("isNull", String.class);
+        Operator<String, String> operator = (Operator<String, String>) operatorFactory.resolve("isNull", String.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("IsNullOperator", operator.getClass().getSimpleName());
@@ -144,7 +144,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidStringIsNotNullOperator_shouldReturnOperator")
     void resolve_givenValidStringIsNotNullOperator_shouldReturnOperator() {
-        GenericOperator<String> operator = operatorFactory.resolve("isNotNull", String.class);
+        Operator<String, String> operator = (Operator<String, String>) operatorFactory.resolve("isNotNull", String.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("IsNotNullOperator", operator.getClass().getSimpleName());
@@ -282,7 +282,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBooleanEqualsOperator_shouldReturnOperator")
     void resolve_givenValidBooleanEqualsOperator_shouldReturnOperator() {
-        GenericOperator<Boolean> operator = operatorFactory.resolve("equals", Boolean.class);
+        Operator<Boolean, Boolean> operator = (Operator<Boolean, Boolean>) operatorFactory.resolve("equals", Boolean.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("EqualsOperator", operator.getClass().getSimpleName());
@@ -291,7 +291,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidBooleanNotEqualsOperator_shouldReturnOperator")
     void resolve_givenValidBooleanNotEqualsOperator_shouldReturnOperator() {
-        GenericOperator<Boolean> operator = operatorFactory.resolve("notEquals", Boolean.class);
+        Operator<Boolean, Boolean> operator = (Operator<Boolean, Boolean>) operatorFactory.resolve("notEquals", Boolean.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("NotEqualsOperator", operator.getClass().getSimpleName());
@@ -300,7 +300,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidLocalDateEqualsOperator_shouldReturnOperator")
     void resolve_givenValidLocalDateEqualsOperator_shouldReturnOperator() {
-        GenericOperator<LocalDate> operator = operatorFactory.resolve("equals", LocalDate.class);
+        Operator<LocalDate, LocalDate> operator = (Operator<LocalDate, LocalDate>) operatorFactory.resolve("equals", LocalDate.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("EqualsOperator", operator.getClass().getSimpleName());
@@ -309,7 +309,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidLocalDateGreaterThanOperator_shouldReturnOperator")
     void resolve_givenValidLocalDateGreaterThanOperator_shouldReturnOperator() {
-        GenericOperator<LocalDate> operator = operatorFactory.resolve("greaterThan", LocalDate.class);
+        Operator<LocalDate, LocalDate> operator = (Operator<LocalDate, LocalDate>) operatorFactory.resolve("greaterThan", LocalDate.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("GreaterThanOperator", operator.getClass().getSimpleName());
@@ -318,7 +318,7 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidLocalDateLessThanOperator_shouldReturnOperator")
     void resolve_givenValidLocalDateLessThanOperator_shouldReturnOperator() {
-        GenericOperator<LocalDate> operator = operatorFactory.resolve("lessThan", LocalDate.class);
+        Operator<LocalDate, LocalDate> operator = (Operator<LocalDate, LocalDate>) operatorFactory.resolve("lessThan", LocalDate.class);
 
         assertNotNull(operator, "Operator should not be null");
         assertEquals("LessThanOperator", operator.getClass().getSimpleName());
@@ -347,8 +347,8 @@ class OperatorFactoryUnitTest {
     @Test
     @DisplayName("resolve_givenValidOperatorMultipleTimes_shouldReturnSameOperatorType")
     void resolve_givenValidOperatorMultipleTimes_shouldReturnSameOperatorType() {
-        GenericOperator<String> operator1 = operatorFactory.resolve("equals", String.class);
-        GenericOperator<String> operator2 = operatorFactory.resolve("equals", String.class);
+        Operator<String, String> operator1 = (Operator<String, String>) operatorFactory.resolve("equals", String.class);
+        Operator<String, String> operator2 = (Operator<String, String>) operatorFactory.resolve("equals", String.class);
 
         assertNotNull(operator1, "First operator should not be null");
         assertNotNull(operator2, "Second operator should not be null");
@@ -361,7 +361,7 @@ class OperatorFactoryUnitTest {
     @DisplayName("resolve_givenMixedValidAndInvalidCalls_shouldHandleAppropriately")
     void resolve_givenMixedValidAndInvalidCalls_shouldHandleAppropriately() {
         // Valid call should succeed
-        GenericOperator<String> validOperator = operatorFactory.resolve("equals", String.class);
+        Operator<String, String> validOperator = (Operator<String, String>) operatorFactory.resolve("equals", String.class);
         assertNotNull(validOperator, "Valid operator should not be null");
 
         // Invalid call should fail
@@ -371,7 +371,7 @@ class OperatorFactoryUnitTest {
         assertTrue(exception.getMessage().contains("No operator found"));
 
         // Another valid call should succeed after the invalid one
-        GenericOperator<BigDecimal> anotherValidOperator = operatorFactory.resolve("greaterThan", BigDecimal.class);
+        Operator<BigDecimal, BigDecimal> anotherValidOperator = (Operator<BigDecimal, BigDecimal>) operatorFactory.resolve("greaterThan", BigDecimal.class);
         assertNotNull(anotherValidOperator, "Another valid operator should not be null");
     }
 }

@@ -1,7 +1,7 @@
 package com.example.qe.model.operator.impl;
 
 import com.example.qe.annotation.OperatorAnnotation;
-import com.example.qe.model.operator.CustomOperator;
+import com.example.qe.model.operator.Operator;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -14,9 +14,9 @@ import java.time.LocalDate;
         types = {BigDecimal.class},
         description = "Checks if a date field is a specified number of years before today"
 )
-public class YearsBeforeOperator implements CustomOperator<BigDecimal> {
+public class YearsBeforeOperator implements Operator<LocalDate,BigDecimal> {
     @Override
-    public Condition applyToField(Field<?> field, BigDecimal years) {
+    public Condition apply(Field<LocalDate> field, BigDecimal years) {
         LocalDate targetDate = LocalDate.now().minusYears(years.longValue());
         return DSL.condition("{0} = {1}", field, targetDate);
     }
