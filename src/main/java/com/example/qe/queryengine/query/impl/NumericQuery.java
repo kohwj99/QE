@@ -1,0 +1,24 @@
+package com.example.qe.queryengine.query.impl;
+
+import com.example.qe.queryengine.query.FieldQuery;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+import java.math.BigDecimal;
+
+@JsonTypeName("NumericQuery")
+public class NumericQuery extends FieldQuery<BigDecimal> {
+
+    @JsonCreator
+    public NumericQuery(@JsonProperty("column") String column,
+                       @JsonProperty("operatorName") String operatorName,
+                       @JsonProperty("value") BigDecimal value) {
+        super(column, operatorName, value);
+    }
+
+    @Override
+    protected Class<BigDecimal> getValueClass() {
+        return BigDecimal.class;
+    }
+}

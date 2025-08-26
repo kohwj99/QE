@@ -1,6 +1,9 @@
 package com.example.qe.util;
 
-import com.example.qe.model.query.Query;
+import com.example.qe.queryengine.operator.OperatorFactory;
+import com.example.qe.queryengine.operator.OperatorRegistry;
+import com.example.qe.queryengine.operator.OperatorScanner;
+import com.example.qe.queryengine.query.Query;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -37,7 +40,7 @@ public class QueryDeserializationTest {
         // Setup OperatorRegistry and scan operators
         OperatorRegistry registry = new OperatorRegistry();
         OperatorScanner scanner = new OperatorScanner(registry);
-        scanner.scanAndRegister("com.example.qe.model.operator");
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Create factory
         operatorFactory = new OperatorFactory(registry);

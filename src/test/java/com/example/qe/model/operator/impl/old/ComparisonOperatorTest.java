@@ -1,7 +1,7 @@
 package com.example.qe.model.operator.impl.old;
 
-import com.example.qe.model.operator.impl.GreaterThanEqualOperator;
-import com.example.qe.model.operator.impl.LessThanEqualOperator;
+import com.example.qe.queryengine.operator.impl.GreaterThanEqualOperator;
+import com.example.qe.queryengine.operator.impl.LessThanEqualOperator;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.BeforeEach;

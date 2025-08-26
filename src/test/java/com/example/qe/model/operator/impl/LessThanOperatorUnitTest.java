@@ -1,5 +1,6 @@
 package com.example.qe.model.operator.impl;
 
+import com.example.qe.queryengine.operator.impl.LessThanOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;

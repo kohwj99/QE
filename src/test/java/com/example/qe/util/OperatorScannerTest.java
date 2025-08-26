@@ -1,7 +1,9 @@
 package com.example.qe.util;
 
-import com.example.qe.model.operator.GenericOperator;
-import com.example.qe.model.operator.impl.*;
+import com.example.qe.queryengine.operator.GenericOperator;
+import com.example.qe.queryengine.operator.OperatorRegistry;
+import com.example.qe.queryengine.operator.OperatorScanner;
+import com.example.qe.queryengine.operator.impl.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +41,7 @@ class OperatorScannerTest {
         logger.info("=== Testing operator scanning and registration ===");
 
         // Act: Scan the operator package
-        scanner.scanAndRegister("com.example.qe.model.operator");
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Assert: Verify operators were found and registered
         Set<String> operatorNames = registry.getAllOperatorNames();
@@ -86,7 +88,7 @@ class OperatorScannerTest {
         logger.info("=== Testing all operator type mappings ===");
 
         // Act
-        scanner.scanAndRegister("com.example.qe.model.operator");
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Test EqualsOperator
         logger.info("Testing EqualsOperator registrations...");
@@ -224,7 +226,7 @@ class OperatorScannerTest {
         logger.info("=== Testing retrieval of non-existent operators ===");
 
         // Act
-        scanner.scanAndRegister("com.example.qe.model.operator");
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Assert: Test non-existent operator
         GenericOperator<String> nonExistent = registry.get("nonExistentOperator", String.class);
@@ -268,7 +270,7 @@ class OperatorScannerTest {
 
         // Step 1: Scan and register
         logger.info("Step 1: Scanning for operators...");
-        scanner.scanAndRegister("com.example.qe.model.operator");
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Step 2: Validate expected operators are present
         Set<String> operatorNames = registry.getAllOperatorNames();

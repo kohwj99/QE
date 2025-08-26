@@ -1,8 +1,9 @@
 package com.example.qe.util;
 
-import com.example.qe.annotation.OperatorAnnotation;
-import com.example.qe.model.operator.GenericOperator;
-import com.example.qe.model.operator.impl.EqualsOperator;
+import com.example.qe.queryengine.operator.OperatorAnnotation;
+import com.example.qe.queryengine.operator.GenericOperator;
+import com.example.qe.queryengine.operator.OperatorRegistry;
+import com.example.qe.queryengine.operator.OperatorScanner;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,7 @@ class OperatorScannerUnitTest {
     @Test
     @DisplayName("scanAndRegister_givenValidPackage_shouldRegisterOperators")
     void scanAndRegister_givenValidPackage_shouldRegisterOperators() {
-        String packageName = "com.example.qe.model.operator.impl";
+        String packageName = "com.example.qe.queryengine.operator.impl";
 
         operatorScanner.scanAndRegister(packageName);
 
@@ -96,7 +97,7 @@ class OperatorScannerUnitTest {
         OperatorRegistry realRegistry = new OperatorRegistry();
         OperatorScanner realScanner = new OperatorScanner(realRegistry);
 
-        realScanner.scanAndRegister("com.example.qe.model.operator.impl");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Verify that specific operators are registered
         assertNotNull(realRegistry.get("equals", String.class), "EqualsOperator should be registered for String");
@@ -112,7 +113,7 @@ class OperatorScannerUnitTest {
         OperatorRegistry realRegistry = new OperatorRegistry();
         OperatorScanner realScanner = new OperatorScanner(realRegistry);
 
-        realScanner.scanAndRegister("com.example.qe.model.operator.impl");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // EqualsOperator should be registered for multiple types
         assertNotNull(realRegistry.get("equals", String.class), "Should register EqualsOperator for String");
@@ -135,7 +136,7 @@ class OperatorScannerUnitTest {
         // For now, we'll test with a valid package but verify exception handling exists
         // by checking the method doesn't silently fail
         assertDoesNotThrow(() -> {
-            operatorScanner.scanAndRegister("com.example.qe.model.operator.impl");
+            operatorScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
         }, "Should not throw exception for valid operators");
     }
 
@@ -145,7 +146,7 @@ class OperatorScannerUnitTest {
         OperatorRegistry realRegistry = new OperatorRegistry();
         OperatorScanner realScanner = new OperatorScanner(realRegistry);
 
-        realScanner.scanAndRegister("com.example.qe.model.operator.impl");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Only classes with @OperatorAnnotation should be registered
         assertTrue(realRegistry.getAllOperatorNames().size() > 0, "Should find annotated operators");
@@ -164,10 +165,10 @@ class OperatorScannerUnitTest {
         OperatorScanner realScanner = new OperatorScanner(realRegistry);
 
         // Scan the same package multiple times
-        realScanner.scanAndRegister("com.example.qe.model.operator.impl");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
         int firstScanCount = realRegistry.getTotalOperatorCount();
 
-        realScanner.scanAndRegister("com.example.qe.model.operator.impl");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
         int secondScanCount = realRegistry.getTotalOperatorCount();
 
         // Should handle multiple scans gracefully (operators might be overwritten)
@@ -184,7 +185,7 @@ class OperatorScannerUnitTest {
         OperatorScanner realScanner = new OperatorScanner(realRegistry);
 
         // Scan main operator package
-        realScanner.scanAndRegister("com.example.qe.model.operator.impl");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
         int operatorCount = realRegistry.getAllOperatorNames().size();
 
         // Scan an empty package (should not add any operators)
@@ -202,7 +203,7 @@ class OperatorScannerUnitTest {
         OperatorScanner realScanner = new OperatorScanner(realRegistry);
 
         // Scan parent package (should include impl subpackage)
-        realScanner.scanAndRegister("com.example.qe.model.operator");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // Should find operators from impl subpackage
         assertTrue(realRegistry.getAllOperatorNames().size() > 0,
@@ -226,7 +227,7 @@ class OperatorScannerUnitTest {
         OperatorRegistry realRegistry = new OperatorRegistry();
         OperatorScanner realScanner = new OperatorScanner(realRegistry);
 
-        realScanner.scanAndRegister("com.example.qe.model.operator.impl");
+        realScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
         // DayOfMonthOperator has only BigDecimal type
         assertNotNull(realRegistry.get("dayOfMonth", BigDecimal.class),

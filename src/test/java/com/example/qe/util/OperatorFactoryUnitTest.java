@@ -1,6 +1,9 @@
 package com.example.qe.util;
 
-import com.example.qe.model.operator.GenericOperator;
+import com.example.qe.queryengine.operator.GenericOperator;
+import com.example.qe.queryengine.operator.OperatorFactory;
+import com.example.qe.queryengine.operator.OperatorRegistry;
+import com.example.qe.queryengine.operator.OperatorScanner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +23,7 @@ class OperatorFactoryUnitTest {
     void setUp() {
         operatorRegistry = new OperatorRegistry();
         OperatorScanner scanner = new OperatorScanner(operatorRegistry);
-        scanner.scanAndRegister("com.example.qe.model.operator");
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
         operatorFactory = new OperatorFactory(operatorRegistry);
     }
 

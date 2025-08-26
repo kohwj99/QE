@@ -1,13 +1,13 @@
 package com.example.qe.integration;
 
-import com.example.qe.model.query.Query;
-import com.example.qe.resolver.ValueResolver;
-import com.example.qe.resolver.impl.BasicPlaceholderResolver;
-import com.example.qe.service.QueryExecutionService;
-import com.example.qe.service.ReplacementService;
-import com.example.qe.util.OperatorFactory;
-import com.example.qe.util.OperatorRegistry;
-import com.example.qe.util.OperatorScanner;
+import com.example.qe.queryengine.query.Query;
+import com.example.qe.queryengine.replacement.ReplacementResolver;
+import com.example.qe.queryengine.replacement.impl.BasicPlaceholderResolver;
+import com.example.qe.queryengine.QueryExecutionService;
+import com.example.qe.queryengine.replacement.ReplacementService;
+import com.example.qe.queryengine.operator.OperatorFactory;
+import com.example.qe.queryengine.operator.OperatorRegistry;
+import com.example.qe.queryengine.operator.OperatorScanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.jooq.Condition;
@@ -55,7 +55,7 @@ class QueryProcessingIntegrationTest {
             operatorScanner = new OperatorScanner(operatorRegistry);
 
             logger.info("Scanning and registering operators...");
-            operatorScanner.scanAndRegister("com.example.qe.model.operator");
+            operatorScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
             logger.info("Registered {} unique operators with {} total type registrations",
                        operatorRegistry.getAllOperatorNames().size(),
                        operatorRegistry.getTotalOperatorCount());
@@ -63,7 +63,7 @@ class QueryProcessingIntegrationTest {
             operatorFactory = new OperatorFactory(operatorRegistry);
 
             // Create ValueResolver list for ReplacementService
-            List<ValueResolver> resolvers = List.of(new BasicPlaceholderResolver());
+            List<ReplacementResolver> resolvers = List.of(new BasicPlaceholderResolver());
             replacementService = new ReplacementService(resolvers);
             dsl = DSL.using(SQLDialect.DEFAULT);
             // Initialize QueryExecutionService with correct constructor

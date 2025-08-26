@@ -1,9 +1,10 @@
 package com.example.qe.service;
 
-import com.example.qe.resolver.impl.BasicPlaceholderResolver;
-import com.example.qe.util.OperatorFactory;
-import com.example.qe.util.OperatorRegistry;
-import com.example.qe.util.OperatorScanner;
+import com.example.qe.queryengine.QueryExecutionService;
+import com.example.qe.queryengine.replacement.ReplacementService;
+import com.example.qe.queryengine.operator.OperatorFactory;
+import com.example.qe.queryengine.operator.OperatorRegistry;
+import com.example.qe.queryengine.operator.OperatorScanner;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -15,11 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
-
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -41,7 +37,7 @@ class QueryExecutionServiceUnitTest {
         // Set up operator factory with real operators
         OperatorRegistry registry = new OperatorRegistry();
         OperatorScanner scanner = new OperatorScanner(registry);
-        scanner.scanAndRegister("com.example.qe.model.operator");
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
         operatorFactory = new OperatorFactory(registry);
         dsl = DSL.using(SQLDialect.DEFAULT);
 

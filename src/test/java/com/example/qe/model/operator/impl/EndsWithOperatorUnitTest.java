@@ -1,6 +1,6 @@
 package com.example.qe.model.operator.impl;
 
-import com.example.qe.model.operator.impl.EndsWithOperator;
+import com.example.qe.queryengine.operator.impl.EndsWithOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
