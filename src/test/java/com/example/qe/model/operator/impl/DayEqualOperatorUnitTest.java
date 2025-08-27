@@ -15,77 +15,80 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("DayEqualOperator Unit Tests")
 class DayEqualOperatorUnitTest {
 
-    private DayEqualOperator dayEqualOperator;
-    private Field<?> dateField;
+    private DayEqualOperator operator;
+    private Field<?> field;
 
     @BeforeEach
     void setUp() {
-        dayEqualOperator = new DayEqualOperator();
-        dateField = DSL.field("birth_date");
+        operator = new DayEqualOperator();
+        field = DSL.field("birth_date");
     }
 
     @Test
-    @DisplayName("applyToField_givenValidDay_shouldReturnDayEqualCondition")
     void applyToField_givenValidDay_shouldReturnDayEqualCondition() {
-        BigDecimal dayValue = new BigDecimal("15");
+        // Arrange
+        BigDecimal dayValue = BigDecimal.valueOf(15);
 
-        Condition condition = dayEqualOperator.applyToField(dateField, dayValue);
+        // Act
+        Condition condition = operator.applyToField(field, dayValue);
 
-        assertNotNull(condition, "Condition should not be null");
-        String sql = condition.toString();
-        assertTrue(sql.contains("birth_date"), "SQL should contain field name");
-        assertTrue(sql.contains("15"), "SQL should contain the day value");
+        // Assert
+        assertConditionContains(condition, "birth_date", "15");
     }
 
     @Test
-    @DisplayName("applyToField_givenFirstDayOfMonth_shouldReturnDayEqualCondition")
     void applyToField_givenFirstDayOfMonth_shouldReturnDayEqualCondition() {
-        BigDecimal dayValue = new BigDecimal("1");
+        // Arrange
+        BigDecimal dayValue = BigDecimal.valueOf(1);
 
-        Condition condition = dayEqualOperator.applyToField(dateField, dayValue);
+        // Act
+        Condition condition = operator.applyToField(field, dayValue);
 
-        assertNotNull(condition, "Condition should not be null");
-        String sql = condition.toString();
-        assertTrue(sql.contains("birth_date"), "SQL should contain field name");
-        assertTrue(sql.contains("1"), "SQL should contain the day value");
+        // Assert
+        assertConditionContains(condition, "birth_date", "1");
     }
 
     @Test
-    @DisplayName("applyToField_givenLastDayOfMonth_shouldReturnDayEqualCondition")
     void applyToField_givenLastDayOfMonth_shouldReturnDayEqualCondition() {
-        BigDecimal dayValue = new BigDecimal("31");
+        // Arrange
+        BigDecimal dayValue = BigDecimal.valueOf(31);
 
-        Condition condition = dayEqualOperator.applyToField(dateField, dayValue);
+        // Act
+        Condition condition = operator.applyToField(field, dayValue);
 
-        assertNotNull(condition, "Condition should not be null");
-        String sql = condition.toString();
-        assertTrue(sql.contains("birth_date"), "SQL should contain field name");
-        assertTrue(sql.contains("31"), "SQL should contain the day value");
+        // Assert
+        assertConditionContains(condition, "birth_date", "31");
     }
 
     @Test
-    @DisplayName("applyToField_givenMidMonthDay_shouldReturnDayEqualCondition")
     void applyToField_givenMidMonthDay_shouldReturnDayEqualCondition() {
-        BigDecimal dayValue = new BigDecimal("25");
+        // Arrange
+        BigDecimal dayValue = BigDecimal.valueOf(25);
 
-        Condition condition = dayEqualOperator.applyToField(dateField, dayValue);
+        // Act
+        Condition condition = operator.applyToField(field, dayValue);
 
-        assertNotNull(condition, "Condition should not be null");
-        String sql = condition.toString();
-        assertTrue(sql.contains("birth_date"), "SQL should contain field name");
-        assertTrue(sql.contains("25"), "SQL should contain the day value");
+        // Assert
+        assertConditionContains(condition, "birth_date", "25");
     }
 
     @Test
-    @DisplayName("applyToField_givenZeroDay_shouldReturnDayEqualCondition")
     void applyToField_givenZeroDay_shouldReturnDayEqualCondition() {
-        BigDecimal dayValue = new BigDecimal("0");
+        // Arrange
+        BigDecimal dayValue = BigDecimal.valueOf(0);
 
-        Condition condition = dayEqualOperator.applyToField(dateField, dayValue);
+        // Act
+        Condition condition = operator.applyToField(field, dayValue);
 
+        // Assert
+        assertConditionContains(condition, "birth_date", "0");
+    }
+
+    private void assertConditionContains(Condition condition, String... expected) {
         assertNotNull(condition, "Condition should not be null");
         String sql = condition.toString();
-        assertTrue(sql.contains("birth_date"), "SQL should contain field name");
-        assertTrue(sql.contains("0"), "SQL should contain the day value");
+        for (String s : expected) {
+            assertTrue(sql.contains(s), "SQL should contain: " + s);
+        }
     }
 }

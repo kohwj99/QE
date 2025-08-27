@@ -10,30 +10,31 @@ public class OperatorFactory {
         this.registry = registry;
     }
 
-    /**
-     * Resolves the operator by name and value type.
-     * Throws an exception if no matching operator is found.
-     */
-    public <T> GenericOperator<T> resolve(String operatorName, Class<T> valueType) {
-        GenericOperator<T> operator = registry.get(operatorName, valueType);
-        if (operator == null) {
+    /** Resolve a CustomOperator<F,V> by name and field type */
+    public <F, V> CustomOperator<F, V> resolve(String operatorName, Class<F> fieldType) {
+        CustomOperator<F, V> op = registry.get(operatorName, fieldType);
+        if (op == null) {
+            throw new IllegalArgumentException("No operator found for " + operatorName + " and field type " + fieldType.getName());
+        }
+
+        // Validate against OperatorAnnotation if present
+        OperatorAnnotation annotation = op.getClass().getAnnotation(OperatorAnnotation.class);
+        if (annotation != null && !Arrays.asList(annotation.types()).contains(fieldType)) {
             throw new IllegalArgumentException(
-                    "No operator found for name: " + operatorName + " and type: " + valueType.getName());
-        }
-        Class<?> operatorClass = operator.getClass();
-        OperatorAnnotation annotation = operatorClass.getAnnotation(OperatorAnnotation.class);
-
-        if (annotation != null && annotation.types().length > 0) {
-            boolean typeSupported = Arrays.asList(annotation.types()).contains(valueType);
-            if (!typeSupported) {
-                throw new IllegalArgumentException(
-                        String.format("Operator '%s' does not support type '%s'. Supported types: %s",
-                                operatorName, valueType.getSimpleName(),
-                                Arrays.toString(annotation.types())));
-            }
+                    String.format("Operator '%s' does not support type '%s'. Supported types: %s",
+                            operatorName, fieldType.getSimpleName(), Arrays.toString(annotation.types()))
+            );
         }
 
-        return operator;
+        return op;
+    }
+
+    /** Resolve an optional RunConditionOperator */
+    public RunConditionOperator resolveRunCondition(String operatorName) {
+        RunConditionOperator op = registry.getRunCondition(operatorName);
+        if (op == null) {
+            throw new IllegalArgumentException("No RunConditionOperator found for " + operatorName);
+        }
+        return op;
     }
 }
-

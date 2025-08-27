@@ -1,4 +1,5 @@
 package com.example.qe.queryengine.operator;
+
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,33 +16,41 @@ public class OperatorScanner {
     }
 
     public void scanAndRegister(String basePackage) {
-        logger.info("Starting operator scanning in package: {}", basePackage);
+        logger.info("Scanning package: {}", basePackage);
         Reflections reflections = new Reflections(basePackage);
 
         Set<Class<?>> operatorClasses = reflections.getTypesAnnotatedWith(OperatorAnnotation.class);
-        logger.info("Found {} classes annotated with @OperatorAnnotation", operatorClasses.size());
+        logger.info("Found {} operator classes", operatorClasses.size());
 
         for (Class<?> clazz : operatorClasses) {
             try {
-                logger.debug("Processing operator class: {}", clazz.getName());
                 OperatorAnnotation annotation = clazz.getAnnotation(OperatorAnnotation.class);
-                GenericOperator<?> operatorInstance = (GenericOperator<?>) clazz.getDeclaredConstructor().newInstance();
+                Object instance = clazz.getDeclaredConstructor().newInstance();
 
-                logger.info("Registering operator '{}' from class: {}", annotation.value(), clazz.getSimpleName());
+                // Register as CustomOperator
+                if (instance instanceof CustomOperator<?, ?> customOp) {
+                    for (Class<?> fieldType : annotation.types()) {
+                        // Suppress unchecked cast warning
+                        @SuppressWarnings("unchecked")
+                        Class<Object> castFieldType = (Class<Object>) fieldType;
 
-                for (Class<?> type : annotation.types()) {
-                    registry.register(annotation.value(), type, (GenericOperator) operatorInstance);
-                    logger.debug("  - Registered for type: {}", type.getSimpleName());
+                        @SuppressWarnings("unchecked")
+                        CustomOperator<Object, Object> castOp = (CustomOperator<Object, Object>) customOp;
+
+                        registry.register(annotation.value(), castFieldType, castOp);
+                        logger.debug("Registered operator '{}' for type '{}'", annotation.value(), fieldType.getSimpleName());
+                    }
                 }
 
-                logger.info("Successfully registered operator '{}' for {} types",
-                           annotation.value(), annotation.types().length);
+                // RunConditionOperator is automatically registered in registry.register()
+                if (instance instanceof RunConditionOperator) {
+                    logger.debug("Operator '{}' also implements RunConditionOperator", annotation.value());
+                }
+
             } catch (Exception e) {
                 logger.error("Failed to instantiate operator {}: {}", clazz.getName(), e.getMessage(), e);
                 throw new RuntimeException("Failed to instantiate operator " + clazz.getName(), e);
             }
         }
-
-        logger.info("Completed operator scanning. Total operators processed: {}", operatorClasses.size());
     }
 }
