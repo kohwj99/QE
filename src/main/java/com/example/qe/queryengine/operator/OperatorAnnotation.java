@@ -7,6 +7,7 @@ import java.lang.annotation.*;
 public @interface OperatorAnnotation {
 
     String value();
-    Class<?>[] types();
+    Class<?>[] supportedFieldTypes();
+    Class<?>[] supportedValueTypes();
     String description() default "";
 }

@@ -1,7 +1,5 @@
 package com.example.qe.queryengine.operator;
 
-import java.util.Arrays;
-
 public class OperatorFactory {
 
     private final OperatorRegistry registry;
@@ -10,30 +8,34 @@ public class OperatorFactory {
         this.registry = registry;
     }
 
-    /**
-     * Resolves the operator by name and value type.
-     * Throws an exception if no matching operator is found.
-     */
-    public <T> GenericOperator<T> resolve(String operatorName, Class<T> valueType) {
-        GenericOperator<T> operator = registry.get(operatorName, valueType);
-        if (operator == null) {
-            throw new IllegalArgumentException(
-                    "No operator found for name: " + operatorName + " and type: " + valueType.getName());
-        }
-        Class<?> operatorClass = operator.getClass();
-        OperatorAnnotation annotation = operatorClass.getAnnotation(OperatorAnnotation.class);
-
-        if (annotation != null && annotation.types().length > 0) {
-            boolean typeSupported = Arrays.asList(annotation.types()).contains(valueType);
-            if (!typeSupported) {
-                throw new IllegalArgumentException(
-                        String.format("Operator '%s' does not support type '%s'. Supported types: %s",
-                                operatorName, valueType.getSimpleName(),
-                                Arrays.toString(annotation.types())));
-            }
-        }
-
-        return operator;
+    public record ResolvedOperator(GenericOperator<?> operator, Class<?> valueType) {
     }
+
+    public ResolvedOperator resolveWithDynamicValueType(String operatorName, Class<?> fieldType) {
+        var supportedValueTypes = registry.getSupportedValueTypes(operatorName, fieldType);
+        Class<?> valueType = supportedValueTypes.contains(fieldType)
+                ? fieldType
+                : supportedValueTypes.iterator().next();
+        GenericOperator<?> operator = registry.getOperator(operatorName, fieldType, valueType);
+        if (operator == null) {
+            throw new IllegalArgumentException("No operator found for " + operatorName);
+        }
+        return new ResolvedOperator(operator, valueType);
+    }
+
+//    /**
+//     * Resolves the operator by name, field type, and value type.
+//     * Throws an exception if no matching operator is found or types are not supported.
+//     */
+//    public <T> GenericOperator<T> resolve(String operatorName, Class<?> fieldType, Class<T> valueType) {
+//        GenericOperator<T> operator = (GenericOperator<T>) registry.getOperator(operatorName, fieldType, valueType);
+//        if (operator == null) {
+//            throw new IllegalArgumentException(
+//                    String.format("No operator found for name: %s, field type: %s, value type: %s",
+//                            operatorName, fieldType.getSimpleName(), valueType.getSimpleName())
+//            );
+//        }
+//        return operator;
+//    }
 }
 

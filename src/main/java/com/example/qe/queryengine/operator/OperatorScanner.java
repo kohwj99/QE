@@ -1,8 +1,8 @@
+// src/main/java/com/example/qe/queryengine/operator/OperatorScanner.java
 package com.example.qe.queryengine.operator;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Set;
 
 public class OperatorScanner {
@@ -14,6 +14,7 @@ public class OperatorScanner {
         this.registry = registry;
     }
 
+    @SuppressWarnings("unchecked")
     public void scanAndRegister(String basePackage) {
         logger.info("Starting operator scanning in package: {}", basePackage);
         Reflections reflections = new Reflections(basePackage);
@@ -27,15 +28,20 @@ public class OperatorScanner {
                 OperatorAnnotation annotation = clazz.getAnnotation(OperatorAnnotation.class);
                 GenericOperator<?> operatorInstance = (GenericOperator<?>) clazz.getDeclaredConstructor().newInstance();
 
-                logger.info("Registering operator '{}' from class: {}", annotation.value(), clazz.getSimpleName());
+                String operatorName = annotation.value();
+                Class<?>[] fieldTypes = annotation.supportedFieldTypes();
+                Class<?>[] valueTypes = annotation.supportedValueTypes();
 
-                for (Class<?> type : annotation.types()) {
-                    registry.register(annotation.value(), type, (GenericOperator) operatorInstance);
-                    logger.debug("  - Registered for type: {}", type.getSimpleName());
+                for (Class<?> fieldType : fieldTypes) {
+                    for (Class<?> valueType : valueTypes) {
+                        registry.register(operatorName, fieldType, (Class<Object>) valueType, (GenericOperator<Object>) operatorInstance);
+                        logger.debug("Registered operator '{}' for field type '{}' and value type '{}'",
+                                operatorName, fieldType.getSimpleName(), valueType.getSimpleName());
+                    }
                 }
 
-                logger.info("Successfully registered operator '{}' for {} types",
-                           annotation.value(), annotation.types().length);
+                logger.info("Successfully registered operator '{}' for {} field types and {} value types",
+                        operatorName, fieldTypes.length, valueTypes.length);
             } catch (Exception e) {
                 logger.error("Failed to instantiate operator {}: {}", clazz.getName(), e.getMessage(), e);
                 throw new RuntimeException("Failed to instantiate operator " + clazz.getName(), e);

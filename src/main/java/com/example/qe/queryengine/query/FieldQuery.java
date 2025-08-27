@@ -11,39 +11,42 @@ import static org.jooq.impl.DSL.field;
 
 @Setter
 @Getter
-public abstract class FieldQuery<T> implements Query {
+public abstract class FieldQuery implements Query {
 
     // Getters and setters (needed for JSON deserialization)
     protected String column;
     protected String operator;
-    protected T value; // Nullable for IS NULL / IS NOT NULL
+    protected Object value; // Nullable for IS NULL / IS NOT NULL
 
     protected FieldQuery() {
         // Default constructor for JSON deserialization
     }
 
-    protected FieldQuery(String column, String operator, T value) {
+    protected FieldQuery(String column, String operator, Object value) {
         this.column = column;
         this.operator = operator;
         this.value = value;
     }
 
+//    @Override
+//    public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
+//        // Get the jOOQ field with the right type
+//        Field<T> field = field(column, getValueClass());
+//
+//        // Resolve operator from the factory directly
+//        GenericOperator<T> op = operatorFactory.resolve(operator, getValueClass());
+//
+//        if (op == null) {
+//            throw new IllegalArgumentException("Unknown operator: " + operator);
+//        }
+//
+//        // Apply operator to generate condition
+//        return op.apply(field, value);
+//    }
     @Override
-    public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
-        // Get the jOOQ field with the right type
-        Field<T> field = field(column, getValueClass());
+    public abstract Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory);
 
-        // Resolve operator from the factory directly
-        GenericOperator<T> op = operatorFactory.resolve(operator, getValueClass());
 
-        if (op == null) {
-            throw new IllegalArgumentException("Unknown operator: " + operator);
-        }
-
-        // Apply operator to generate condition
-        return op.apply(field, value);
-    }
-
-    protected abstract Class<T> getValueClass();
+    protected abstract Class<?> getValueClass();
 
 }
