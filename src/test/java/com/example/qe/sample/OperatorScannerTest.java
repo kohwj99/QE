@@ -1,61 +1,88 @@
 package com.example.qe.sample;
 
+import com.example.qe.queryengine.operator.GenericOperator;
 import com.example.qe.queryengine.operator.OperatorRegistry;
 import com.example.qe.queryengine.operator.OperatorScanner;
 import com.example.qe.queryengine.operator.impl.EqualsOperator;
-import com.example.qe.queryengine.operator.impl.DayEqualOperator;
+import com.example.qe.queryengine.operator.impl.DayOfWeekOperator;
 import com.example.qe.queryengine.operator.OperatorAnnotation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
-
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OperatorScannerTest {
 
-    @Test
-    void testScanAndRegisterRegistersAnnotatedOperatorsWithCorrectTypes() {
-        OperatorRegistry registry = new OperatorRegistry();
-        OperatorScanner scanner = new OperatorScanner(registry);
+    private OperatorRegistry registry;
+    private OperatorScanner scanner;
 
+    @BeforeEach
+    void setup() {
+        // Arrange
+        registry = mock(OperatorRegistry.class);
+        scanner = new OperatorScanner(registry);
+    }
+
+    @Test
+    void scanAndRegister_givenPackageWithOperators_shouldRegisterEqualsOperator() {
+        // Act
         scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
 
-        // EqualsOperator checks
-        Object equalsOp = registry.getOperator("equals");
-        assertNotNull(equalsOp, "EqualsOperator should be registered");
-        assertTrue(equalsOp instanceof EqualsOperator);
+        // Assert
+        ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Class<?>[]> fieldTypesCaptor = (ArgumentCaptor<Class<?>[]>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(Class[].class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Class<?>[]> valueTypesCaptor = (ArgumentCaptor<Class<?>[]>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(Class[].class);
+        ArgumentCaptor<Object> instanceCaptor = ArgumentCaptor.forClass(Object.class);
 
-        OperatorAnnotation equalsAnn = EqualsOperator.class.getAnnotation(OperatorAnnotation.class);
-        assertNotNull(equalsAnn, "EqualsOperator should have OperatorAnnotation");
-        assertArrayEquals(
-                new Class[]{String.class, BigDecimal.class, Boolean.class, LocalDate.class},
-                equalsAnn.supportedFieldTypes(),
-                "EqualsOperator supportedFieldTypes mismatch"
-        );
-        assertArrayEquals(
-                new Class[]{String.class, BigDecimal.class, Boolean.class, LocalDate.class},
-                equalsAnn.supportedValueTypes(),
-                "EqualsOperator supportedValueTypes mismatch"
+        verify(registry, atLeastOnce()).register(
+                nameCaptor.capture(),
+                fieldTypesCaptor.capture(),
+                valueTypesCaptor.capture(),
+                (GenericOperator) instanceCaptor.capture()
         );
 
-        // DayEqualOperator checks
-        Object dayEqualOp = registry.getOperator("dayEqual");
-        assertNotNull(dayEqualOp, "DayEqualOperator should be registered");
-        assertTrue(dayEqualOp instanceof DayEqualOperator);
+        assertTrue(nameCaptor.getAllValues().contains("equals"), "EqualsOperator should be registered");
+        assertTrue(instanceCaptor.getAllValues().stream().anyMatch(EqualsOperator.class::isInstance), "EqualsOperator instance should be registered");
 
-        OperatorAnnotation dayEqualAnn = DayEqualOperator.class.getAnnotation(OperatorAnnotation.class);
-        assertNotNull(dayEqualAnn, "DayEqualOperator should have OperatorAnnotation");
-        assertArrayEquals(
-                new Class[]{LocalDate.class},
-                dayEqualAnn.supportedFieldTypes(),
-                "DayEqualOperator supportedFieldTypes mismatch"
+        // Verify annotation field and value types
+        OperatorAnnotation annotation = EqualsOperator.class.getAnnotation(OperatorAnnotation.class);
+        assertArrayEquals(new Class[]{String.class, java.math.BigDecimal.class, Boolean.class, java.time.LocalDate.class},
+                annotation.supportedFieldTypes(), "EqualsOperator supportedFieldTypes mismatch");
+        assertArrayEquals(new Class[]{String.class, java.math.BigDecimal.class, Boolean.class, java.time.LocalDate.class},
+                annotation.supportedValueTypes(), "EqualsOperator supportedValueTypes mismatch");
+    }
+
+    @Test
+    void scanAndRegister_givenPackageWithOperators_shouldRegisterDayOfWeekOperator() {
+        // Act
+        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
+
+        // Assert
+        ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Class<?>[]> fieldTypesCaptor = (ArgumentCaptor<Class<?>[]>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(Class[].class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Class<?>[]> valueTypesCaptor = (ArgumentCaptor<Class<?>[]>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(Class[].class);
+        ArgumentCaptor<Object> instanceCaptor = ArgumentCaptor.forClass(Object.class);
+
+        verify(registry, atLeastOnce()).register(
+                nameCaptor.capture(),
+                fieldTypesCaptor.capture(),
+                valueTypesCaptor.capture(),
+                (GenericOperator) instanceCaptor.capture()
         );
-        assertArrayEquals(
-                new Class[]{BigDecimal.class},
-                dayEqualAnn.supportedValueTypes(),
-                "DayEqualOperator supportedValueTypes mismatch"
-        );
+
+        assertTrue(nameCaptor.getAllValues().contains("dayOfWeek"), "DayOfWeekOperator should be registered");
+        assertTrue(instanceCaptor.getAllValues().stream().anyMatch(DayOfWeekOperator.class::isInstance), "DayOfWeekOperator instance should be registered");
+
+        OperatorAnnotation annotation = DayOfWeekOperator.class.getAnnotation(OperatorAnnotation.class);
+        assertArrayEquals(new Class[]{java.time.LocalDate.class},
+                annotation.supportedFieldTypes(), "DayOfWeekOperator supportedFieldTypes mismatch");
+        assertArrayEquals(new Class[]{java.math.BigDecimal.class},
+                annotation.supportedValueTypes(), "DayOfWeekOperator supportedValueTypes mismatch");
     }
 }
