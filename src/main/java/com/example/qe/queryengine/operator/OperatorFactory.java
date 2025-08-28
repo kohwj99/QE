@@ -16,7 +16,7 @@ public class OperatorFactory {
      * Throws an exception if no matching operator is found.
      */
 
-    public GenericOperator resolve(String operatorName, Class<?> fieldType, Class valueType) {
+    public GenericOperator resolve(String operatorName, Class<?> fieldType, Class<?> valueType) {
         GenericOperator op = registry.get(operatorName, fieldType, valueType);
         if (op == null) {
             throw new IllegalArgumentException("Operator " + operatorName +

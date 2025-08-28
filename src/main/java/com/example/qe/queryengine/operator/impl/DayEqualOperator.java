@@ -13,7 +13,7 @@ import java.time.LocalDate;
         value = "dayEqual",
         supportedFieldTypes = {LocalDate.class},
         supportedValueTypes = {BigDecimal.class},
-        description = "Checks if the day component of a date field equals the specified day of the week"
+        description = "Checks if the day component of a date field equals the specified day of the month"
 )
 public class DayEqualOperator implements GenericOperator {
     @Override

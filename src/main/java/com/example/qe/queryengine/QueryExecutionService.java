@@ -1,7 +1,7 @@
 package com.example.qe.queryengine;
 
 import com.example.qe.queryengine.query.Query;
-import com.example.qe.queryengine.replacement.ReplacementService;
+//import com.example.qe.queryengine.replacement.ReplacementService;
 import com.example.qe.queryengine.operator.OperatorFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,14 +19,13 @@ public class QueryExecutionService {
     private final OperatorFactory operatorFactory;
     private final ObjectMapper objectMapper;
     private final DSLContext dsl;
-    private final ReplacementService replacementService;
+//    private final ReplacementService replacementService;
 
     @Autowired
     public QueryExecutionService(OperatorFactory operatorFactory,
-                                DSLContext dsl,
-                                ReplacementService replacementService) {
+                                DSLContext dsl) {
+//                                ReplacementService replacementService) {
         this.operatorFactory = operatorFactory;
-        this.replacementService = replacementService;
         this.dsl = dsl;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
@@ -38,9 +37,10 @@ public class QueryExecutionService {
             throw new IllegalArgumentException("JSON cannot be null or empty");
         }
 
+        String processedJson = json;
         // STEP 1: Replace placeholders in JSON before deserialization
-        String processedJson = replacementService.processJsonPlaceholders(json);
-        System.out.println("Processed JSON: " + processedJson);
+//        String processedJson = replacementService.processJsonPlaceholders(json);
+//        System.out.println("Processed JSON: " + processedJson);
 
         // STEP 2: Deserialize the processed JSON to Query object
         Query query = objectMapper.readValue(processedJson, Query.class);

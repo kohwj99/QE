@@ -1,13 +1,11 @@
 //package com.example.qe.integration;
 //
-//import com.example.qe.queryengine.query.Query;
-//import com.example.qe.queryengine.replacement.ReplacementResolver;
-//import com.example.qe.queryengine.replacement.impl.BasicPlaceholderResolver;
 //import com.example.qe.queryengine.QueryExecutionService;
-//import com.example.qe.queryengine.replacement.ReplacementService;
 //import com.example.qe.queryengine.operator.OperatorFactory;
 //import com.example.qe.queryengine.operator.OperatorRegistry;
-//import com.example.qe.queryengine.operator.OperatorScanner;
+//import com.example.qe.queryengine.operator.impl.DayEqualOperator;
+//import com.example.qe.queryengine.operator.impl.EqualsOperator;
+//import com.example.qe.queryengine.query.Query;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 //import org.jooq.Condition;
@@ -15,225 +13,178 @@
 //import org.jooq.SQLDialect;
 //import org.jooq.impl.DSL;
 //import org.junit.jupiter.api.*;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 //
+//import java.math.BigDecimal;
+//import java.time.LocalDate;
 //import java.util.List;
 //
 //import static org.junit.jupiter.api.Assertions.*;
+//import static org.mockito.Mockito.*;
 //
-///**
-// * Simplified integration test that demonstrates the complete flow from JSON query input
-// * to JOOQ Condition output. This test validates the core pipeline functionality.
-// */
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//@DisplayName("Query Processing Integration Tests")
 //class SimpleQueryProcessingIntegrationTest {
-//
-//    private static final Logger logger = LoggerFactory.getLogger(SimpleQueryProcessingIntegrationTest.class);
 //
 //    private QueryExecutionService queryExecutionService;
 //    private OperatorRegistry operatorRegistry;
 //    private OperatorFactory operatorFactory;
 //    private DSLContext dsl;
+//    private ObjectMapper objectMapper;
+//
 //    @BeforeEach
-//    void setUp() {
-//        logger.info("=== Setting up Integration Test ===");
-//
-//        // Initialize components
+//    void arrange_setup() {
 //        operatorRegistry = new OperatorRegistry();
-//        OperatorScanner operatorScanner = new OperatorScanner(operatorRegistry);
-//
-//        // Scan and register operators
-//        operatorScanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
-//        logger.info("Registered {} operators", operatorRegistry.getAllOperatorNames().size());
+//        operatorRegistry.register("equals", new Class[]{String.class}, new Class[]{String.class}, new EqualsOperator());
+//        operatorRegistry.register("equals", new Class[]{Boolean.class}, new Class[]{Boolean.class}, new EqualsOperator());
+//        operatorRegistry.register("equals", new Class[]{LocalDate.class}, new Class[]{LocalDate.class}, new EqualsOperator());
+//        operatorRegistry.register("equals", new Class[]{BigDecimal.class}, new Class[]{BigDecimal.class}, new EqualsOperator());
+//        operatorRegistry.register("dayEqual", new Class[]{LocalDate.class}, new Class[]{BigDecimal.class}, new DayEqualOperator());
 //
 //        operatorFactory = new OperatorFactory(operatorRegistry);
-//
-//        // Create ValueResolver list for ReplacementService
-//        List<ReplacementResolver> resolvers = List.of(new BasicPlaceholderResolver());
-//        ReplacementService replacementService = new ReplacementService(resolvers);
 //        dsl = DSL.using(SQLDialect.DEFAULT);
-//        // Initialize service
-//        queryExecutionService = new QueryExecutionService(
-//            operatorFactory,
-//            dsl,
-//            replacementService
-//        );
+//        ReplacementService mockReplacementService = mock(ReplacementService.class);
+//        queryExecutionService = new QueryExecutionService(operatorFactory, dsl, mockReplacementService);
 //
-//        logger.info("Setup complete");
+//        objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
 //    }
 //
 //    @Test
 //    @Order(1)
-//    @DisplayName("processStringQuery_givenValidInput_shouldGenerateCondition")
-//    void processStringQuery_givenValidInput_shouldGenerateCondition() throws Exception {
-//        logger.info("=== Test: String Query Processing ===");
-//
-//        String jsonInput = """
+//    void parseJsonToCondition_givenBoolQuery_shouldGenerateCondition() throws Exception {
+//        // Arrange
+//        String json = """
 //        {
-//          "type": "StringQuery",
-//          "column": "name",
+//          "type": "BoolQuery",
+//          "column": "is_active",
 //          "operator": "equals",
-//          "value": "John Doe"
+//          "value": true
 //        }
 //        """;
+//        when(queryExecutionService.getReplacementService().processJsonPlaceholders(json)).thenReturn(json);
 //
-//        logger.info("Input: {}", jsonInput);
+//        // Act
+//        Query query = objectMapper.readValue(json, Query.class);
+//        assertEquals("BoolQuery", query.getType());
+//        var operator = operatorFactory.resolve("equals", Boolean.class);
+//        assertNotNull(operator);
+//        Condition condition = queryExecutionService.parseJsonToCondition(json);
 //
-//        Condition condition = queryExecutionService.parseJsonToCondition(jsonInput);
-//
-//        assertNotNull(condition, "Condition should not be null");
+//        // Assert
+//        assertNotNull(condition);
 //        String sql = condition.toString();
-//        logger.info("Generated SQL: {}", sql);
-//
-//        assertTrue(sql.contains("name"), "Should contain field name");
-//        assertTrue(sql.contains("John Doe"), "Should contain value");
-//
-//        logger.info("✓ String query test passed");
+//        assertTrue(sql.contains("is_active"));
+//        assertTrue(sql.contains("true"));
 //    }
 //
 //    @Test
 //    @Order(2)
-//    @DisplayName("processNumericQuery_givenValidInput_shouldGenerateCondition")
-//    void processNumericQuery_givenValidInput_shouldGenerateCondition() throws Exception {
-//        logger.info("=== Test: Numeric Query Processing ===");
-//
-//        String jsonInput = """
+//    void parseJsonToCondition_givenStringQuery_shouldGenerateCondition() throws Exception {
+//        // Arrange
+//        String json = """
 //        {
-//          "type": "NumericQuery",
-//          "column": "amount",
-//          "operator": "greaterThan",
-//          "value": "100.50"
+//          "type": "StringQuery",
+//          "column": "department",
+//          "operator": "equals",
+//          "value": "Engineering"
 //        }
 //        """;
+//        when(queryExecutionService.getReplacementService().processJsonPlaceholders(json)).thenReturn(json);
 //
-//        logger.info("Input: {}", jsonInput);
+//        // Act
+//        Query query = objectMapper.readValue(json, Query.class);
+//        assertEquals("StringQuery", query.getType());
+//        var operator = operatorFactory.resolve("equals", String.class);
+//        assertNotNull(operator);
+//        Condition condition = queryExecutionService.parseJsonToCondition(json);
 //
-//        Condition condition = queryExecutionService.parseJsonToCondition(jsonInput);
-//
-//        assertNotNull(condition, "Condition should not be null");
+//        // Assert
+//        assertNotNull(condition);
 //        String sql = condition.toString();
-//        logger.info("Generated SQL: {}", sql);
-//
-//        assertTrue(sql.contains("amount"), "Should contain field name");
-//        assertTrue(sql.contains("100.50"), "Should contain value");
-//
-//        logger.info("✓ Numeric query test passed");
+//        assertTrue(sql.contains("department"));
+//        assertTrue(sql.contains("Engineering"));
 //    }
 //
 //    @Test
 //    @Order(3)
-//    @DisplayName("processComplexQuery_givenAndLogic_shouldGenerateCondition")
-//    void processComplexQuery_givenAndLogic_shouldGenerateCondition() throws Exception {
-//        logger.info("=== Test: Complex AND Query Processing ===");
-//
-//        String jsonInput = """
+//    void parseJsonToCondition_givenLocalDateQueryWithEquals_shouldGenerateCondition() throws Exception {
+//        // Arrange
+//        String json = """
 //        {
-//          "type": "AndQuery",
-//          "children": [
-//            {
-//              "type": "StringQuery",
-//              "column": "status",
-//              "operator": "equals",
-//              "value": "ACTIVE"
-//            },
-//            {
-//              "type": "NumericQuery",
-//              "column": "amount",
-//              "operator": "greaterThan",
-//              "value": "50.00"
-//            }
-//          ]
+//          "type": "LocalDateQuery",
+//          "column": "created_date",
+//          "operator": "equals",
+//          "value": "2024-06-01"
 //        }
 //        """;
+//        when(queryExecutionService.getReplacementService().processJsonPlaceholders(json)).thenReturn(json);
 //
-//        logger.info("Input: {}", jsonInput);
+//        // Act
+//        Query query = objectMapper.readValue(json, Query.class);
+//        assertEquals("LocalDateQuery", query.getType());
+//        var operator = operatorFactory.resolve("equals", LocalDate.class);
+//        assertNotNull(operator);
+//        Condition condition = queryExecutionService.parseJsonToCondition(json);
 //
-//        Condition condition = queryExecutionService.parseJsonToCondition(jsonInput);
-//
-//        assertNotNull(condition, "Condition should not be null");
+//        // Assert
+//        assertNotNull(condition);
 //        String sql = condition.toString();
-//        logger.info("Generated SQL: {}", sql);
-//
-//        assertTrue(sql.contains("status"), "Should contain status field");
-//        assertTrue(sql.contains("amount"), "Should contain amount field");
-//        assertTrue(sql.toLowerCase().contains("and"), "Should contain AND logic");
-//
-//        logger.info("✓ Complex query test passed");
+//        assertTrue(sql.contains("created_date"));
+//        assertTrue(sql.contains("2024-06-01"));
 //    }
 //
 //    @Test
 //    @Order(4)
-//    @DisplayName("processInvalidOperator_givenInvalidInput_shouldThrowException")
-//    void processInvalidOperator_givenInvalidInput_shouldThrowException() {
-//        logger.info("=== Test: Invalid Operator Error Handling ===");
-//
-//        String jsonInput = """
+//    void parseJsonToCondition_givenLocalDateQueryWithDayEqual_shouldGenerateCondition() throws Exception {
+//        // Arrange
+//        String json = """
 //        {
-//          "type": "StringQuery",
-//          "column": "name",
-//          "operator": "invalidOperator",
-//          "value": "test"
+//          "type": "LocalDateQuery",
+//          "column": "created_date",
+//          "operator": "dayEqual",
+//          "value": 1
 //        }
 //        """;
+//        when(queryExecutionService.getReplacementService().processJsonPlaceholders(json)).thenReturn(json);
 //
-//        logger.info("Input with invalid operator: {}", jsonInput);
+//        // Act
+//        Query query = objectMapper.readValue(json, Query.class);
+//        assertEquals("LocalDateQuery", query.getType());
+//        var operator = operatorFactory.resolve("dayEqual", LocalDate.class, BigDecimal.class);
+//        assertNotNull(operator);
+//        Condition condition = queryExecutionService.parseJsonToCondition(json);
 //
-//        assertThrows(Exception.class, () -> {
-//            queryExecutionService.parseJsonToCondition(jsonInput);
-//        }, "Should throw exception for invalid operator");
-//
-//        logger.info("✓ Error handling test passed");
+//        // Assert
+//        assertNotNull(condition);
+//        String sql = condition.toString();
+//        assertTrue(sql.contains("created_date"));
+//        assertTrue(sql.contains("1"));
 //    }
 //
 //    @Test
 //    @Order(5)
-//    @DisplayName("validatePipelineComponents_givenSetup_shouldValidateAllComponents")
-//    void validatePipelineComponents_givenSetup_shouldValidateAllComponents() throws Exception {
-//        logger.info("=== Test: Complete Pipeline Validation ===");
-//
-//        // Validate OperatorScanner
-//        assertTrue(operatorRegistry.getAllOperatorNames().size() > 0,
-//                  "Should have registered operators");
-//        logger.info("✓ OperatorScanner: {} operators registered",
-//                   operatorRegistry.getAllOperatorNames().size());
-//
-//        // Validate OperatorFactory
-//        var equalsOp = operatorFactory.resolve("equals", String.class);
-//        assertNotNull(equalsOp, "Should resolve equals operator");
-//        logger.info("✓ OperatorFactory: Resolved {}", equalsOp.getClass().getSimpleName());
-//
-//        // Validate complete flow
-//        String testJson = """
+//    void parseJsonToCondition_givenNumericQuery_shouldGenerateCondition() throws Exception {
+//        // Arrange
+//        String json = """
 //        {
-//          "type": "StringQuery",
-//          "column": "test",
+//          "type": "NumericQuery",
+//          "column": "salary",
 //          "operator": "equals",
-//          "value": "value"
+//          "value": 50000
 //        }
 //        """;
+//        when(queryExecutionService.getReplacementService().processJsonPlaceholders(json)).thenReturn(json);
 //
-//        Condition condition = queryExecutionService.parseJsonToCondition(testJson);
-//        assertNotNull(condition, "Should generate condition");
-//        logger.info("✓ Complete flow: Generated SQL: {}", condition.toString());
+//        // Act
+//        Query query = objectMapper.readValue(json, Query.class);
+//        assertEquals("NumericQuery", query.getType());
+//        var operator = operatorFactory.resolve("equals", BigDecimal.class);
+//        assertNotNull(operator);
+//        Condition condition = queryExecutionService.parseJsonToCondition(json);
 //
-//        // Validate direct Query processing
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        Query query = mapper.readValue(testJson, Query.class);
-//        assertNotNull(query, "Should create Query object");
-//
-//        DSLContext dsl = DSL.using(SQLDialect.DEFAULT);
-//        Condition directCondition = query.toCondition(dsl, operatorFactory);
-//        assertNotNull(directCondition, "Should generate condition directly");
-//        logger.info("✓ Direct Query processing working");
-//
-//        logger.info("🎉 Complete pipeline validation successful!");
-//    }
-//
-//    @AfterEach
-//    void tearDown() {
-//        logger.info("Test completed");
+//        // Assert
+//        assertNotNull(condition);
+//        String sql = condition.toString();
+//        assertTrue(sql.contains("salary"));
+//        assertTrue(sql.contains("50000"));
 //    }
 //}
