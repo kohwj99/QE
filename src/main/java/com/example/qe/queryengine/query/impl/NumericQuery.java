@@ -8,17 +8,16 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.math.BigDecimal;
 
 @JsonTypeName("NumericQuery")
-public class NumericQuery extends FieldQuery<BigDecimal> {
-
+public class NumericQuery extends FieldQuery {
     @JsonCreator
     public NumericQuery(@JsonProperty("column") String column,
-                       @JsonProperty("operatorName") String operatorName,
-                       @JsonProperty("value") BigDecimal value) {
-        super(column, operatorName, value);
+                        @JsonProperty("operator") String operator,
+                        @JsonProperty("value") BigDecimal value) {
+        super(column, operator, value);
     }
 
     @Override
-    protected Class<BigDecimal> getValueClass() {
+    protected Class<?> getFieldClass() {
         return BigDecimal.class;
     }
 }
