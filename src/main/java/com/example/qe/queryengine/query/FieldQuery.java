@@ -13,6 +13,7 @@ import static org.jooq.impl.DSL.field;
 @Getter
 public abstract class FieldQuery<T> implements Query {
 
+
     // Getters and setters (needed for JSON deserialization)
     protected String column;
     protected String operator;
