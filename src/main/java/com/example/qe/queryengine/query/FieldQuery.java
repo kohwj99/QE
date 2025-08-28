@@ -33,8 +33,6 @@ public abstract class FieldQuery implements Query {
     @Override
     public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
         Field<?> field = field(column, getFieldClass());
-
-        System.out.println(valueType.getClazz());
         Class<?> validValueType = operatorFactory.resolveValueType(operator, getFieldClass());
 
         // Perform type checking to enforce Operator compatibility
