@@ -1,52 +1,31 @@
 package com.example.qe.queryengine.operator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
-
 public class OperatorRegistry {
+    private final Map<String, Set<Class<?>>> operatorToFieldTypes = new HashMap<>();
+    private final Map<String, Set<Class<?>>> operatorToValueTypes = new HashMap<>();
+    private final Map<String, GenericOperator> operatorMap = new HashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(OperatorRegistry.class);
-
-    // Map: operatorName -> (valueType -> operator instance)
-    private final Map<String, Map<Class<?>, GenericOperator<?>>> operators = new HashMap<>();
-
-    public <T> void register(String operatorName, Class<T> valueType, GenericOperator<T> operator) {
-        operators.computeIfAbsent(operatorName, k -> new HashMap<>())
-                .put(valueType, operator);
-        logger.debug("Registered operator '{}' for type '{}' using implementation '{}'",
-                    operatorName, valueType.getSimpleName(), operator.getClass().getSimpleName());
+    public void register(String name, Class<?>[] fieldTypes, Class<?>[] valueTypes, GenericOperator operator) {
+        operatorToFieldTypes.computeIfAbsent(name, k -> new HashSet<>()).addAll(Arrays.asList(fieldTypes));
+        operatorToValueTypes.computeIfAbsent(name, k -> new HashSet<>()).addAll(Arrays.asList(valueTypes));
+        operatorMap.put(name, operator);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> GenericOperator<T> get(String operatorName, Class<T> valueType) {
-        Map<Class<?>, GenericOperator<?>> byType = operators.get(operatorName);
-        if (byType == null) {
-            logger.warn("No operator found for name: '{}'", operatorName);
-            return null;
-        }
-
-        GenericOperator<T> operator = (GenericOperator<T>) byType.get(valueType);
-        if (operator == null) {
-            logger.warn("No operator '{}' found for type: '{}'", operatorName, valueType.getSimpleName());
-        } else {
-            logger.debug("Retrieved operator '{}' for type '{}': {}",
-                        operatorName, valueType.getSimpleName(), operator.getClass().getSimpleName());
-        }
-        return operator;
+    public GenericOperator get(String name, Class<?> fieldType, Class<?> valueType) {
+        Set<Class<?>> fieldTypes = operatorToFieldTypes.get(name);
+        Set<Class<?>> valueTypes = operatorToValueTypes.get(name);
+        if (fieldTypes == null || valueTypes == null) return null;
+        if (!fieldTypes.contains(fieldType) || !valueTypes.contains(valueType)) return null;
+        return operatorMap.get(name);
     }
 
-    public Set<String> getAllOperatorNames() {
-        return operators.keySet();
+    public Set<Class<?>> getSupportedValueTypes(String operatorName) {
+        return operatorToValueTypes.getOrDefault(operatorName, Collections.emptySet());
     }
 
-    public Map<Class<?>, GenericOperator<?>> getOperatorsForName(String operatorName) {
-        return operators.get(operatorName);
-    }
-
-    public int getTotalOperatorCount() {
-        return operators.values().stream()
-                .mapToInt(Map::size)
-                .sum();
+    public Object getOperator(String name) {
+        // Replace 'operatorMap' with your actual map variable name
+        return operatorMap.get(name);
     }
 }

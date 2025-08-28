@@ -10,12 +10,15 @@ import java.time.LocalDate;
 
 @OperatorAnnotation(
         value = "equals",
-        types = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
+        supportedFieldTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
+        supportedValueTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
         description = "Checks if a field equals the given value"
 )
-public class EqualsOperator<T> implements GenericOperator<T> {
+public class EqualsOperator implements GenericOperator {
+
+    @SuppressWarnings("unchecked")
     @Override
-    public Condition apply(Field<T> field, T value) {
-        return field.eq(value);
+    public Condition apply(Field<?> field, Object value) {
+        return ((Field<Object>) field).eq(value);
     }
 }

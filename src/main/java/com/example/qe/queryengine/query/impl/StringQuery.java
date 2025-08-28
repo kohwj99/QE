@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("StringQuery")
-public class StringQuery extends FieldQuery<String> {
+public class StringQuery extends FieldQuery {
 
     @JsonCreator
     public StringQuery(@JsonProperty("column") String column,
@@ -16,7 +16,7 @@ public class StringQuery extends FieldQuery<String> {
     }
 
     @Override
-    protected Class<String> getValueClass() {
+    protected Class<String> getFieldClass() {
         return String.class;
     }
 }

@@ -2,9 +2,9 @@ package com.example.qe.queryengine.operator;
 import org.jooq.Condition;
 import org.jooq.Field;
 
-public interface GenericOperator<T> {
+public interface GenericOperator {
     /**
      * Apply this operator to a DSL field and a value, producing a Condition.
      */
-    Condition apply(Field<T> field, T value);
+    Condition apply(Field<?> field, Object value);
 }

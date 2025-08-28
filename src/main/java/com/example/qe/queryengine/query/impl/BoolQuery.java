@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("BoolQuery")
-public class BoolQuery extends FieldQuery<Boolean> {
+public class BoolQuery extends FieldQuery {
     @JsonCreator
     public BoolQuery(@JsonProperty("column") String column,
                      @JsonProperty("operatorName") String operatorName,
@@ -15,7 +15,7 @@ public class BoolQuery extends FieldQuery<Boolean> {
     }
 
     @Override
-    protected Class<Boolean> getValueClass() {
+    protected Class<Boolean> getFieldClass() {
         return Boolean.class;
     }
 }
