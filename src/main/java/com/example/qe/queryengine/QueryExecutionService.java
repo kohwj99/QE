@@ -36,7 +36,7 @@ public class QueryExecutionService {
         if (json == null || json.trim().isEmpty()) {
             throw new IllegalArgumentException("JSON cannot be null or empty");
         }
-
+        System.out.println("1 ==============================================");
         String processedJson = json;
         // STEP 1: Replace placeholders in JSON before deserialization
 //        String processedJson = replacementService.processJsonPlaceholders(json);
@@ -44,9 +44,14 @@ public class QueryExecutionService {
 
         // STEP 2: Deserialize the processed JSON to Query object
         Query query = objectMapper.readValue(processedJson, Query.class);
+        System.out.println(query.toString());
+        System.out.println("2 ==============================================");
 
         // STEP 3: Generate condition and SQL for debugging using OperatorFactory directly
         Condition condition = query.toCondition(dsl, operatorFactory);
+
+        System.out.println("3 ==============================================");
+
         String sql = dsl.renderInlined(dsl.select().from("your_table").where(condition));
         System.out.println("Generated SQL: " + sql);
 

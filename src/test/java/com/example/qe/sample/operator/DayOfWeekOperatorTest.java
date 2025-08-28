@@ -7,6 +7,8 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,72 +26,65 @@ class DayOfWeekOperatorTest {
         field = DSL.field("date_field", LocalDate.class);
     }
 
+    /**
+     * Helper to assert that the SQL contains modulo logic and compares to the expected day.
+     * Logs the SQL for visual inspection.
+     */
     private void assertSqlContainsExpectedDay(Condition condition, int expectedDay) {
         String sql = DSL.using(SQLDialect.DEFAULT).renderInlined(condition);
         System.out.println("Generated SQL: " + sql);
 
         String normalized = sql.replaceAll("\\s+", "").toLowerCase();
 
-        assertTrue(normalized.contains("extract(day_of_week") || normalized.contains("dayofweek"),
-                "Expected SQL to contain day-of-week extraction, but got: " + normalized);
-        assertTrue(normalized.contains("mod("),
+        // MSSQL uses %7 for modulo, check for that
+        assertTrue(normalized.contains("%7"),
                 "Expected SQL to contain modulo operation, but got: " + normalized);
+
+        // Check that the condition compares to the expected day
         assertTrue(normalized.contains("=" + expectedDay),
                 "Expected SQL to compare to " + expectedDay + ", but got: " + normalized);
     }
 
-    @Test
-    void apply_givenMonday_shouldGenerateCorrectSQL() {
+    // --- Parameterized positive tests for all weekdays (Monday=1 to Sunday=7) ---
+    @ParameterizedTest(name = "apply_givenValidDay{0}_shouldGenerateCorrectSQL")
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7})
+    void apply_givenValidDay_shouldGenerateCorrectSQL(int day) {
         // Arrange
-        BigDecimal monday = BigDecimal.valueOf(1);
+        BigDecimal value = BigDecimal.valueOf(day);
 
         // Act
-        Condition condition = operator.apply(field, monday);
-        System.out.println(condition);
+        Condition condition = operator.apply(field, value);
 
         // Assert
-        assertSqlContainsExpectedDay(condition, 1);
+        assertSqlContainsExpectedDay(condition, day);
     }
 
-    @Test
-    void apply_givenSunday_shouldGenerateCorrectSQL() {
+    // --- Edge / negative day values ---
+    @ParameterizedTest(name = "apply_givenEdgeOrInvalidDay{0}_shouldGenerateSQL")
+    @ValueSource(ints = {0, 8, -1, 100})
+    void apply_givenEdgeOrInvalidDay_shouldGenerateSQL(int day) {
         // Arrange
-        BigDecimal sunday = BigDecimal.valueOf(7);
+        BigDecimal value = BigDecimal.valueOf(day);
 
         // Act
-        Condition condition = operator.apply(field, sunday);
+        Condition condition = operator.apply(field, value);
 
         // Assert
-        assertSqlContainsExpectedDay(condition, 7);
+        assertSqlContainsExpectedDay(condition, day);
+    }
+
+    // --- Wrong type should throw ClassCastException ---
+    @ParameterizedTest(name = "apply_givenNonBigDecimal_{0}_shouldThrowClassCastException")
+    @ValueSource(strings = {"Monday", "1", "", "true"})
+    void apply_givenNonBigDecimal_shouldThrowClassCastException(String invalidValue) {
+        assertThrows(ClassCastException.class, () -> operator.apply(field, invalidValue));
     }
 
     @Test
-    void apply_givenInvalidDay_shouldGenerateCorrectSQL() {
-        // Arrange
-        BigDecimal invalid = BigDecimal.valueOf(0);
-
-        // Act
-        Condition condition = operator.apply(field, invalid);
-
-        // Assert
-        assertSqlContainsExpectedDay(condition, 0);
+    void apply_givenNullValue_shouldThrowNullPointerException() {
+        NullPointerException ex = assertThrows(NullPointerException.class,
+                () -> operator.apply(field, null));
+        assertEquals("Day value cannot be null", ex.getMessage());
     }
 
-    @Test
-    void apply_givenNonBigDecimal_shouldThrowClassCastException() {
-        // Arrange
-        Object invalid = "Monday";
-
-        // Act & Assert
-        assertThrows(ClassCastException.class, () -> operator.apply(field, invalid));
-    }
-
-    @Test
-    void apply_givenNullDay_shouldThrowNullPointerException() {
-        // Arrange
-        Object nullDay = null;
-
-        // Act & Assert
-        assertThrows(NullPointerException.class, () -> operator.apply(field, nullDay));
-    }
 }

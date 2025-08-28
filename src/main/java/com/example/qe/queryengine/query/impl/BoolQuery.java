@@ -1,6 +1,7 @@
 package com.example.qe.queryengine.query.impl;
 
 import com.example.qe.queryengine.query.FieldQuery;
+import com.example.qe.queryengine.query.ValueType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -10,8 +11,9 @@ public class BoolQuery extends FieldQuery {
     @JsonCreator
     public BoolQuery(@JsonProperty("column") String column,
                      @JsonProperty("operatorName") String operatorName,
-                     @JsonProperty("value") Boolean value) {
-        super(column, operatorName, value);
+                     @JsonProperty("value") Boolean value,
+                         @JsonProperty("valueType") ValueType valueType){
+        super(column, operatorName, value, valueType);
     }
 
     @Override
