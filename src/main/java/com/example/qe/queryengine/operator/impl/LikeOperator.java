@@ -17,6 +17,6 @@ public class LikeOperator implements GenericOperator {
         if (!(value instanceof String)) {
             throw new IllegalArgumentException("LikeOperator expects a String value");
         }
-        return field.like("%" + (String) value + "%");
+        return field.like("%" + value + "%");
     }
 }

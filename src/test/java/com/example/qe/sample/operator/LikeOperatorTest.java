@@ -31,7 +31,7 @@ class LikeOperatorTest {
     @Test
     void apply_givenValidStringValue_shouldReturnLikeCondition() {
         // Arrange
-        String value = "%Alice%";
+        String value = "Alice";
 
         // Act
         Condition condition = operator.apply(field, value);
@@ -51,7 +51,7 @@ class LikeOperatorTest {
         String sql = renderSql(condition);
 
         // Assert
-        assertTrue(sql.contains("namelike''"), "SQL should handle empty string");
+        assertTrue(sql.contains("namelike'%%'"), "SQL should handle empty string");
     }
 
     @Test

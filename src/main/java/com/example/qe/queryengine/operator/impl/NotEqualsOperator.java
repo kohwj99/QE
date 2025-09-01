@@ -1,21 +1,28 @@
-//package com.example.qe.queryengine.operator.impl;
-//
-//import com.example.qe.queryengine.operator.OperatorAnnotation;
-//import com.example.qe.queryengine.operator.GenericOperator;
-//import org.jooq.Condition;
-//import org.jooq.Field;
-//
-//import java.math.BigDecimal;
-//import java.time.LocalDate;
-//
-//@OperatorAnnotation(
-//        value = "notEquals",
-//        types = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
-//        description = "Checks if a field does not equal the given value"
-//)
-//public class NotEqualsOperator<T> implements GenericOperator<T> {
-//    @Override
-//    public Condition apply(Field<T> field, T value) {
-//        return field.ne(value);
-//    }
-//}
+package com.example.qe.queryengine.operator.impl;
+
+import com.example.qe.queryengine.operator.OperatorAnnotation;
+import com.example.qe.queryengine.operator.GenericOperator;
+import org.jooq.Condition;
+import org.jooq.Field;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+
+@OperatorAnnotation(
+        value = "notEquals",
+        supportedFieldTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
+        supportedValueTypes = {String.class, BigDecimal.class, Boolean.class, LocalDate.class},
+        description = "Checks if a field is NOT equals the given value"
+)
+public class NotEqualsOperator implements GenericOperator {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Condition apply(Field<?> field, Object value) {
+
+        if (value == null) {
+            return field.isNull();
+        }
+        return ((Field<Object>) field).ne(value);
+    }
+}
