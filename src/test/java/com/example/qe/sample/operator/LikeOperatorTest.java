@@ -57,7 +57,7 @@ class LikeOperatorTest {
     @Test
     void apply_givenNonStringValue_shouldThrowIllegalArgumentException() {
         // Arrange
-        Object value = 123;
+        Integer value = 123;
 
         // Act & Assert
         Exception ex = assertThrows(IllegalArgumentException.class, () -> operator.apply(field, value));

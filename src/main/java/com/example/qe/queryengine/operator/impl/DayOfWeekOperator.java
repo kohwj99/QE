@@ -21,6 +21,13 @@ public class DayOfWeekOperator implements GenericOperator {
         if (day == null) {
             throw new NullPointerException("Day value cannot be null");
         }
+
+        if (!LocalDate.class.isAssignableFrom(field.getType())) {
+            throw new IllegalArgumentException(
+                    "DayOfWeekOperator only supports LocalDate fields, but got: " + field.getType()
+            );
+        }
+
         int expectedDay = ((BigDecimal) day).intValue();
 
         // SQL Server: DATEPART(WEEKDAY, field) returns Sunday=1 .. Saturday=7

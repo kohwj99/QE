@@ -21,7 +21,7 @@ public class NotEqualsOperator implements GenericOperator {
     public Condition apply(Field<?> field, Object value) {
 
         if (value == null) {
-            return field.isNull();
+            return field.isNotNull();
         }
         return ((Field<Object>) field).ne(value);
     }

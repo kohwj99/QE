@@ -30,15 +30,12 @@ public class DateQueryDeserializer extends JsonDeserializer<Object> {
         String text = p.getText();
         // Check for date format: length and dashes at correct positions
         if (text != null && text.length() == 10 && text.charAt(4) == '-' && text.charAt(7) == '-') {
-            try {
-                return LocalDate.parse(text, DATE_FORMATTER);
-            } catch (Exception ignored) {}
+            return LocalDate.parse(text, DATE_FORMATTER);
         }
-
-        if (isNumber(text)) {
+        else if (isNumber(text)) {
             return new BigDecimal(text);
+        } else {
+            throw new IOException("Date Query can only take in valid LocalDate string or Number in some cases");
         }
-
-        return text;
     }
 }

@@ -1,6 +1,6 @@
 package com.example.qe.sample.operator;
 
-import com.example.qe.queryengine.operator.impl.DayOfWeekOperator;
+import com.example.qe.queryengine.operator.impl.DayOfMonthOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.SQLDialect;
@@ -15,14 +15,14 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DayOfWeekOperatorTest {
+class DayOfMonthOperatorTest {
 
-    private DayOfWeekOperator operator;
+    private DayOfMonthOperator operator;
     private Field<LocalDate> validField;
 
     @BeforeEach
     void setup() {
-        operator = new DayOfWeekOperator();
+        operator = new DayOfMonthOperator();
         validField = DSL.field("date_field", LocalDate.class);
     }
 
@@ -32,26 +32,28 @@ class DayOfWeekOperatorTest {
 
         String normalized = sql.replaceAll("\\s+", "").toLowerCase();
 
-        assertTrue(normalized.contains("%7"),
-                "Expected SQL to contain modulo, but got: " + normalized);
+        // Accept ANSI SQL extraction syntax
+        assertTrue(normalized.contains("extract(dayfrom"),
+                "Expected SQL to contain day extraction, but got: " + normalized);
 
         assertTrue(normalized.contains("=" + expectedDay),
                 "Expected SQL to compare to " + expectedDay + ", but got: " + normalized);
     }
 
-    // ✅ Positive: all weekdays (Monday=1 to Sunday=7)
+
+    // ✅ Positive: valid days 1 to 31
     @ParameterizedTest
-    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7})
+    @ValueSource(ints = {1, 15, 31})
     void apply_givenValidDay_shouldGenerateCorrectSQL(int day) {
         BigDecimal value = BigDecimal.valueOf(day);
         Condition condition = operator.apply(validField, value);
         assertSqlContainsExpectedDay(condition, day);
     }
 
-    // ✅ Edge values still generate SQL
+    // ✅ Edge cases: days outside 1–31 (still generates SQL, validation is left to DB)
     @ParameterizedTest
-    @ValueSource(ints = {0, 8, -1, 100})
-    void apply_givenEdgeOrInvalidDay_shouldStillGenerateSQL(int day) {
+    @ValueSource(ints = {0, 32, -1, 100})
+    void apply_givenEdgeDay_shouldStillGenerateSQL(int day) {
         BigDecimal value = BigDecimal.valueOf(day);
         Condition condition = operator.apply(validField, value);
         assertSqlContainsExpectedDay(condition, day);
@@ -91,7 +93,7 @@ class DayOfWeekOperatorTest {
     @Test
     void apply_givenStringValue_shouldThrowClassCastException() {
         assertThrows(ClassCastException.class,
-                () -> operator.apply(validField, "Monday"));
+                () -> operator.apply(validField, "15"));
     }
 
     @Test

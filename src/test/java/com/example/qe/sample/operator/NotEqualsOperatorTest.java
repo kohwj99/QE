@@ -83,7 +83,7 @@ class NotEqualsOperatorTest {
         Condition condition = operator.apply(field, null);
         String sql = renderSql(condition);
 
-        assertTrue(sql.contains("nameisnull"));
+        assertTrue(sql.contains("nameisnotnull"));
     }
 
     @Test

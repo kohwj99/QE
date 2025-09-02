@@ -1,23 +1,48 @@
-//package com.example.qe.queryengine.operator.impl;
-//
-//import com.example.qe.queryengine.operator.OperatorAnnotation;
-//import com.example.qe.queryengine.operator.CustomOperator;
-//import org.jooq.Condition;
-//import org.jooq.Field;
-//import org.jooq.impl.DSL;
-//
-//import java.math.BigDecimal;
-//import java.time.LocalDate;
-//
-//@OperatorAnnotation(
-//        value = "daysBefore",
-//        types = {BigDecimal.class},
-//        description = "Checks if a date field is a specified number of days before today"
-//)
-//public class DaysBeforeOperator implements CustomOperator<BigDecimal> {
-//    @Override
-//    public Condition applyToField(Field<?> field, BigDecimal days) {
-//        LocalDate targetDate = LocalDate.now().minusDays(days.longValue());
-//        return DSL.condition("{0} = {1}", field, targetDate);
-//    }
-//}
+package com.example.qe.queryengine.operator.impl;
+
+import com.example.qe.queryengine.operator.GenericOperator;
+import com.example.qe.queryengine.operator.OperatorAnnotation;
+import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@OperatorAnnotation(
+        value = "daysBefore",
+        supportedFieldTypes = {LocalDate.class},
+        supportedValueTypes = {BigDecimal.class},
+        description = "Checks if today is a given number of days before a date field"
+)
+public class DaysBeforeOperator implements GenericOperator {
+
+    @Override
+    public Condition apply(Field<?> field, Object value) {
+        if (value == null) {
+            throw new NullPointerException("Day value cannot be null");
+        }
+
+
+        if (!(BigDecimal.class.isAssignableFrom(value.getClass()))) {
+            throw new IllegalArgumentException(
+                    "DaysBeforeOperator requires a numeric value (BigDecimal), but got: " + value.getClass()
+            );
+        }
+
+        // Ensure only LocalDate or LocalDateTime fields are supported
+        if (!(LocalDate.class.isAssignableFrom(field.getType()) ||
+                LocalDateTime.class.isAssignableFrom(field.getType()))) {
+            throw new IllegalArgumentException(
+                    "DaysBeforeOperator only supports LocalDate or LocalDateTime fields, but got: " + field.getType()
+            );
+        }
+
+        long days = ((BigDecimal) value).longValue();
+        LocalDate targetDate = LocalDate.now().plusDays(days);
+
+        // ✅ Date-only comparison (ignore time part if DATETIME)
+        return DSL.condition("CAST({0} AS DATE) = {1}", field, targetDate);
+    }
+}

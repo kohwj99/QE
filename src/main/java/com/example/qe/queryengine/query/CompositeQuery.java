@@ -28,4 +28,13 @@ public abstract class CompositeQuery implements Query {
     }
 
     protected abstract Condition combineConditions(List<Condition> conditions);
+
+    public void validate() {
+        for (Query child : children) {
+            if (child == null) {
+                throw new IllegalArgumentException("Child query cannot be null");
+            }
+            child.validate();
+        }
+    }
 }

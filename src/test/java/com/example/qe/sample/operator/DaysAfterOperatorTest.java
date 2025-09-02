@@ -1,6 +1,6 @@
 package com.example.qe.sample.operator;
 
-import com.example.qe.queryengine.operator.impl.DayOfWeekOperator;
+import com.example.qe.queryengine.operator.impl.DaysAfterOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.SQLDialect;
@@ -15,49 +15,40 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DayOfWeekOperatorTest {
+class DaysAfterOperatorTest {
 
-    private DayOfWeekOperator operator;
+    private DaysAfterOperator operator;
     private Field<LocalDate> validField;
 
     @BeforeEach
     void setup() {
-        operator = new DayOfWeekOperator();
+        operator = new DaysAfterOperator();
         validField = DSL.field("date_field", LocalDate.class);
     }
 
-    private void assertSqlContainsExpectedDay(Condition condition, int expectedDay) {
+    private String renderSql(Condition condition) {
         String sql = DSL.using(SQLDialect.DEFAULT).renderInlined(condition);
         System.out.println("Generated SQL: " + sql);
-
-        String normalized = sql.replaceAll("\\s+", "").toLowerCase();
-
-        assertTrue(normalized.contains("%7"),
-                "Expected SQL to contain modulo, but got: " + normalized);
-
-        assertTrue(normalized.contains("=" + expectedDay),
-                "Expected SQL to compare to " + expectedDay + ", but got: " + normalized);
+        return sql.replaceAll("\\s+", "").toLowerCase();
     }
 
-    // ✅ Positive: all weekdays (Monday=1 to Sunday=7)
+    // --- Positive cases: valid number of days ---
     @ParameterizedTest
-    @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7})
-    void apply_givenValidDay_shouldGenerateCorrectSQL(int day) {
-        BigDecimal value = BigDecimal.valueOf(day);
+    @ValueSource(ints = {0, 1, 5, 30})
+    void apply_givenValidDays_shouldGenerateExpectedSQL(int days) {
+        BigDecimal value = BigDecimal.valueOf(days);
+
         Condition condition = operator.apply(validField, value);
-        assertSqlContainsExpectedDay(condition, day);
+        String sql = renderSql(condition);
+
+        LocalDate expectedDate = LocalDate.now().minusDays(days);
+        assertTrue(sql.contains(expectedDate.toString()),
+                "Expected SQL to contain " + expectedDate + ", but got: " + sql);
+        assertTrue(sql.contains("date_field="),
+                "Expected SQL to compare to field, but got: " + sql);
     }
 
-    // ✅ Edge values still generate SQL
-    @ParameterizedTest
-    @ValueSource(ints = {0, 8, -1, 100})
-    void apply_givenEdgeOrInvalidDay_shouldStillGenerateSQL(int day) {
-        BigDecimal value = BigDecimal.valueOf(day);
-        Condition condition = operator.apply(validField, value);
-        assertSqlContainsExpectedDay(condition, day);
-    }
-
-    // ❌ Null value
+    // --- Null value ---
     @Test
     void apply_givenNullValue_shouldThrowNullPointerException() {
         NullPointerException ex = assertThrows(NullPointerException.class,
@@ -65,7 +56,7 @@ class DayOfWeekOperatorTest {
         assertEquals("Day value cannot be null", ex.getMessage());
     }
 
-    // ❌ Invalid field types
+    // --- Invalid field types ---
     @Test
     void apply_givenStringField_shouldThrowIllegalArgumentException() {
         Field<String> stringField = DSL.field("string_field", String.class);
@@ -87,11 +78,11 @@ class DayOfWeekOperatorTest {
                 () -> operator.apply(booleanField, BigDecimal.ONE));
     }
 
-    // ❌ Invalid value types
+    // --- Invalid value types ---
     @Test
     void apply_givenStringValue_shouldThrowClassCastException() {
         assertThrows(ClassCastException.class,
-                () -> operator.apply(validField, "Monday"));
+                () -> operator.apply(validField, "5"));
     }
 
     @Test

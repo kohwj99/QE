@@ -28,4 +28,5 @@ public interface Query {
 
     Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory);
 
+    public void validate();
 }

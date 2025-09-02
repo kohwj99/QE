@@ -11,7 +11,9 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class QueryExecutionService {
@@ -36,22 +38,34 @@ public class QueryExecutionService {
         if (json == null || json.trim().isEmpty()) {
             throw new IllegalArgumentException("JSON cannot be null or empty");
         }
+        System.out.println("Replacement Service: " + "Not used currently");
         System.out.println("1 ==============================================");
         String processedJson = json;
         // STEP 1: Replace placeholders in JSON before deserialization
 //        String processedJson = replacementService.processJsonPlaceholders(json);
 //        System.out.println("Processed JSON: " + processedJson);
 
+        System.out.println("Parse Query");
+        System.out.println("2 ==============================================");
         // STEP 2: Deserialize the processed JSON to Query object
         Query query = objectMapper.readValue(processedJson, Query.class);
         System.out.println(query.toString());
-        System.out.println("2 ==============================================");
 
-        // STEP 3: Generate condition and SQL for debugging using OperatorFactory directly
-        Condition condition = query.toCondition(dsl, operatorFactory);
-
+        System.out.println("Validate Query to ensure all required details are present");
         System.out.println("3 ==============================================");
+        try {
+            query.validate();
+            // Proceed with processing
+        } catch (IllegalArgumentException ex) {
+            // Handle validation error
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
 
+        System.out.println("Generate Condition and SQL");
+        System.out.println("4 ==============================================");
+
+        // STEP 4: Generate condition and SQL for debugging using OperatorFactory directly
+        Condition condition = query.toCondition(dsl, operatorFactory);
         String sql = dsl.renderInlined(dsl.select().from("your_table").where(condition));
         System.out.println("Generated SQL: " + sql);
 

@@ -44,9 +44,25 @@ public abstract class FieldQuery implements Query {
             throw new IllegalArgumentException("Unknown operator: " + operator);
         }
 
+        // Perform type checking to ensure value is of the correct type
+        if (value != null && !valueType.getClazz().isInstance(value)) {
+            throw new IllegalArgumentException("Value is not of the expected type: " + valueType.getClazz().getName());
+        }
+
         return op.apply(field, valueType.getClazz().cast(value));
     }
 
     protected abstract Class<?> getFieldClass();
 
+    public void validate() {
+        if (column == null || column.trim().isEmpty()) {
+            throw new IllegalArgumentException("Column cannot be null or empty");
+        }
+        if (operator == null || operator.trim().isEmpty()) {
+            throw new IllegalArgumentException("Operator cannot be null or empty");
+        }
+        if (valueType == null || valueType.getClazz().getSimpleName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Value type cannot be null or empty");
+        }
+    }
 }
