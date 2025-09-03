@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DaysBeforeOperatorIntegrationTest {
+class DaysAfterOperatorIntegrationTest {
 
     private static QueryExecutionService queryExecutionService;
 
@@ -41,16 +41,16 @@ class DaysBeforeOperatorIntegrationTest {
        ============================ */
     static Stream<QueryTestCase> positiveTestCases() {
         return Stream.of(
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "0", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "1", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "30", "NUMERIC")
+                new QueryTestCase("daysAfter", "DateQuery", "createdDate", "0", "NUMERIC"),
+                new QueryTestCase("daysAfter", "DateQuery", "createdDate", "1", "NUMERIC"),
+                new QueryTestCase("daysAfter", "DateQuery", "createdDate", "30", "NUMERIC")
         );
     }
 
     @ParameterizedTest
     @MethodSource("positiveTestCases")
-    @DisplayName("DaysBeforeOperator Positive Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
+    @DisplayName("DaysAfterOperator Positive Test Cases")
+    void parseJsonToCondition_givenDaysAfterOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -70,7 +70,7 @@ class DaysBeforeOperatorIntegrationTest {
 
         assertTrue(sql.contains(testCase.column()), "SQL should contain column name");
 
-        LocalDate expectedDate = LocalDate.now().plusDays(Long.parseLong(testCase.value()));
+        LocalDate expectedDate = LocalDate.now().minusDays(Long.parseLong(testCase.value()));
         assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the computed target date");
     }
 
@@ -80,20 +80,20 @@ class DaysBeforeOperatorIntegrationTest {
     static Stream<QueryTestCase> negativeTestCases() {
         return Stream.of(
                 // Null value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", null, "NUMERIC"),
+                new QueryTestCase("daysAfter", "DateQuery", "createdDate", null, "NUMERIC"),
                 // Non-numeric value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "abc", "STRING"),
+                new QueryTestCase("daysAfter", "DateQuery", "createdDate", "abc", "STRING"),
                 // Invalid operator
                 new QueryTestCase("invalid", "DateQuery", "createdDate", "1", "NUMERIC"),
                 // Missing column
-                new QueryTestCase("daysBefore", "DateQuery", "", "1", "NUMERIC")
+                new QueryTestCase("daysAfter", "DateQuery", "", "1", "NUMERIC")
         );
     }
 
     @ParameterizedTest
     @MethodSource("negativeTestCases")
-    @DisplayName("DaysBeforeOperator Negative Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
+    @DisplayName("DaysAfterOperator Negative Test Cases")
+    void parseJsonToCondition_givenDaysAfterOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -117,13 +117,13 @@ class DaysBeforeOperatorIntegrationTest {
        Null Value Test
        ============================ */
     @Test
-    @DisplayName("DaysBeforeOperator should throw InvalidQueryException when value is null")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNullValue_shouldThrowInvalidQueryException() {
+    @DisplayName("DaysAfterOperator should throw InvalidQueryException when value is null")
+    void parseJsonToCondition_givenDaysAfterOperatorWithNullValue_shouldThrowInvalidQueryException() {
         String jsonInput = """
             {
               "type": "DateQuery",
               "column": "createdDate",
-              "operator": "daysBefore",
+              "operator": "daysAfter",
               "value": null,
               "valueType": "NUMERIC"
             }

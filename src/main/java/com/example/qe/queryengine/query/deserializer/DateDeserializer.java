@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 
-public class DateQueryDeserializer extends JsonDeserializer<Object> {
+public class DateDeserializer extends JsonDeserializer<Object> {
 
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
@@ -32,8 +32,7 @@ public class DateQueryDeserializer extends JsonDeserializer<Object> {
         // Check for date format: length and dashes at correct positions
         if (text != null && text.length() == 10 && text.charAt(4) == '-' && text.charAt(7) == '-') {
             return LocalDate.parse(text, DATE_FORMATTER);
-        }
-        else if (isNumber(text)) {
+        } else if (isNumber(text)) {
             return new BigDecimal(text);
         } else {
             throw new QueryDeserializationException("Date Query can only take in valid LocalDate string or Number in some cases");

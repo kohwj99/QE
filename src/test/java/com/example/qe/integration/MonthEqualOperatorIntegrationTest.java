@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DaysBeforeOperatorIntegrationTest {
+class MonthEqualOperatorIntegrationTest {
 
     private static QueryExecutionService queryExecutionService;
 
@@ -41,16 +41,16 @@ class DaysBeforeOperatorIntegrationTest {
        ============================ */
     static Stream<QueryTestCase> positiveTestCases() {
         return Stream.of(
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "0", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "1", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "30", "NUMERIC")
+                new QueryTestCase("monthEqual", "DateQuery", "createdDate", "1", "NUMERIC"),
+                new QueryTestCase("monthEqual", "DateQuery", "createdDate", "6", "NUMERIC"),
+                new QueryTestCase("monthEqual", "DateQuery", "createdDate", "12", "NUMERIC")
         );
     }
 
     @ParameterizedTest
     @MethodSource("positiveTestCases")
-    @DisplayName("DaysBeforeOperator Positive Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
+    @DisplayName("MonthEqualOperator Positive Test Cases")
+    void parseJsonToCondition_givenMonthEqualOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -69,9 +69,8 @@ class DaysBeforeOperatorIntegrationTest {
         System.out.println("Generated SQL: " + sql);
 
         assertTrue(sql.contains(testCase.column()), "SQL should contain column name");
-
-        LocalDate expectedDate = LocalDate.now().plusDays(Long.parseLong(testCase.value()));
-        assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the computed target date");
+        assertTrue(sql.contains("MONTH"), "SQL should use MONTH function");
+        assertTrue(sql.contains(testCase.value()), "SQL should contain the expected month value");
     }
 
     /* ============================
@@ -80,20 +79,20 @@ class DaysBeforeOperatorIntegrationTest {
     static Stream<QueryTestCase> negativeTestCases() {
         return Stream.of(
                 // Null value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", null, "NUMERIC"),
+                new QueryTestCase("monthEqual", "DateQuery", "createdDate", null, "NUMERIC"),
                 // Non-numeric value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "abc", "STRING"),
+                new QueryTestCase("monthEqual", "DateQuery", "createdDate", "abc", "STRING"),
                 // Invalid operator
                 new QueryTestCase("invalid", "DateQuery", "createdDate", "1", "NUMERIC"),
                 // Missing column
-                new QueryTestCase("daysBefore", "DateQuery", "", "1", "NUMERIC")
+                new QueryTestCase("monthEqual", "DateQuery", "", "1", "NUMERIC")
         );
     }
 
     @ParameterizedTest
     @MethodSource("negativeTestCases")
-    @DisplayName("DaysBeforeOperator Negative Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
+    @DisplayName("MonthEqualOperator Negative Test Cases")
+    void parseJsonToCondition_givenMonthEqualOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -117,13 +116,13 @@ class DaysBeforeOperatorIntegrationTest {
        Null Value Test
        ============================ */
     @Test
-    @DisplayName("DaysBeforeOperator should throw InvalidQueryException when value is null")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNullValue_shouldThrowInvalidQueryException() {
+    @DisplayName("MonthEqualOperator should throw InvalidQueryException when value is null")
+    void parseJsonToCondition_givenMonthEqualOperatorWithNullValue_shouldThrowInvalidQueryException() {
         String jsonInput = """
             {
               "type": "DateQuery",
               "column": "createdDate",
-              "operator": "daysBefore",
+              "operator": "monthEqual",
               "value": null,
               "valueType": "NUMERIC"
             }
@@ -133,6 +132,6 @@ class DaysBeforeOperatorIntegrationTest {
             queryExecutionService.parseJsonToCondition(jsonInput);
         });
 
-        assertTrue(ex.getMessage().contains("Day value cannot be null"));
+        assertTrue(ex.getMessage().contains("Month value cannot be null"));
     }
 }

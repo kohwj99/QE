@@ -1,14 +1,13 @@
 package com.example.qe.queryengine.query.deserializer;
 
 import com.example.qe.queryengine.exception.QueryDeserializationException;
-import com.example.qe.queryengine.exception.QueryEngineException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 
-public class BooleanQueryDeserializer extends JsonDeserializer<Boolean> {
+public class BooleanDeserializer extends JsonDeserializer<Boolean> {
 
     @Override
     public Boolean deserialize (JsonParser p, DeserializationContext ctxt) throws IOException {

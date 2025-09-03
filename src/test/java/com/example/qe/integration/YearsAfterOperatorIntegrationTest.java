@@ -16,12 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDate;
 import java.util.stream.Stream;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DaysBeforeOperatorIntegrationTest {
+class YearsAfterOperatorIntegrationTest {
 
     private static QueryExecutionService queryExecutionService;
 
@@ -41,16 +41,16 @@ class DaysBeforeOperatorIntegrationTest {
        ============================ */
     static Stream<QueryTestCase> positiveTestCases() {
         return Stream.of(
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "0", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "1", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "30", "NUMERIC")
+                new QueryTestCase("yearsAfter", "DateQuery", "createdDate", "0", "NUMERIC"),
+                new QueryTestCase("yearsAfter", "DateQuery", "createdDate", "1", "NUMERIC"),
+                new QueryTestCase("yearsAfter", "DateQuery", "createdDate", "5", "NUMERIC")
         );
     }
 
     @ParameterizedTest
     @MethodSource("positiveTestCases")
-    @DisplayName("DaysBeforeOperator Positive Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
+    @DisplayName("YearsAfterOperator Positive Test Cases")
+    void parseJsonToCondition_givenYearsAfterOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -69,9 +69,9 @@ class DaysBeforeOperatorIntegrationTest {
         System.out.println("Generated SQL: " + sql);
 
         assertTrue(sql.contains(testCase.column()), "SQL should contain column name");
-
-        LocalDate expectedDate = LocalDate.now().plusDays(Long.parseLong(testCase.value()));
-        assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the computed target date");
+        assertTrue(sql.contains("CAST"), "SQL should cast field to DATE");
+        assertTrue(sql.contains(LocalDate.now().minusYears(Long.parseLong(testCase.value())).toString()),
+                "SQL should contain correct target date");
     }
 
     /* ============================
@@ -79,21 +79,17 @@ class DaysBeforeOperatorIntegrationTest {
        ============================ */
     static Stream<QueryTestCase> negativeTestCases() {
         return Stream.of(
-                // Null value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", null, "NUMERIC"),
-                // Non-numeric value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "abc", "STRING"),
-                // Invalid operator
-                new QueryTestCase("invalid", "DateQuery", "createdDate", "1", "NUMERIC"),
-                // Missing column
-                new QueryTestCase("daysBefore", "DateQuery", "", "1", "NUMERIC")
+                new QueryTestCase("yearsAfter", "DateQuery", "createdDate", null, "NUMERIC"),
+                new QueryTestCase("yearsAfter", "DateQuery", "createdDate", "abc", "STRING"),
+                new QueryTestCase("invalid", "DateQuery", "createdDate", "2023", "NUMERIC"),
+                new QueryTestCase("yearsAfter", "DateQuery", "", "2023", "NUMERIC")
         );
     }
 
     @ParameterizedTest
     @MethodSource("negativeTestCases")
-    @DisplayName("DaysBeforeOperator Negative Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
+    @DisplayName("YearsAfterOperator Negative Test Cases")
+    void parseJsonToCondition_givenYearsAfterOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -117,13 +113,13 @@ class DaysBeforeOperatorIntegrationTest {
        Null Value Test
        ============================ */
     @Test
-    @DisplayName("DaysBeforeOperator should throw InvalidQueryException when value is null")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNullValue_shouldThrowInvalidQueryException() {
+    @DisplayName("YearsAfterOperator should throw InvalidQueryException when value is null")
+    void parseJsonToCondition_givenYearsAfterOperatorWithNullValue_shouldThrowInvalidQueryException() {
         String jsonInput = """
             {
               "type": "DateQuery",
               "column": "createdDate",
-              "operator": "daysBefore",
+              "operator": "yearsAfter",
               "value": null,
               "valueType": "NUMERIC"
             }
@@ -133,6 +129,6 @@ class DaysBeforeOperatorIntegrationTest {
             queryExecutionService.parseJsonToCondition(jsonInput);
         });
 
-        assertTrue(ex.getMessage().contains("Day value cannot be null"));
+        assertTrue(ex.getMessage().contains("Year value cannot be null"));
     }
 }

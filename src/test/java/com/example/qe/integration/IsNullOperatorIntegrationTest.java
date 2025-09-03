@@ -1,7 +1,6 @@
 package com.example.qe.integration;
 
 import com.example.qe.queryengine.QueryExecutionService;
-import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.OperatorFactory;
 import com.example.qe.queryengine.operator.OperatorRegistry;
 import com.example.qe.queryengine.operator.OperatorScanner;
@@ -16,12 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DaysBeforeOperatorIntegrationTest {
+class IsNullOperatorIntegrationTest {
 
     private static QueryExecutionService queryExecutionService;
 
@@ -41,26 +39,28 @@ class DaysBeforeOperatorIntegrationTest {
        ============================ */
     static Stream<QueryTestCase> positiveTestCases() {
         return Stream.of(
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "0", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "1", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "30", "NUMERIC")
+                new QueryTestCase("isNull", "StringQuery", "name", null, "STRING"),
+                new QueryTestCase("isNull", "NumericQuery", "amount", null, "NUMERIC"),
+                new QueryTestCase("isNull", "BoolQuery", "active", null, "BOOLEAN"),
+                new QueryTestCase("isNull", "DateQuery", "createdDate", null, "DATE")
         );
     }
 
     @ParameterizedTest
     @MethodSource("positiveTestCases")
-    @DisplayName("DaysBeforeOperator Positive Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
+    @DisplayName("IsNullOperator Positive Test Cases")
+    void parseJsonToCondition_givenIsNullOperator_shouldReturnIsNullCondition(QueryTestCase testCase) throws Exception {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
                   "column": "%s",
                   "operator": "%s",
-                  "value": "%s",
+                  "value": %s,
                   "valueType": "%s"
                 }
                 """, testCase.queryType(), testCase.column(), testCase.operator(),
-                testCase.value(), testCase.valueType());
+                "null",
+                testCase.valueType());
 
         Condition condition = queryExecutionService.parseJsonToCondition(jsonInput);
         assertNotNull(condition, "Condition should not be null");
@@ -69,44 +69,36 @@ class DaysBeforeOperatorIntegrationTest {
         System.out.println("Generated SQL: " + sql);
 
         assertTrue(sql.contains(testCase.column()), "SQL should contain column name");
-
-        LocalDate expectedDate = LocalDate.now().plusDays(Long.parseLong(testCase.value()));
-        assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the computed target date");
+        assertTrue(sql.toLowerCase().contains("is null"), "SQL should contain IS NULL");
     }
 
     /* ============================
-       Negative / Invalid Cases
+       Edge / Negative Cases
        ============================ */
-    static Stream<QueryTestCase> negativeTestCases() {
+    static Stream<QueryTestCase> edgeTestCases() {
         return Stream.of(
-                // Null value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", null, "NUMERIC"),
-                // Non-numeric value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "abc", "STRING"),
-                // Invalid operator
-                new QueryTestCase("invalid", "DateQuery", "createdDate", "1", "NUMERIC"),
-                // Missing column
-                new QueryTestCase("daysBefore", "DateQuery", "", "1", "NUMERIC")
+                new QueryTestCase("isNull", "StringQuery", "", null, "STRING"),  // missing column
+                new QueryTestCase(null, "StringQuery", "name", null, "STRING")    // null operator
         );
     }
 
     @ParameterizedTest
-    @MethodSource("negativeTestCases")
-    @DisplayName("DaysBeforeOperator Negative Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
+    @MethodSource("edgeTestCases")
+    @DisplayName("IsNullOperator Edge Cases")
+    void parseJsonToCondition_givenIsNullOperatorEdgeCases_shouldThrowException(QueryTestCase testCase) {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
                   "column": "%s",
                   "operator": "%s",
-                  "value": "%s",
+                  "value": %s,
                   "valueType": "%s"
                 }
                 """,
                 testCase.queryType(),
                 testCase.column(),
                 testCase.operator() == null ? "\\null\\" : testCase.operator(),
-                testCase.value(),
+                "null",
                 testCase.valueType()
         );
 
@@ -114,25 +106,28 @@ class DaysBeforeOperatorIntegrationTest {
     }
 
     /* ============================
-       Null Value Test
+       Null value should be ignored
        ============================ */
     @Test
-    @DisplayName("DaysBeforeOperator should throw InvalidQueryException when value is null")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNullValue_shouldThrowInvalidQueryException() {
+    @DisplayName("IsNullOperator should ignore value and return IS NULL condition")
+    void parseJsonToCondition_givenIsNullOperatorWithAnyValue_shouldReturnIsNullCondition() throws Exception {
         String jsonInput = """
             {
-              "type": "DateQuery",
-              "column": "createdDate",
-              "operator": "daysBefore",
-              "value": null,
-              "valueType": "NUMERIC"
+              "type": "StringQuery",
+              "column": "name",
+              "operator": "isNull",
+              "value": "ignored",
+              "valueType": "STRING"
             }
             """;
 
-        Exception ex = assertThrows(InvalidQueryException.class, () -> {
-            queryExecutionService.parseJsonToCondition(jsonInput);
-        });
+        Condition condition = queryExecutionService.parseJsonToCondition(jsonInput);
+        assertNotNull(condition);
 
-        assertTrue(ex.getMessage().contains("Day value cannot be null"));
+        String sql = condition.toString();
+        System.out.println("Generated SQL: " + sql);
+
+        assertTrue(sql.contains("name"), "SQL should contain column name");
+        assertTrue(sql.toLowerCase().contains("is null"), "SQL should contain IS NULL");
     }
 }

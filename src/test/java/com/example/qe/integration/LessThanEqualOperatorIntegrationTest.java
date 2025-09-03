@@ -1,7 +1,6 @@
 package com.example.qe.integration;
 
 import com.example.qe.queryengine.QueryExecutionService;
-import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.OperatorFactory;
 import com.example.qe.queryengine.operator.OperatorRegistry;
 import com.example.qe.queryengine.operator.OperatorScanner;
@@ -16,12 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DaysBeforeOperatorIntegrationTest {
+class LessThanEqualOperatorIntegrationTest {
 
     private static QueryExecutionService queryExecutionService;
 
@@ -41,16 +39,22 @@ class DaysBeforeOperatorIntegrationTest {
        ============================ */
     static Stream<QueryTestCase> positiveTestCases() {
         return Stream.of(
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "0", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "1", "NUMERIC"),
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "30", "NUMERIC")
+                // Numeric lessThanEqual
+                new QueryTestCase("lessThanEqual", "NumericQuery", "amount", "200", "NUMERIC"),
+                new QueryTestCase("lessThanEqual", "NumericQuery", "amount", "100.00", "NUMERIC"),
+
+                // Date lessThanEqual
+                new QueryTestCase("lessThanEqual", "DateQuery", "createdDate", "2023-08-15", "DATE"),
+                new QueryTestCase("lessThanEqual", "DateQuery", "createdDate", "2100-01-01", "DATE")
         );
     }
 
     @ParameterizedTest
     @MethodSource("positiveTestCases")
-    @DisplayName("DaysBeforeOperator Positive Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
+    @DisplayName("LessThanEqualOperator Positive Test Cases")
+    void parseJsonToCondition_givenLessThanEqualOperatorWithPositiveCases_shouldReturnConditionSuccessfully(
+            QueryTestCase testCase) throws Exception {
+
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -69,9 +73,13 @@ class DaysBeforeOperatorIntegrationTest {
         System.out.println("Generated SQL: " + sql);
 
         assertTrue(sql.contains(testCase.column()), "SQL should contain column name");
+        assertTrue(sql.contains("<="), "SQL should contain <=");
 
-        LocalDate expectedDate = LocalDate.now().plusDays(Long.parseLong(testCase.value()));
-        assertTrue(sql.contains(expectedDate.toString()), "SQL should contain the computed target date");
+        if ("NUMERIC".equals(testCase.valueType())) {
+            assertTrue(sql.contains(testCase.value()), "SQL should contain numeric value");
+        } else if ("DATE".equals(testCase.valueType())) {
+            assertTrue(sql.contains(testCase.value()), "SQL should contain date value");
+        }
     }
 
     /* ============================
@@ -79,21 +87,25 @@ class DaysBeforeOperatorIntegrationTest {
        ============================ */
     static Stream<QueryTestCase> negativeTestCases() {
         return Stream.of(
-                // Null value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", null, "NUMERIC"),
-                // Non-numeric value
-                new QueryTestCase("daysBefore", "DateQuery", "createdDate", "abc", "STRING"),
                 // Invalid operator
-                new QueryTestCase("invalid", "DateQuery", "createdDate", "1", "NUMERIC"),
+                new QueryTestCase("invalid", "NumericQuery", "amount", "100", "NUMERIC"),
                 // Missing column
-                new QueryTestCase("daysBefore", "DateQuery", "", "1", "NUMERIC")
+                new QueryTestCase("lessThanEqual", "NumericQuery", "", "100", "NUMERIC"),
+                // Invalid numeric
+                new QueryTestCase("lessThanEqual", "NumericQuery", "amount", "abc", "NUMERIC"),
+                // Invalid date
+                new QueryTestCase("lessThanEqual", "DateQuery", "createdDate", "2023-13-01", "DATE"),
+                // Null value
+                new QueryTestCase("lessThanEqual", "NumericQuery", "amount", null, "NUMERIC")
         );
     }
 
     @ParameterizedTest
     @MethodSource("negativeTestCases")
-    @DisplayName("DaysBeforeOperator Negative Test Cases")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNegativeCases_shouldThrowException(QueryTestCase testCase) {
+    @DisplayName("LessThanEqualOperator Negative Test Cases")
+    void parseJsonToCondition_givenLessThanEqualOperatorWithNegativeCases_shouldThrowException(
+            QueryTestCase testCase) {
+
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -102,37 +114,37 @@ class DaysBeforeOperatorIntegrationTest {
                   "value": "%s",
                   "valueType": "%s"
                 }
-                """,
-                testCase.queryType(),
-                testCase.column(),
-                testCase.operator() == null ? "\\null\\" : testCase.operator(),
-                testCase.value(),
-                testCase.valueType()
-        );
+                """, testCase.queryType(), testCase.column(), testCase.operator(),
+                testCase.value(), testCase.valueType());
 
-        assertThrows(Exception.class, () -> queryExecutionService.parseJsonToCondition(jsonInput));
+        Exception ex = assertThrows(Exception.class, () -> {
+            queryExecutionService.parseJsonToCondition(jsonInput);
+        });
+
+        System.out.println("Negative Test Error: " + ex.getMessage());
     }
 
     /* ============================
-       Null Value Test
+       Null Value Case
        ============================ */
     @Test
-    @DisplayName("DaysBeforeOperator should throw InvalidQueryException when value is null")
-    void parseJsonToCondition_givenDaysBeforeOperatorWithNullValue_shouldThrowInvalidQueryException() {
+    @DisplayName("LessThanEqualOperator should throw exception for null value")
+    void parseJsonToCondition_givenLessThanEqualOperatorWithNullValue_shouldThrowException() {
         String jsonInput = """
             {
-              "type": "DateQuery",
-              "column": "createdDate",
-              "operator": "daysBefore",
+              "type": "NumericQuery",
+              "column": "amount",
+              "operator": "lessThanEqual",
               "value": null,
               "valueType": "NUMERIC"
             }
             """;
 
-        Exception ex = assertThrows(InvalidQueryException.class, () -> {
+        Exception ex = assertThrows(Exception.class, () -> {
             queryExecutionService.parseJsonToCondition(jsonInput);
         });
 
-        assertTrue(ex.getMessage().contains("Day value cannot be null"));
+        assertTrue(ex.getMessage().toLowerCase().contains("null"),
+                "Exception message should mention null");
     }
 }
