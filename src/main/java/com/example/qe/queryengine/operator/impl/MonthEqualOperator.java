@@ -9,7 +9,6 @@ import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 @OperatorAnnotation(
@@ -25,19 +24,13 @@ public class MonthEqualOperator implements GenericOperator {
         if (value == null) {
             throw new InvalidQueryException("Month value cannot be null");
         }
-
-        if (!(LocalDate.class.isAssignableFrom(field.getType()) ||
-                LocalDateTime.class.isAssignableFrom(field.getType()))) {
+        if (!(LocalDate.class.isAssignableFrom(field.getType()))) {
             throw new InvalidQueryException(
-                    "MonthEqualOperator only supports LocalDate or LocalDateTime fields, but got: " + field.getType()
+                    "MonthEqualOperator only supports LocalDate field, but got: " + field.getType()
             );
         }
-
         int expectedMonth = ((BigDecimal) value).intValue();
-
-        // ✅ Ensure only date part is considered
         Field<Integer> monthField = DSL.field("MONTH(CAST({0} AS DATE))", Integer.class, field);
-
         return monthField.eq(expectedMonth);
     }
 }

@@ -23,17 +23,13 @@ public class YearsAfterOperator implements GenericOperator {
         if (value == null) {
             throw new InvalidQueryException("Year value cannot be null");
         }
-
         if (!LocalDate.class.isAssignableFrom(field.getType())) {
             throw new InvalidQueryException(
                     "YearsAfterOperator only supports LocalDate fields, but got: " + field.getType()
             );
         }
-
         LocalDate targetDate = LocalDate.now().minusYears(((BigDecimal) value).longValue());
-
         Field<LocalDate> dateOnlyField = DSL.field("CAST({0} AS DATE)", LocalDate.class, field);
-
         return dateOnlyField.eq(targetDate);
     }
 }

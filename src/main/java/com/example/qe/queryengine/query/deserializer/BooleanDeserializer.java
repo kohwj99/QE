@@ -14,17 +14,14 @@ public class BooleanDeserializer extends JsonDeserializer<Boolean> {
         String text = p.getText();
 
         if (text == null || text.equalsIgnoreCase("null")) {
-            return null; // treat null, "null", or "" as Java null
+            return null;
         }
-
         if (text.equalsIgnoreCase("true")) {
             return Boolean.TRUE;
         }
-
         if (text.equalsIgnoreCase("false")) {
             return Boolean.FALSE;
         }
-
         throw new QueryDeserializationException("Boolean value can only be true, false, null, or empty string");
     }
 }

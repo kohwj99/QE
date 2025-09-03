@@ -28,10 +28,8 @@ public class YearsBeforeOperator implements GenericOperator {
                     "YearsBeforeOperator only supports LocalDate fields, but got: " + field.getType()
             );
         }
-
         LocalDate targetDate = LocalDate.now().plusYears(((BigDecimal) value).longValue());
         Field<LocalDate> dateOnlyField = DSL.field("CAST({0} AS DATE)", LocalDate.class, field);
-
         return dateOnlyField.eq(targetDate);
     }
 }

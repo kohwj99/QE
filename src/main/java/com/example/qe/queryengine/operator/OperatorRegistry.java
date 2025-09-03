@@ -25,7 +25,6 @@ public class OperatorRegistry {
     }
 
     public Object getOperator(String name) {
-        // Replace 'operatorMap' with your actual map variable name
         return operatorMap.get(name);
     }
 }

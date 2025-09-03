@@ -28,17 +28,13 @@ public class DayOfWeekOperator implements GenericOperator {
                     "DayOfWeekOperator only supports LocalDate fields, but got: " + field.getType()
             );
         }
-
         int expectedDay = ((BigDecimal) day).intValue();
-
-        // SQL Server: DATEPART(WEEKDAY, field) returns Sunday=1 .. Saturday=7
         // Remap to Monday=1 .. Sunday=7
         Field<Integer> dayOfWeekMapped = DSL.field(
                 "((datepart(weekday, {0}) + @@DATEFIRST - 2) % 7) + 1",
                 Integer.class,
                 field
         );
-
         return dayOfWeekMapped.eq(expectedDay);
     }
 }

@@ -14,14 +14,12 @@ import static org.jooq.impl.DSL.field;
 @Getter
 public abstract class FieldQuery implements Query {
 
-    // Getters and setters (needed for JSON deserialization)
     protected String column;
     protected String operator;
-    protected Object value; // Nullable for IS NULL / IS NOT NULL
+    protected Object value;
     protected ValueType valueType;
 
     protected FieldQuery() {
-        // Default constructor for JSON deserialization
     }
 
     protected FieldQuery(String column, String operator, Object value, ValueType valueType) {

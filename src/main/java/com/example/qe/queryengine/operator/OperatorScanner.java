@@ -1,14 +1,13 @@
 package com.example.qe.queryengine.operator;
 import com.example.qe.queryengine.exception.QueryEngineException;
+import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
+@Slf4j
 public class OperatorScanner {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperatorScanner.class);
     private final OperatorRegistry registry;
 
     public OperatorScanner(OperatorRegistry registry) {
@@ -16,11 +15,11 @@ public class OperatorScanner {
     }
 
     public void scanAndRegister(String basePackage) {
-        logger.info("Starting operator scanning in package: {}", basePackage);
+        log.info("Starting operator scanning in package: {}", basePackage);
         Reflections reflections = new Reflections(basePackage);
 
         Set<Class<?>> operatorClasses = reflections.getTypesAnnotatedWith(OperatorAnnotation.class);
-        logger.info("Found {} classes annotated with @OperatorAnnotation", operatorClasses.size());
+        log.info("Found {} classes annotated with @OperatorAnnotation", operatorClasses.size());
 
         for (Class<?> clazz : operatorClasses) {
             try {
@@ -33,14 +32,14 @@ public class OperatorScanner {
 
                 registry.register(operatorName, fieldTypes, valueTypes, operatorInstance);
 
-                logger.info("Registered operator '{}' for field types {} and value types {}",
+                log.info("Registered operator '{}' for field types {} and value types {}",
                         operatorName, fieldTypes.length, valueTypes.length);
             } catch (Exception e) {
-                logger.error("Failed to instantiate operator {}: {}", clazz.getName(), e.getMessage(), e);
+                log.error("Failed to instantiate operator {}: {}", clazz.getName(), e.getMessage(), e);
                 throw new QueryEngineException("Failed to instantiate operator " + clazz.getName(), e);
             }
         }
 
-        logger.info("Completed operator scanning. Total operators processed: {}", operatorClasses.size());
+        log.info("Completed operator scanning. Total operators processed: {}", operatorClasses.size());
     }
 }

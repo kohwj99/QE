@@ -29,7 +29,6 @@ public class DateDeserializer extends JsonDeserializer<Object> {
     @Override
     public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String text = p.getText();
-        // Check for date format: length and dashes at correct positions
         if (text != null && text.length() == 10 && text.charAt(4) == '-' && text.charAt(7) == '-') {
             return LocalDate.parse(text, DATE_FORMATTER);
         } else if (isNumber(text)) {

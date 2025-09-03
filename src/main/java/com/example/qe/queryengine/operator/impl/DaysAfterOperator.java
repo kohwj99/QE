@@ -9,7 +9,6 @@ import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @OperatorAnnotation(
         value = "daysAfter",
@@ -31,11 +30,9 @@ public class DaysAfterOperator implements GenericOperator {
             );
         }
 
-        // Ensure only LocalDate or LocalDateTime fields are supported
-        if (!(LocalDate.class.isAssignableFrom(field.getType()) ||
-                LocalDateTime.class.isAssignableFrom(field.getType()))) {
+        if (!(LocalDate.class.isAssignableFrom(field.getType()))) {
             throw new IllegalArgumentException(
-                    "DaysBeforeOperator only supports LocalDate or LocalDateTime fields, but got: " + field.getType()
+                    "DaysBeforeOperator only supports LocalDate field, but got: " + field.getType()
             );
         }
 

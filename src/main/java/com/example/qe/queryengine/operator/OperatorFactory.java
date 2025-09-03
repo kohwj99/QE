@@ -40,4 +40,3 @@ public class OperatorFactory {
         return valueTypes.iterator().next();
     }
 }
-

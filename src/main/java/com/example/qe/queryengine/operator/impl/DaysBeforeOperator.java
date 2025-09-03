@@ -9,7 +9,6 @@ import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @OperatorAnnotation(
         value = "daysBefore",
@@ -32,18 +31,14 @@ public class DaysBeforeOperator implements GenericOperator {
             );
         }
 
-        // Ensure only LocalDate or LocalDateTime fields are supported
-        if (!(LocalDate.class.isAssignableFrom(field.getType()) ||
-                LocalDateTime.class.isAssignableFrom(field.getType()))) {
+        if (!(LocalDate.class.isAssignableFrom(field.getType()))) {
             throw new IllegalArgumentException(
-                    "DaysBeforeOperator only supports LocalDate or LocalDateTime fields, but got: " + field.getType()
+                    "DaysBeforeOperator only supports LocalDate field, but got: " + field.getType()
             );
         }
 
         long days = ((BigDecimal) value).longValue();
         LocalDate targetDate = LocalDate.now().plusDays(days);
-
-        // ✅ Date-only comparison (ignore time part if DATETIME)
         return DSL.condition("CAST({0} AS DATE) = {1}", field, targetDate);
     }
 }

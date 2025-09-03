@@ -28,14 +28,7 @@ public class DayOfMonthOperator implements GenericOperator {
                     "DayOfMonthOperator only supports LocalDate fields, but got: " + field.getType()
             );
         }
-
-//        int expectedDay = ((BigDecimal) day).intValue();
-//
-//        // SQL Server equivalent: DAY(field) = expectedDay
-//        return DSL.day(field).eq(expectedDay);
         int expectedDay = ((BigDecimal) day).intValue();
-
-        // Manually generate SQL Server DAY() function
         Field<Integer> dayField = DSL.field("DAY(CAST({0} AS DATE))", Integer.class, field);
         return dayField.eq(expectedDay);
     }

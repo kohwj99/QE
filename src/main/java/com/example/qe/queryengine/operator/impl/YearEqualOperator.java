@@ -29,10 +29,7 @@ public class YearEqualOperator implements GenericOperator {
                     "YearEqualOperator only supports LocalDate fields, but got: " + field.getType()
             );
         }
-
         BigDecimal year = (BigDecimal) value;
-
-        // Extract the year part explicitly from the date field
         Field<Integer> yearField = DSL.field("YEAR(CAST({0} AS DATE))", Integer.class, field);
         return yearField.eq(year.intValue());
     }
