@@ -141,12 +141,12 @@ class QueryExecutionServiceSimpleIntegrationTest {
                 break;
             case "dayOfMonth":
                 // SQL should contain day(...) = value
-                assertTrue(sql.contains("day(" + testCase.column + ")=" + testCase.value));
+                assertTrue(sql.contains("day(cast(" + testCase.column.toLowerCase() + "asdate))=" + testCase.value));
                 break;
             case "daysAfter":
             case "daysBefore":
                 // SQL should contain equality to a computed date (today +/- n days)
-                assertTrue(sql.contains(testCase.column + "="), "Expected computed date comparison");
+                assertTrue(sql.contains("cast(" + testCase.column.toLowerCase() + "asdate)="), "Expected computed date comparison");
                 break;
             default:
                 fail("Unknown special operator: " + testCase.operator);

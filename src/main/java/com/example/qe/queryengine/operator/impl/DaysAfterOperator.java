@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.operator.impl;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.GenericOperator;
 import com.example.qe.queryengine.operator.OperatorAnnotation;
 import org.jooq.Condition;
@@ -21,11 +22,11 @@ public class DaysAfterOperator implements GenericOperator {
     @Override
     public Condition apply(Field<?> field, Object value) {
         if (value == null) {
-            throw new NullPointerException("Day value cannot be null");
+            throw new InvalidQueryException("Day value cannot be null");
         }
 
         if (!(BigDecimal.class.isAssignableFrom(value.getClass()))) {
-            throw new IllegalArgumentException(
+            throw new InvalidQueryException(
                     "DaysBeforeOperator requires a numeric value (BigDecimal), but got: " + value.getClass()
             );
         }

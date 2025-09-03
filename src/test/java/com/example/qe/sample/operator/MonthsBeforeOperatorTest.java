@@ -1,5 +1,6 @@
 package com.example.qe.sample.operator;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.impl.MonthsBeforeOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -44,14 +45,14 @@ class MonthsBeforeOperatorTest {
         LocalDate expectedDate = LocalDate.now().plusMonths(months);
         assertTrue(sql.contains(expectedDate.toString()),
                 "Expected SQL to contain " + expectedDate + ", but got: " + sql);
-        assertTrue(sql.contains("date_field="),
+        assertTrue(sql.contains("cast(date_fieldasdate)=date"),
                 "Expected SQL to compare to field, but got: " + sql);
     }
 
     // --- Null value ---
     @Test
     void apply_givenNullValue_shouldThrowNullPointerException() {
-        NullPointerException ex = assertThrows(NullPointerException.class,
+        Exception ex = assertThrows(InvalidQueryException.class,
                 () -> operator.apply(validField, null));
         assertEquals("Day value cannot be null", ex.getMessage());
     }
@@ -60,21 +61,21 @@ class MonthsBeforeOperatorTest {
     @Test
     void apply_givenStringField_shouldThrowIllegalArgumentException() {
         Field<String> stringField = DSL.field("string_field", String.class);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(stringField, BigDecimal.ONE));
     }
 
     @Test
     void apply_givenBigDecimalField_shouldThrowIllegalArgumentException() {
         Field<BigDecimal> decimalField = DSL.field("decimal_field", BigDecimal.class);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(decimalField, BigDecimal.ONE));
     }
 
     @Test
     void apply_givenBooleanField_shouldThrowIllegalArgumentException() {
         Field<Boolean> booleanField = DSL.field("bool_field", Boolean.class);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(booleanField, BigDecimal.ONE));
     }
 

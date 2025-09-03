@@ -1,5 +1,6 @@
 package com.example.qe.sample.operator;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.impl.GreaterThanEqualOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -57,13 +58,13 @@ class GreaterThanEqualOperatorTest {
     }
 
     @Test
-    void apply_givenNullValue_shouldThrowNullPointerException() {
+    void apply_givenNullValue_shouldThrowInvalidQueryException() {
         // Arrange
         Field<BigDecimal> field = DSL.field("amount", BigDecimal.class);
         Object value = null;
 
         // Act & Assert
-        assertThrows(NullPointerException.class, () -> operator.apply(field, value));
+        assertThrows(InvalidQueryException.class, () -> operator.apply(field, value));
     }
 
     @Test

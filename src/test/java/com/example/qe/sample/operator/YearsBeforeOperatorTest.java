@@ -1,5 +1,6 @@
 package com.example.qe.sample.operator;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.impl.YearsBeforeOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -39,30 +40,30 @@ class YearsBeforeOperatorTest {
     // --- Null value ---
     @Test
     void apply_givenNullValue_shouldThrowNullPointerException() {
-        NullPointerException ex = assertThrows(NullPointerException.class,
+        Exception ex = assertThrows(InvalidQueryException.class,
                 () -> operator.apply(validField, null));
         assertEquals("Year value cannot be null", ex.getMessage());
     }
 
     // --- Invalid field types ---
     @Test
-    void apply_givenStringField_shouldThrowIllegalArgumentException() {
+    void apply_givenStringField_shouldThrowInvalidQueryException() {
         Field<String> stringField = DSL.field("string_field", String.class);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(stringField, BigDecimal.ONE));
     }
 
     @Test
-    void apply_givenBigDecimalField_shouldThrowIllegalArgumentException() {
+    void apply_givenBigDecimalField_shouldThrowInvalidQueryException() {
         Field<BigDecimal> decimalField = DSL.field("decimal_field", BigDecimal.class);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(decimalField, BigDecimal.ONE));
     }
 
     @Test
-    void apply_givenBooleanField_shouldThrowIllegalArgumentException() {
+    void apply_givenBooleanField_shouldThrowInvalidQueryException() {
         Field<Boolean> booleanField = DSL.field("bool_field", Boolean.class);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(booleanField, BigDecimal.ONE));
     }
 

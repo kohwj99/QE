@@ -1,5 +1,6 @@
 package com.example.qe.sample.operator;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.impl.EndsWithOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -50,22 +51,22 @@ class EndsWithOperatorTest {
     }
 
     @Test
-    void apply_givenNullValue_shouldThrowIllegalArgumentException() {
+    void apply_givenNullValue_shouldThrowInvalidQueryException() {
         // Arrange
         Field<String> field = DSL.field("name", String.class);
 
         // Act + Assert
-        assertThrows(IllegalArgumentException.class, () -> operator.apply(field, null));
+        assertThrows(InvalidQueryException.class, () -> operator.apply(field, null));
     }
 
     @Test
-    void apply_givenNonStringValue_shouldThrowIllegalArgumentException() {
+    void apply_givenNonStringValue_shouldThrowInvalidQueryException() {
         // Arrange
         Field<String> field = DSL.field("name", String.class);
         Object value = 123;
 
         // Act + Assert
-        assertThrows(IllegalArgumentException.class, () -> operator.apply(field, value));
+        assertThrows(InvalidQueryException.class, () -> operator.apply(field, value));
     }
 
     @Test

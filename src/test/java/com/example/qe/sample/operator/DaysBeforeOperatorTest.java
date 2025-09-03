@@ -1,5 +1,6 @@
 package com.example.qe.sample.operator;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.impl.DaysBeforeOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -44,14 +45,14 @@ class DaysBeforeOperatorTest {
         LocalDate expectedDate = LocalDate.now().plusDays(days);
         assertTrue(sql.contains(expectedDate.toString()),
                 "Expected SQL to contain " + expectedDate + ", but got: " + sql);
-        assertTrue(sql.contains("date_field="),
+        assertTrue(sql.contains("(cast(date_fieldasdate)="),
                 "Expected SQL to compare to field, but got: " + sql);
     }
 
     // --- Null value ---
     @Test
-    void apply_givenNullValue_shouldThrowNullPointerException() {
-        NullPointerException ex = assertThrows(NullPointerException.class,
+    void apply_givenNullValue_shouldThrowInvalidQueryException() {
+        Exception ex = assertThrows(InvalidQueryException.class,
                 () -> operator.apply(validField, null));
         assertEquals("Day value cannot be null", ex.getMessage());
     }
@@ -80,20 +81,20 @@ class DaysBeforeOperatorTest {
 
     // --- Invalid value types ---
     @Test
-    void apply_givenStringValue_shouldThrowClassCastException() {
-        assertThrows(ClassCastException.class,
+    void apply_givenStringValue_shouldThrowInvalidQueryException() {
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(validField, "5"));
     }
 
     @Test
-    void apply_givenLocalDateValue_shouldThrowClassCastException() {
-        assertThrows(ClassCastException.class,
+    void apply_givenLocalDateValue_shouldThrowInvalidQueryException() {
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(validField, LocalDate.now()));
     }
 
     @Test
-    void apply_givenBooleanValue_shouldThrowClassCastException() {
-        assertThrows(ClassCastException.class,
+    void apply_givenBooleanValue_shouldThrowInvalidQueryException() {
+        assertThrows(InvalidQueryException.class,
                 () -> operator.apply(validField, true));
     }
 }

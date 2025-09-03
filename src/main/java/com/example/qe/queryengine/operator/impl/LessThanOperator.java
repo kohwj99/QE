@@ -1,6 +1,7 @@
 package com.example.qe.queryengine.operator.impl;
 
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.OperatorAnnotation;
 import com.example.qe.queryengine.operator.GenericOperator;
 import org.jooq.Condition;
@@ -20,7 +21,7 @@ public class LessThanOperator implements GenericOperator {
     @Override
     public Condition apply(Field<?> field, Object value) {
         if (value == null) {
-            throw new NullPointerException("Value cannot be null for lessThan operator");
+            throw new InvalidQueryException("Value cannot be null for lessThan operator");
         }
 
         return ((Field<Object>) field).lt(value);

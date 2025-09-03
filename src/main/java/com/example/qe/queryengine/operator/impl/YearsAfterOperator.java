@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.operator.impl;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.GenericOperator;
 import com.example.qe.queryengine.operator.OperatorAnnotation;
 import org.jooq.Condition;
@@ -20,11 +21,11 @@ public class YearsAfterOperator implements GenericOperator {
     @Override
     public Condition apply(Field<?> field, Object value) {
         if (value == null) {
-            throw new NullPointerException("Year value cannot be null");
+            throw new InvalidQueryException("Year value cannot be null");
         }
 
         if (!LocalDate.class.isAssignableFrom(field.getType())) {
-            throw new IllegalArgumentException(
+            throw new InvalidQueryException(
                     "YearsAfterOperator only supports LocalDate fields, but got: " + field.getType()
             );
         }

@@ -1,6 +1,7 @@
 package com.example.qe.queryengine.operator;
 
-import java.util.Arrays;
+import com.example.qe.queryengine.exception.OperatorNotFoundException;
+
 import java.util.Set;
 
 public class OperatorFactory {
@@ -19,7 +20,7 @@ public class OperatorFactory {
     public GenericOperator resolve(String operatorName, Class<?> fieldType, Class<?> valueType) {
         GenericOperator op = registry.get(operatorName, fieldType, valueType);
         if (op == null) {
-            throw new IllegalArgumentException("Operator " + operatorName +
+            throw new OperatorNotFoundException("Operator " + operatorName +
                     " does not support field type " + fieldType.getName() +
                     " and value type " + valueType.getName());
         }
@@ -29,7 +30,7 @@ public class OperatorFactory {
     public Class<?> resolveValueType(String operatorName, Class<?> fieldType) {
         Set<Class<?>> valueTypes = registry.getSupportedValueTypes(operatorName);
         if (valueTypes == null || valueTypes.isEmpty()) {
-            throw new IllegalArgumentException("No value types registered for operator: " + operatorName);
+            throw new OperatorNotFoundException("No value types registered for operator: " + operatorName);
         }
         // If fieldType is supported as a value type, use it
         if (valueTypes.contains(fieldType)) {

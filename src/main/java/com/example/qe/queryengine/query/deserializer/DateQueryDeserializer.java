@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.query.deserializer;
 
+import com.example.qe.queryengine.exception.QueryDeserializationException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -35,7 +36,7 @@ public class DateQueryDeserializer extends JsonDeserializer<Object> {
         else if (isNumber(text)) {
             return new BigDecimal(text);
         } else {
-            throw new IOException("Date Query can only take in valid LocalDate string or Number in some cases");
+            throw new QueryDeserializationException("Date Query can only take in valid LocalDate string or Number in some cases");
         }
     }
 }

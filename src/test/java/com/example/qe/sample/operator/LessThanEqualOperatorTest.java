@@ -1,5 +1,6 @@
 package com.example.qe.sample.operator;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.impl.LessThanEqualOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -52,12 +53,12 @@ class LessThanEqualOperatorTest {
     }
 
     @Test
-    void apply_givenNullValue_shouldThrowNullPointerException() {
+    void apply_givenNullValue_shouldThrowInvalidQueryException() {
         // Arrange
         Field<BigDecimal> field = DSL.field("salary", BigDecimal.class);
 
         // Act + Assert
-        assertThrows(NullPointerException.class, () -> operator.apply(field, null));
+        assertThrows(InvalidQueryException.class, () -> operator.apply(field, null));
     }
 
     @Test

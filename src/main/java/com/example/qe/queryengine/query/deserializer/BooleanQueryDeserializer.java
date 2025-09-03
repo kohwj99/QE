@@ -1,5 +1,7 @@
 package com.example.qe.queryengine.query.deserializer;
 
+import com.example.qe.queryengine.exception.QueryDeserializationException;
+import com.example.qe.queryengine.exception.QueryEngineException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -24,6 +26,6 @@ public class BooleanQueryDeserializer extends JsonDeserializer<Boolean> {
             return Boolean.FALSE;
         }
 
-        throw new IOException("Boolean value can only be true, false, null, or empty string");
+        throw new QueryDeserializationException("Boolean value can only be true, false, null, or empty string");
     }
 }

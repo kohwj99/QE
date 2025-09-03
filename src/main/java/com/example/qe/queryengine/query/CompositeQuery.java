@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.query;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.OperatorFactory;
 import lombok.Getter;
 import org.jooq.Condition;
@@ -32,7 +33,7 @@ public abstract class CompositeQuery implements Query {
     public void validate() {
         for (Query child : children) {
             if (child == null) {
-                throw new IllegalArgumentException("Child query cannot be null");
+                throw new InvalidQueryException("Child query cannot be null");
             }
             child.validate();
         }

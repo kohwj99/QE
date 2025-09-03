@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.operator.impl;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.OperatorAnnotation;
 import com.example.qe.queryengine.operator.GenericOperator;
 import org.jooq.Condition;
@@ -19,7 +20,7 @@ public class GreaterThanEqualOperator implements GenericOperator {
     @Override
     public Condition apply(Field<?> field, Object value) {
         if (value == null) {
-            throw new NullPointerException("Value cannot be null for greaterThanEqual operator");
+            throw new InvalidQueryException("Value cannot be null for greaterThanEqual operator");
         }
 
         return ((Field<Object>) field).ge(value);

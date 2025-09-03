@@ -1,5 +1,6 @@
 package com.example.qe.sample;
 
+import com.example.qe.queryengine.exception.OperatorNotFoundException;
 import com.example.qe.queryengine.operator.GenericOperator;
 import com.example.qe.queryengine.operator.OperatorFactory;
 import com.example.qe.queryengine.operator.OperatorRegistry;
@@ -50,23 +51,23 @@ class OperatorFactoryTest {
     }
 
     @Test
-    void resolve_givenUnsupportedTypes_shouldThrowException() {
+    void resolve_givenUnsupportedTypes_shouldThrowOperatorNotFoundException() {
         // Arrange
         when(registry.get(eq("equals"), eq(String.class), eq(LocalDate.class))).thenReturn(null);
 
         // Act & Assert
-        Exception ex = assertThrows(IllegalArgumentException.class,
+        Exception ex = assertThrows(OperatorNotFoundException.class,
                 () -> factory.resolve("equals", String.class, LocalDate.class));
         assertTrue(ex.getMessage().contains("does not support"));
     }
 
     @Test
-    void resolve_givenUnknownOperatorName_shouldThrowException() {
+    void resolve_givenUnknownOperatorName_shouldThrowOperatorNotFoundException() {
         // Arrange
         when(registry.get(eq("unknown"), any(), any())).thenReturn(null);
 
         // Act & Assert
-        Exception ex = assertThrows(IllegalArgumentException.class,
+        Exception ex = assertThrows(OperatorNotFoundException.class,
                 () -> factory.resolve("unknown", String.class, String.class));
         assertTrue(ex.getMessage().contains("Operator unknown"));
     }
@@ -90,9 +91,9 @@ class OperatorFactoryTest {
     }
 
     @Test
-    void resolveValueType_givenUnknownOperator_shouldThrowException() {
+    void resolveValueType_givenUnknownOperator_shouldThrowOperatorNotFoundException() {
         // Act & Assert
-        Exception ex = assertThrows(IllegalArgumentException.class,
+        Exception ex = assertThrows(OperatorNotFoundException.class,
                 () -> factory.resolveValueType("unknown", String.class));
         assertTrue(ex.getMessage().contains("No value types registered"));
     }

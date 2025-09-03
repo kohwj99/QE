@@ -1,4 +1,5 @@
 package com.example.qe.queryengine.operator;
+import com.example.qe.queryengine.exception.QueryEngineException;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class OperatorScanner {
                         operatorName, fieldTypes.length, valueTypes.length);
             } catch (Exception e) {
                 logger.error("Failed to instantiate operator {}: {}", clazz.getName(), e.getMessage(), e);
-                throw new RuntimeException("Failed to instantiate operator " + clazz.getName(), e);
+                throw new QueryEngineException("Failed to instantiate operator " + clazz.getName(), e);
             }
         }
 

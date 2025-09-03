@@ -57,7 +57,7 @@ class EqualsOperatorIntegrationTest {
     @ParameterizedTest
     @MethodSource("positiveTestCases")
     @DisplayName("EqualsOperator Positive Test Cases")
-    void testEqualsOperatorPositive(TestCase testCase) throws Exception {
+    void parseJsonToCondition_givenEqualsOperatorWithPositiveCases_shouldReturnConditionSuccessfully(TestCase testCase) throws Exception {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -86,8 +86,6 @@ class EqualsOperatorIntegrationTest {
             assertTrue(sql.contains(testCase.value), "SQL should contain date value");
         } else {
             // Default string comparison
-            System.out.println(sql);
-            System.out.println(testCase.value);
             assertTrue(sql.contains(testCase.value), "SQL should contain string value");
         }
     }
@@ -113,7 +111,7 @@ class EqualsOperatorIntegrationTest {
     @ParameterizedTest
     @MethodSource("negativeTestCases")
     @DisplayName("EqualsOperator Negative Test Cases")
-    void testEqualsOperatorNegative(TestCase testCase) {
+    void parseJsonToCondition_givenEqualsOperatorWithNegativeCases_shouldThrowException(TestCase testCase) {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -152,7 +150,7 @@ class EqualsOperatorIntegrationTest {
     @ParameterizedTest
     @MethodSource("edgeTestCases")
     @DisplayName("EqualsOperator Edge Cases")
-    void testEqualsOperatorEdge(TestCase testCase) {
+    void parseJsonToCondition_givenEqualsOperatorWithEdgeCases_shouldThrowException(TestCase testCase) {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -178,8 +176,8 @@ class EqualsOperatorIntegrationTest {
 
     @Test
     @DisplayName("EqualsOperator should handle null value correctly")
-    void testEqualsOperatorWithNullValue() throws Exception {
-        String jsonInput = """
+    void parseJsonToCondition_givenEqualsOperatorWithNullValue_shouldReturnConditionSuccessfully() throws Exception {
+        String stringJsonInput = """
             {
               "type": "StringQuery",
               "column": "name",
@@ -189,14 +187,75 @@ class EqualsOperatorIntegrationTest {
             }
             """;
 
-        Condition condition = queryExecutionService.parseJsonToCondition(jsonInput);
-        assertNotNull(condition, "Condition should not be null");
+        String boolJsonInput = """
+            {
+              "type": "BoolQuery",
+              "column": "name",
+              "operator": "equals",
+              "value": null,
+              "valueType": "BOOLEAN"
+            }
+            """;
 
-        String sql = condition.toString();
-        System.out.println("Generated SQL: " + sql);
+        String dateJsonInput = """
+            {
+              "type": "DateQuery",
+              "column": "name",
+              "operator": "equals",
+              "value": null,
+              "valueType": "DATE"
+            }
+            """;
 
-        assertTrue(sql.contains("name"), "SQL should contain column name");
-        assertTrue(sql.toLowerCase().contains("is null"), "SQL should contain IS NULL for null value");
+        String numericJsonInput = """
+            {
+              "type": "NumericQuery",
+              "column": "name",
+              "operator": "equals",
+              "value": null,
+              "valueType": "NUMERIC"
+            }
+            """;
+
+        // test with string json input
+        Condition strCondition = queryExecutionService.parseJsonToCondition(stringJsonInput);
+        assertNotNull(strCondition, "Condition should not be null");
+
+        String strSql = strCondition.toString();
+        System.out.println("Generated SQL: " + strSql);
+
+        assertTrue(strSql.contains("name"), "SQL should contain column name");
+        assertTrue(strSql.toLowerCase().contains("is null"), "SQL should contain IS NULL for null value");
+
+        // test with bool json input
+        Condition boolCondition = queryExecutionService.parseJsonToCondition(boolJsonInput);
+        assertNotNull(boolCondition, "Condition should not be null");
+
+        String boolSql = boolCondition.toString();
+        System.out.println("Generated SQL: " + boolSql);
+
+        assertTrue(boolSql.contains("name"), "SQL should contain column name");
+        assertTrue(boolSql.toLowerCase().contains("is null"), "SQL should contain IS NULL for null value");
+
+        // test with Date json input
+        Condition dateCondition = queryExecutionService.parseJsonToCondition(dateJsonInput);
+        assertNotNull(dateCondition, "Condition should not be null");
+
+        String dateSql = dateCondition.toString();
+        System.out.println("Generated SQL: " + dateSql);
+
+        assertTrue(dateSql.contains("name"), "SQL should contain column name");
+        assertTrue(dateSql.toLowerCase().contains("is null"), "SQL should contain IS NULL for null value");
+
+        // test with Numeric json input
+        Condition numericCondition = queryExecutionService.parseJsonToCondition(numericJsonInput);
+        assertNotNull(numericCondition, "Condition should not be null");
+
+        String numericSql = numericCondition.toString();
+        System.out.println("Generated SQL: " + numericSql);
+
+        assertTrue(numericSql.contains("name"), "SQL should contain column name");
+        assertTrue(numericSql.toLowerCase().contains("is null"), "SQL should contain IS NULL for null value");
     }
 
     /* ============================

@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.query;
 
+import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.GenericOperator;
 import com.example.qe.queryengine.operator.OperatorFactory;
 import lombok.Getter;
@@ -37,16 +38,16 @@ public abstract class FieldQuery implements Query {
 
         // Perform type checking to enforce Operator compatibility
         if (!validValueType.equals(valueType.getClazz())) {
-            throw new IllegalArgumentException("Value type " + valueType.name() + " is not supported for operator " + operator + " on field type " + getFieldClass().getName());
+            throw new InvalidQueryException("Value type " + valueType.name() + " is not supported for operator " + operator + " on field type " + getFieldClass().getName());
         }
         GenericOperator op = operatorFactory.resolve(operator, getFieldClass(), valueType.getClazz());
         if (op == null) {
-            throw new IllegalArgumentException("Unknown operator: " + operator);
+            throw new InvalidQueryException("Unknown operator: " + operator);
         }
 
         // Perform type checking to ensure value is of the correct type
         if (value != null && !valueType.getClazz().isInstance(value)) {
-            throw new IllegalArgumentException("Value is not of the expected type: " + valueType.getClazz().getName());
+            throw new InvalidQueryException("Value is not of the expected type: " + valueType.getClazz().getName());
         }
 
         return op.apply(field, valueType.getClazz().cast(value));
@@ -56,13 +57,13 @@ public abstract class FieldQuery implements Query {
 
     public void validate() {
         if (column == null || column.trim().isEmpty()) {
-            throw new IllegalArgumentException("Column cannot be null or empty");
+            throw new InvalidQueryException("Column cannot be null or empty");
         }
         if (operator == null || operator.trim().isEmpty()) {
-            throw new IllegalArgumentException("Operator cannot be null or empty");
+            throw new InvalidQueryException("Operator cannot be null or empty");
         }
         if (valueType == null || valueType.getClazz().getSimpleName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Value type cannot be null or empty");
+            throw new InvalidQueryException("Value type cannot be null or empty");
         }
     }
 }
