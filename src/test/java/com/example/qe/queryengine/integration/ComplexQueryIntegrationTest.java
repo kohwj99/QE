@@ -1,21 +1,15 @@
 package com.example.qe.queryengine.integration;
 
-import com.example.qe.queryengine.operator.ConditionParser;
 import com.example.qe.queryengine.exception.InvalidQueryException;
 import org.jooq.Condition;
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ComplexQueryIntegrationTest {
-
-    @Autowired
-//    private QueryExecutionService queryExecutionService;
-    private ConditionParser queryExecutionService;
+public class ComplexQueryIntegrationTest extends OperatorIntegrationTest{
 
     @Test
     @Order(1)
@@ -42,7 +36,7 @@ public class ComplexQueryIntegrationTest {
         }
         """;
 
-        Condition condition = queryExecutionService.parseJsonToCondition(json);
+        Condition condition = conditionParser.parseJsonToCondition(json);
         assertNotNull(condition);
 
         String sql = condition.toString().toLowerCase();
@@ -88,7 +82,7 @@ public class ComplexQueryIntegrationTest {
         }
         """;
 
-        Condition condition = queryExecutionService.parseJsonToCondition(json);
+        Condition condition = conditionParser.parseJsonToCondition(json);
         assertNotNull(condition);
 
         String sql = condition.toString().toLowerCase();
@@ -148,7 +142,7 @@ public class ComplexQueryIntegrationTest {
         }
         """;
 
-        Condition condition = queryExecutionService.parseJsonToCondition(json);
+        Condition condition = conditionParser.parseJsonToCondition(json);
         assertNotNull(condition);
 
         String sql = condition.toString().toLowerCase();
@@ -168,7 +162,7 @@ public class ComplexQueryIntegrationTest {
         }
         """;
 
-        assertThrows(Exception.class, () -> queryExecutionService.parseJsonToCondition(json));
+        assertThrows(Exception.class, () -> conditionParser.parseJsonToCondition(json));
     }
 
     @Test
@@ -210,7 +204,7 @@ public class ComplexQueryIntegrationTest {
 
         InvalidQueryException ex = assertThrows(
                 InvalidQueryException.class,
-                () -> queryExecutionService.parseJsonToCondition(json)
+                () -> conditionParser.parseJsonToCondition(json)
         );
 
         String expectedMessage = "Column cannot be null or empty"; // adjust to match your operator validation

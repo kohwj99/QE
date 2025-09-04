@@ -21,20 +21,8 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class YearEqualOperatorIntegrationTest {
+class YearEqualOperatorIntegrationTest extends OperatorIntegrationTest {
 
-    private static ConditionParser conditionParser;
-
-    @BeforeAll
-    static void setup() {
-        OperatorRegistry registry = new OperatorRegistry();
-        OperatorScanner scanner = new OperatorScanner(registry);
-        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
-        OperatorFactory factory = new OperatorFactory(registry);
-
-        DSLContext dsl = DSL.using(SQLDialect.DEFAULT);
-        conditionParser = new ConditionParser(factory, dsl);
-    }
 
     /* ============================
        Positive / Normal Cases
