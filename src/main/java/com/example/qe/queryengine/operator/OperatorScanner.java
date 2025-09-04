@@ -15,31 +15,20 @@ public class OperatorScanner {
     }
 
     public void scanAndRegister(String basePackage) {
-        log.info("Starting operator scanning in package: {}", basePackage);
         Reflections reflections = new Reflections(basePackage);
-
         Set<Class<?>> operatorClasses = reflections.getTypesAnnotatedWith(OperatorAnnotation.class);
-        log.info("Found {} classes annotated with @OperatorAnnotation", operatorClasses.size());
-
         for (Class<?> clazz : operatorClasses) {
             try {
                 OperatorAnnotation annotation = clazz.getAnnotation(OperatorAnnotation.class);
                 GenericOperator operatorInstance = (GenericOperator) clazz.getDeclaredConstructor().newInstance();
-
                 String operatorName = annotation.value();
                 Class<?>[] fieldTypes = annotation.supportedFieldTypes();
                 Class<?>[] valueTypes = annotation.supportedValueTypes();
-
                 registry.register(operatorName, fieldTypes, valueTypes, operatorInstance);
-
-                log.info("Registered operator '{}' for field types {} and value types {}",
-                        operatorName, fieldTypes.length, valueTypes.length);
             } catch (Exception e) {
-                log.error("Failed to instantiate operator {}: {}", clazz.getName(), e.getMessage(), e);
                 throw new QueryEngineException("Failed to instantiate operator " + clazz.getName(), e);
             }
         }
-
-        log.info("Completed operator scanning. Total operators processed: {}", operatorClasses.size());
+        log.debug("Completed operator scanning. Total operators processed: {}", operatorClasses.size());
     }
 }

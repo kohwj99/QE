@@ -1,6 +1,8 @@
 package com.example.qe.queryengine.query;
 
+import com.example.qe.queryengine.exception.FieldTypeMismatchException;
 import com.example.qe.queryengine.exception.InvalidQueryException;
+import com.example.qe.queryengine.exception.OperatorNotFoundException;
 import com.example.qe.queryengine.operator.GenericOperator;
 import com.example.qe.queryengine.operator.OperatorFactory;
 import lombok.Getter;
@@ -36,11 +38,11 @@ public abstract class FieldQuery implements Query {
 
         // Perform type checking to enforce Operator compatibility
         if (!validValueType.equals(valueType.getClazz())) {
-            throw new InvalidQueryException("Value type " + valueType.name() + " is not supported for operator " + operator + " on field type " + getFieldClass().getName());
+            throw new FieldTypeMismatchException("Value type " + valueType.name() + " is not supported for operator " + operator + " on field type " + getFieldClass().getName());
         }
         GenericOperator op = operatorFactory.resolve(operator, getFieldClass(), valueType.getClazz());
         if (op == null) {
-            throw new InvalidQueryException("Unknown operator: " + operator);
+            throw new OperatorNotFoundException("Unknown operator: " + operator);
         }
 
         // Perform type checking to ensure value is of the correct type

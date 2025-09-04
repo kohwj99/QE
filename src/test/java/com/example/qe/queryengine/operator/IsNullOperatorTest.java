@@ -1,0 +1,115 @@
+package com.example.qe.queryengine.operator;
+
+import com.example.qe.queryengine.operator.impl.IsNullOperator;
+import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.impl.DSL;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class IsNullOperatorTest {
+
+    private IsNullOperator operator;
+
+    @BeforeEach
+    void setUp() {
+        operator = new IsNullOperator();
+    }
+
+    @Test
+    void apply_givenStringField_shouldReturnNullCondition() {
+        // Arrange
+        Field<String> field = DSL.field("name", String.class);
+
+        // Act
+        Condition condition = operator.apply(field, null);
+
+        // Assert
+        assertNotNull(condition);
+        assertTrue(condition.toString().toLowerCase().contains("is null"));
+    }
+
+    @Test
+    void apply_givenBigDecimalField_shouldReturnNullCondition() {
+        // Arrange
+        Field<BigDecimal> field = DSL.field("salary", BigDecimal.class);
+
+        // Act
+        Condition condition = operator.apply(field, null);
+
+        // Assert
+        assertNotNull(condition);
+        assertTrue(condition.toString().toLowerCase().contains("is null"));
+    }
+
+    @Test
+    void apply_givenBooleanField_shouldReturnNullCondition() {
+        // Arrange
+        Field<Boolean> field = DSL.field("active", Boolean.class);
+
+        // Act
+        Condition condition = operator.apply(field, null);
+
+        // Assert
+        assertNotNull(condition);
+        assertTrue(condition.toString().toLowerCase().contains("is null"));
+    }
+
+    @Test
+    void apply_givenLocalDateField_shouldReturnNullCondition() {
+        // Arrange
+        Field<LocalDate> field = DSL.field("created_date", LocalDate.class);
+
+        // Act
+        Condition condition = operator.apply(field, null);
+
+        // Assert
+        assertNotNull(condition);
+        assertTrue(condition.toString().toLowerCase().contains("is null"));
+    }
+
+    @Test
+    void apply_givenNonNullValue_shouldIgnoreValueAndReturnNullCondition() {
+        // Arrange
+        Field<String> field = DSL.field("name", String.class);
+        String value = "ignored";
+
+        // Act
+        Condition condition = operator.apply(field, value);
+
+        // Assert
+        assertNotNull(condition);
+        assertTrue(condition.toString().toLowerCase().contains("is null"));
+    }
+
+    @Test
+    void apply_givenMockField_shouldCallIsNull() {
+        // Arrange
+        @SuppressWarnings("unchecked")
+        Field<String> mockField = mock(Field.class);
+        Condition mockCondition = DSL.trueCondition();
+        when(mockField.isNull()).thenReturn(mockCondition);
+
+        // Act
+        Condition result = operator.apply(mockField, null);
+
+        // Assert
+        assertEquals(mockCondition, result);
+        verify(mockField, times(1)).isNull();
+    }
+
+    @Test
+    void apply_givenNullField_shouldThrowNullPointerException() {
+        // Arrange
+        Field<?> field = null;
+
+        // Act + Assert
+        assertThrows(NullPointerException.class, () -> operator.apply(field, null));
+    }
+}
