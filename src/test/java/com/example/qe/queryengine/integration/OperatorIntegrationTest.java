@@ -20,7 +20,7 @@ public abstract class OperatorIntegrationTest {
     void setupCommon() {
         OperatorRegistry registry = new OperatorRegistry();
         OperatorScanner scanner = new OperatorScanner(registry);
-        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
+        scanner.scanAndRegister();
         OperatorFactory factory = new OperatorFactory(registry);
 
         DSLContext dsl = DSL.using(SQLDialect.DEFAULT);

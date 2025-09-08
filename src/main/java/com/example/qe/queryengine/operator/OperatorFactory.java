@@ -1,9 +1,11 @@
 package com.example.qe.queryengine.operator;
 
 import com.example.qe.queryengine.exception.OperatorNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+@Component
 public class OperatorFactory {
 
     private final OperatorRegistry registry;

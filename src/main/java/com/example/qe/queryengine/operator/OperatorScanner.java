@@ -1,12 +1,17 @@
 package com.example.qe.queryengine.operator;
 import com.example.qe.queryengine.exception.QueryEngineException;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Slf4j
+@Component
 public class OperatorScanner {
+
+    private static final String OPERATOR_BASE_PACKAGE = "com.example.qe.queryengine.operator.impl";
 
     private final OperatorRegistry registry;
 
@@ -14,8 +19,9 @@ public class OperatorScanner {
         this.registry = registry;
     }
 
-    public void scanAndRegister(String basePackage) {
-        Reflections reflections = new Reflections(basePackage);
+    @PostConstruct
+    public void scanAndRegister() {
+        Reflections reflections = new Reflections(OPERATOR_BASE_PACKAGE);
         Set<Class<?>> operatorClasses = reflections.getTypesAnnotatedWith(OperatorAnnotation.class);
         for (Class<?> clazz : operatorClasses) {
             try {

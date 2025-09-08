@@ -1,8 +1,5 @@
 package com.example.qe.queryengine;
 
-import com.example.qe.queryengine.operator.OperatorFactory;
-import com.example.qe.queryengine.operator.OperatorRegistry;
-import com.example.qe.queryengine.operator.OperatorScanner;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.jooq.DSLContext;
@@ -16,24 +13,6 @@ import javax.sql.DataSource;
 
 @Configuration
 public class QueryEngineConfig {
-    private static final String OPERATOR_BASE_PACKAGE = "com.example.qe.queryengine.operator.impl";
-
-    @Bean
-    public OperatorRegistry operatorRegistry() {
-        return new OperatorRegistry();
-    }
-
-    @Bean
-    public OperatorScanner operatorScanner(OperatorRegistry operatorRegistry) {
-        OperatorScanner scanner = new OperatorScanner(operatorRegistry);
-        scanner.scanAndRegister(OPERATOR_BASE_PACKAGE);
-        return scanner;
-    }
-
-    @Bean
-    public OperatorFactory operatorFactory(OperatorRegistry operatorRegistry) {
-        return new OperatorFactory(operatorRegistry);
-    }
 
     @Bean
     public DataSource dataSource(

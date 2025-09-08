@@ -24,7 +24,7 @@ class OperatorScannerTest {
     @Test
     void scanAndRegister_givenPackageWithOperators_shouldRegisterEqualsOperator() {
         // Act
-        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
+        scanner.scanAndRegister();
 
         // Assert
         ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
@@ -55,7 +55,7 @@ class OperatorScannerTest {
     @Test
     void scanAndRegister_givenPackageWithOperators_shouldRegisterDayOfWeekOperator() {
         // Act
-        scanner.scanAndRegister("com.example.qe.queryengine.operator.impl");
+        scanner.scanAndRegister();
 
         // Assert
         ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);

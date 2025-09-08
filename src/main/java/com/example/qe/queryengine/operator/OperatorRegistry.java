@@ -1,6 +1,10 @@
 package com.example.qe.queryengine.operator;
 
+import org.springframework.stereotype.Component;
+
 import java.util.*;
+
+@Component
 public class OperatorRegistry {
     private final Map<String, Set<Class<?>>> operatorToFieldTypes = new HashMap<>();
     private final Map<String, Set<Class<?>>> operatorToValueTypes = new HashMap<>();
