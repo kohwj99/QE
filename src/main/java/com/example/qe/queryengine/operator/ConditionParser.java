@@ -25,7 +25,6 @@ public class ConditionParser {
     }
 
     public Condition parseJsonToCondition(String json) throws JsonProcessingException {
-        System.out.println("Original JSON: " + json);
         if (json == null || json.trim().isEmpty()) {
             throw new IllegalArgumentException("JSON cannot be null or empty");
         }

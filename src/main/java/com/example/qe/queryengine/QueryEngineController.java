@@ -22,27 +22,17 @@ public class QueryEngineController {
 
     @PostMapping("/executeQuery")
     public void executeQuery(@RequestBody QueryContextDto context) {
-        try {
-            // Execute the query on the actual database
-            Result<Record> result = queryEngineService.executeQuery(context);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        Result<Record> result = queryEngineService.executeQuery(context);
+
     }
 
     @PostMapping("/executeQueryToDisplay")
     public ResponseEntity<List<Map<String, Object>>> executeQueryToDisplay(@RequestBody QueryContextDto context) {
-        try {
 
-            // Execute the query on the actual database
-            List<Map<String, Object>> result = queryEngineService.executeQueryToDisplay(context);
+        // Execute the query on the actual database
+        List<Map<String, Object>> result = queryEngineService.executeQueryToDisplay(context);
 
-            // Convert result to JSON format
-            return ResponseEntity.ok(result);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.noContent().build();
-        }
+        // Convert result to JSON format
+        return ResponseEntity.ok(result);
     }
 }

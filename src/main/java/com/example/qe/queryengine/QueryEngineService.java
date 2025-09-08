@@ -30,7 +30,7 @@ public class QueryEngineService {
         this.dsl = dsl;
     }
 
-    public Result<Record> executeQuery(QueryContextDto context) throws QueryEngineException {
+    public Result<Record> executeQuery(QueryContextDto context) {
 
         try {
             String replacedJson = replaceableResolver.processJsonPlaceholders(context);
@@ -47,7 +47,7 @@ public class QueryEngineService {
         }
     }
 
-    public List<Map<String, Object>> executeQueryToDisplay(QueryContextDto context) throws QueryEngineException {
+    public List<Map<String, Object>> executeQueryToDisplay(QueryContextDto context)  {
 
         try {
             String replacedJson = replaceableResolver.processJsonPlaceholders(context);
