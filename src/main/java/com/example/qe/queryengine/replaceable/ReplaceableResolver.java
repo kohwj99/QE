@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.replaceable;
 
+import com.example.qe.queryengine.exception.QueryReplaceableException;
 import com.example.qe.queryengine.query.QueryContextDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,7 @@ public class ReplaceableResolver {
             System.out.println(root.toPrettyString());
             return objectMapper.writeValueAsString(root);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to process placeholders", e);
+            throw new QueryReplaceableException("Failed to process placeholders", e);
         }
     }
 

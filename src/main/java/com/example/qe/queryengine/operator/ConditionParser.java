@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.operator;
 
+import com.example.qe.queryengine.exception.QueryEngineException;
 import com.example.qe.queryengine.query.Query;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,21 +25,25 @@ public class ConditionParser {
         this.objectMapper.registerModule(new JavaTimeModule());
     }
 
-    public Condition parseJsonToCondition(String json) throws JsonProcessingException {
+    public Condition parseJsonToCondition(String json) {
         if (json == null || json.trim().isEmpty()) {
-            throw new IllegalArgumentException("JSON cannot be null or empty");
+            throw new QueryEngineException("JSON cannot be null or empty");
         }
 
-        Query query = objectMapper.readValue(json, Query.class);
+        Query query;
+        try {
+            query = objectMapper.readValue(json, Query.class);
+        } catch (JsonProcessingException ex) {
+            throw new QueryEngineException("Failed to convert JSON to Query class with error: "+ ex.getMessage(), ex);
+        }
 
         try {
             query.validate();
         } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            throw new QueryEngineException("Query Validation failed with error: "+ ex.getMessage(), ex);
         }
 
         //TODO possible to do a check here for any issues?
-        Condition condition = query.toCondition(dsl, operatorFactory);
-        return condition;
+        return query.toCondition(dsl, operatorFactory);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.replaceable;
 
+import com.example.qe.queryengine.exception.QueryReplaceableException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,13 +15,13 @@ public class ReplaceableFactory {
     public Replaceable create(String placeholder) {
         Class<? extends Replaceable> clazz = registry.get(placeholder);
         if (clazz == null) {
-            throw new IllegalArgumentException("No Replaceable found for placeholder: " + placeholder);
+            throw new QueryReplaceableException("No Replaceable found for placeholder: " + placeholder);
         }
 
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create Replaceable for " + placeholder, e);
+            throw new QueryReplaceableException("Failed to create Replaceable for " + placeholder, e);
         }
     }
 }

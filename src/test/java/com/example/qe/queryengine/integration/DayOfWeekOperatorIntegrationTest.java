@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.integration;
 
+import com.example.qe.queryengine.exception.QueryEngineException;
 import com.example.qe.queryengine.operator.ConditionParser;
 import com.example.qe.queryengine.exception.QueryDeserializationException;
 import com.example.qe.queryengine.operator.OperatorFactory;
@@ -115,10 +116,12 @@ class DayOfWeekOperatorIntegrationTest extends OperatorIntegrationTest {
             }
             """;
 
-        Exception ex = assertThrows(JsonMappingException.class, () -> {
+        Exception ex = assertThrows(QueryEngineException.class, () -> {
             conditionParser.parseJsonToCondition(jsonInput);
         });
 
-        assertTrue(ex.getCause() instanceof QueryDeserializationException);
+        Throwable rootCause = ex.getCause().getCause();
+        assertTrue(rootCause instanceof QueryDeserializationException);
+        assertTrue(rootCause.getMessage().contains("Date Query can only take in valid LocalDate string"));
     }
 }

@@ -32,38 +32,26 @@ public class QueryEngineService {
 
     public Result<Record> executeQuery(QueryContextDto context) {
 
-        try {
-            String replacedJson = replaceableResolver.processJsonPlaceholders(context);
-            Condition condition = conditionParser.parseJsonToCondition(replacedJson);
+        String replacedJson = replaceableResolver.processJsonPlaceholders(context);
+        Condition condition = conditionParser.parseJsonToCondition(replacedJson);
 
-            System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
-            return dsl.select()
-                    .from(context.getTableName())
-                    .where(condition)
-                    .fetch();
-
-        } catch (JsonProcessingException e) {
-            throw new QueryEngineException(e.getMessage(), e.getCause());
-        }
+        System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
+        return dsl.select()
+                .from(context.getTableName())
+                .where(condition)
+                .fetch();
     }
 
     public List<Map<String, Object>> executeQueryToDisplay(QueryContextDto context)  {
+        String replacedJson = replaceableResolver.processJsonPlaceholders(context);
+        Condition condition = conditionParser.parseJsonToCondition(replacedJson);
 
-        try {
-            String replacedJson = replaceableResolver.processJsonPlaceholders(context);
-            Condition condition = conditionParser.parseJsonToCondition(replacedJson);
+        System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
+        Result<Record> result = dsl.select()
+                .from(context.getTableName())
+                .where(condition)
+                .fetch();
 
-            System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
-            Result<Record> result = dsl.select()
-                    .from(context.getTableName())
-                    .where(condition)
-                    .fetch();
-
-            return result.intoMaps();
-
-        } catch (JsonProcessingException e) {
-            throw new QueryEngineException(e.getMessage(), e.getCause());
-        }
+        return result.intoMaps();
     }
-
 }

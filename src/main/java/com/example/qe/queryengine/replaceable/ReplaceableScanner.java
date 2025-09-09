@@ -31,10 +31,10 @@ public class ReplaceableScanner {
                 registerReplaceable(clazz, ann.value());
             }
         }
-        log.debug("Completed replaceable scanning and registration. Registered replaceables: {}", registry.getAll().size());
+        log.debug("Completed replaceable scanning and registration. Registered count: {}", registry.getAll().size());
     }
 
-    private <T extends Replaceable> void registerReplaceable(Class<?> clazz, String placeholder) {
+    <T extends Replaceable> void registerReplaceable(Class<?> clazz, String placeholder) {
         registry.register(placeholder, clazz.asSubclass(Replaceable.class));
     }
 }
