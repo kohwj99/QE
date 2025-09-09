@@ -2,9 +2,6 @@ package com.example.qe.queryengine;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,10 +25,5 @@ public class QueryEngineConfig {
         config.setDriverClassName(driverClassName);
 
         return new HikariDataSource(config);
-    }
-
-    @Bean
-    public DSLContext dslContext(DataSource dataSource) {
-        return DSL.using(dataSource, SQLDialect.DEFAULT);
     }
 }
