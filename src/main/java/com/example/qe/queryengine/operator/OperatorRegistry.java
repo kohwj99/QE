@@ -9,11 +9,16 @@ public class OperatorRegistry {
     private final Map<String, Set<Class<?>>> operatorToFieldTypes = new HashMap<>();
     private final Map<String, Set<Class<?>>> operatorToValueTypes = new HashMap<>();
     private final Map<String, GenericOperator> operatorMap = new HashMap<>();
+    private final Map<String, RunConditionOperator> runConditionOperatorMap = new HashMap<>();
 
     public void register(String name, Class<?>[] fieldTypes, Class<?>[] valueTypes, GenericOperator operator) {
         operatorToFieldTypes.computeIfAbsent(name, k -> new HashSet<>()).addAll(Arrays.asList(fieldTypes));
         operatorToValueTypes.computeIfAbsent(name, k -> new HashSet<>()).addAll(Arrays.asList(valueTypes));
         operatorMap.put(name, operator);
+
+        if (operator instanceof RunConditionOperator runConditionOperator) {
+            runConditionOperatorMap.put(name, runConditionOperator);
+        }
     }
 
     public GenericOperator get(String name, Class<?> fieldType, Class<?> valueType) {
@@ -22,6 +27,12 @@ public class OperatorRegistry {
         if (fieldTypes == null || valueTypes == null) return null;
         if (!fieldTypes.contains(fieldType) || !valueTypes.contains(valueType)) return null;
         return operatorMap.get(name);
+    }
+
+    public RunConditionOperator getRunConditionOperator(String name, Class<?> valueType) {
+        Set<Class<?>> valueTypes = operatorToValueTypes.get(name);
+        if (!valueTypes.contains(valueType)) return null;
+        return runConditionOperatorMap.get(name);
     }
 
     public Set<Class<?>> getSupportedValueTypes(String operatorName) {

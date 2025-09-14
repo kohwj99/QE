@@ -1,0 +1,61 @@
+package com.example.qe.queryengine.query;
+
+import com.example.qe.queryengine.exception.InvalidQueryException;
+import com.example.qe.queryengine.operator.OperatorFactory;
+import com.example.qe.queryengine.operator.RunConditionOperator;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import lombok.Getter;
+import lombok.Setter;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
+
+@Setter
+@Getter
+@JsonTypeName("DateQuery")
+public class JavaQuery implements Query{
+
+    //"e.g [today] dayOfWeek 1"
+    protected String placeholder;
+    protected String operator;
+    protected Object value;
+    protected ValueType valueType;
+
+    protected JavaQuery() {
+    }
+
+    @JsonCreator
+    protected JavaQuery(@JsonProperty("column") String placeholder,
+                        @JsonProperty("operatorName") String operator,
+                        @JsonProperty("value") Object value,
+                        @JsonProperty("valueType") ValueType valueType) {
+        this.placeholder = placeholder;
+        this.operator = operator;
+        this.value = value;
+        this.valueType = valueType;
+    }
+
+    @Override
+    public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
+        System.out.println("working here");
+        RunConditionOperator op = operatorFactory.resolveRunCondition(operator, valueType.getClazz());
+        System.out.println("retrieved op "+op);
+        System.out.println("placeholder "+placeholder);
+        System.out.println("value "+value);
+        return op.evaluate(placeholder,value);
+    }
+
+    public void validate() {
+        if (placeholder == null || placeholder.trim().isEmpty()) {
+            throw new InvalidQueryException("Placeholder cannot be null or empty");
+        }
+        if (operator == null || operator.trim().isEmpty()) {
+            throw new InvalidQueryException("Operator cannot be null or empty");
+        }
+        if (valueType == null || valueType.getClazz().getSimpleName().trim().isEmpty()) {
+            throw new InvalidQueryException("Value type cannot be null or empty");
+        }
+    }
+}

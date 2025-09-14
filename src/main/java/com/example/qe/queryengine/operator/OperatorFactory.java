@@ -29,6 +29,15 @@ public class OperatorFactory {
         return op;
     }
 
+    public RunConditionOperator resolveRunCondition(String operatorName, Class<?> valueType) {
+        RunConditionOperator op = registry.getRunConditionOperator(operatorName, valueType);
+        if (op == null) {
+            throw new OperatorNotFoundException("RunConditionOperator " + operatorName +
+                    " does not support value type " + valueType.getName());
+        }
+        return op;
+    }
+
     public Class<?> resolveValueType(String operatorName, Class<?> fieldType) {
         Set<Class<?>> valueTypes = registry.getSupportedValueTypes(operatorName);
         if (valueTypes == null || valueTypes.isEmpty()) {
