@@ -14,7 +14,7 @@ public class NumericQuery extends FieldQuery {
     @JsonCreator
     public NumericQuery(@JsonProperty("column") String column,
                        @JsonProperty("operatorName") String operatorName,
-                        @JsonProperty("value") BigDecimal value,
+                        @JsonProperty("value") Object value,
                         @JsonProperty("valueType") ValueType valueType) {
         super(column, operatorName, value, valueType);
     }

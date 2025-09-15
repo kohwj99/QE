@@ -11,7 +11,7 @@ public class BoolQuery extends FieldQuery {
     @JsonCreator
     public BoolQuery(@JsonProperty("column") String column,
                      @JsonProperty("operatorName") String operatorName,
-                     @JsonProperty("value") Boolean value,
+                     @JsonProperty("value") Object value,
                          @JsonProperty("valueType") ValueType valueType){
         super(column, operatorName, value, valueType);
     }

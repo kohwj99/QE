@@ -12,7 +12,7 @@ public class StringQuery extends FieldQuery {
     @JsonCreator
     public StringQuery(@JsonProperty("column") String column,
                        @JsonProperty("operatorName") String operatorName,
-                       @JsonProperty("value") String value,
+                       @JsonProperty("value") Object value,
                        @JsonProperty("valueType") ValueType valueType) {
         super(column, operatorName, value, valueType);
     }
