@@ -38,7 +38,8 @@ public class DayOfMonthOperator implements GenericOperator, RunConditionOperator
     public Condition evaluate(Object placeholder, Object value) {
         LocalDate date = LocalDate.parse((String) placeholder);
         Integer dayOfMonth = date.getDayOfMonth();
-        if (dayOfMonth.equals(value)) {
+        Integer day = ((BigDecimal) value).intValue();
+        if (dayOfMonth.equals(day)) {
             return DSL.condition("1 = 1");
         }
         return DSL.condition("1 = 0");

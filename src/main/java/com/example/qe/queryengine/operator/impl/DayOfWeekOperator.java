@@ -43,7 +43,8 @@ public class DayOfWeekOperator implements GenericOperator, RunConditionOperator 
     public Condition evaluate(Object placeholder, Object value) {
         LocalDate date = LocalDate.parse((String) placeholder);
         Integer dayOfWeek = date.getDayOfWeek().getValue();
-        if (dayOfWeek.equals(value)) {
+        Integer day = ((BigDecimal) value).intValue();
+        if (dayOfWeek.equals(day)) {
             return DSL.condition("1 = 1");
         }
         return DSL.condition("1 = 0");
