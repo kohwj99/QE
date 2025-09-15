@@ -41,7 +41,6 @@ public class ConditionParser {
             throw new QueryEngineException("Query Validation failed with error: "+ ex.getMessage(), ex);
         }
 
-        //TODO possible to do a check here for any issues?
         return query.toCondition(dsl, operatorFactory);
     }
 }

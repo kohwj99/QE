@@ -1,19 +1,8 @@
 package com.example.qe.queryengine.integration;
 
 import com.example.qe.queryengine.exception.FieldTypeMismatchException;
-import com.example.qe.queryengine.exception.QueryEngineException;
-import com.example.qe.queryengine.operator.ConditionParser;
-import com.example.qe.queryengine.exception.QueryDeserializationException;
-import com.example.qe.queryengine.operator.OperatorFactory;
-import com.example.qe.queryengine.operator.OperatorRegistry;
-import com.example.qe.queryengine.operator.OperatorScanner;
 import com.example.qe.util.QueryTestCase;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,7 +28,7 @@ class DayOfWeekOperatorIntegrationTest extends OperatorIntegrationTest {
     @ParameterizedTest
     @MethodSource("positiveTestCases")
     @DisplayName("DayOfWeekOperator Positive Test Cases")
-    void parseJsonToCondition_givenDayOfWeekOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase) throws Exception {
+    void parseJsonToCondition_givenDayOfWeekOperatorWithPositiveCases_shouldReturnConditionSuccessfully(QueryTestCase testCase){
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -122,11 +111,5 @@ class DayOfWeekOperatorIntegrationTest extends OperatorIntegrationTest {
         });
         System.out.println(ex.getMessage());
         assertTrue(ex.getMessage().contains("Value type STRING is not supported for operator dayOfWeek on field type java.time.LocalDate"));
-
-//        System.out.println(ex.getCause().getCause().getCause().getMessage());
-//        System.out.println(ex.getCause().getCause().getCause().toString());
-//        Throwable rootCause = ex.getCause().getCause();
-//        assertTrue(rootCause instanceof QueryDeserializationException);
-//        assertTrue(rootCause.getMessage().contains("Date Query can only take in valid LocalDate string"));
     }
 }

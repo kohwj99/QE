@@ -1,16 +1,8 @@
 package com.example.qe.queryengine.integration;
 
-import com.example.qe.queryengine.operator.ConditionParser;
 import com.example.qe.queryengine.exception.InvalidQueryException;
-import com.example.qe.queryengine.operator.OperatorFactory;
-import com.example.qe.queryengine.operator.OperatorRegistry;
-import com.example.qe.queryengine.operator.OperatorScanner;
 import com.example.qe.util.QueryTestCase;
 import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

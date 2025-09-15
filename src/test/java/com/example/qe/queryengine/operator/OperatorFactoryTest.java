@@ -29,14 +29,14 @@ class OperatorFactoryTest {
         dayOfWeekOperator = mock(GenericOperator.class);
 
         // Mock registry.get for valid operator scenarios
-        when(registry.get(eq("equals"), eq(String.class), eq(String.class))).thenReturn(equalsOperator);
-        when(registry.get(eq("equals"), eq(BigDecimal.class), eq(BigDecimal.class))).thenReturn(equalsOperator);
-        when(registry.get(eq("dayOfWeek"), eq(LocalDate.class), eq(BigDecimal.class))).thenReturn(dayOfWeekOperator);
+        when(registry.get("equals", String.class, String.class)).thenReturn(equalsOperator);
+        when(registry.get("equals", BigDecimal.class, BigDecimal.class)).thenReturn(equalsOperator);
+        when(registry.get("dayOfWeek", LocalDate.class, BigDecimal.class)).thenReturn(dayOfWeekOperator);
 
         // Mock registry.getSupportedValueTypes
-        when(registry.getSupportedValueTypes(eq("equals"))).thenReturn(Set.of(String.class, BigDecimal.class));
-        when(registry.getSupportedValueTypes(eq("dayOfWeek"))).thenReturn(Set.of(BigDecimal.class));
-        when(registry.getSupportedValueTypes(eq("unknown"))).thenReturn(Set.of());
+        when(registry.getSupportedValueTypes("equals")).thenReturn(Set.of(String.class, BigDecimal.class));
+        when(registry.getSupportedValueTypes("dayOfWeek")).thenReturn(Set.of(BigDecimal.class));
+        when(registry.getSupportedValueTypes("unknown")).thenReturn(Set.of());
     }
 
     @Test
@@ -50,7 +50,7 @@ class OperatorFactoryTest {
     @Test
     void resolve_givenUnsupportedTypes_shouldThrowOperatorNotFoundException() {
         // Arrange
-        when(registry.get(eq("equals"), eq(String.class), eq(LocalDate.class))).thenReturn(null);
+        when(registry.get("equals", String.class, LocalDate.class)).thenReturn(null);
 
         // Act & Assert
         Exception ex = assertThrows(OperatorNotFoundException.class,
@@ -61,7 +61,7 @@ class OperatorFactoryTest {
     @Test
     void resolve_givenUnknownOperatorName_shouldThrowOperatorNotFoundException() {
         // Arrange
-        when(registry.get(eq("unknown"), any(), any())).thenReturn(null);
+        when(registry.get("unknown", any(), any())).thenReturn(null);
 
         // Act & Assert
         Exception ex = assertThrows(OperatorNotFoundException.class,

@@ -1,15 +1,7 @@
 package com.example.qe.queryengine.integration;
 
-import com.example.qe.queryengine.operator.ConditionParser;
-import com.example.qe.queryengine.operator.OperatorFactory;
-import com.example.qe.queryengine.operator.OperatorRegistry;
-import com.example.qe.queryengine.operator.OperatorScanner;
 import com.example.qe.util.QueryTestCase;
 import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +28,7 @@ class IsNotNullOperatorIntegrationTest extends OperatorIntegrationTest {
     @ParameterizedTest
     @MethodSource("positiveTestCases")
     @DisplayName("IsNotNullOperator Positive Test Cases")
-    void parseJsonToCondition_givenIsNotNullOperator_shouldReturnIsNotNullCondition(QueryTestCase testCase) throws Exception {
+    void parseJsonToCondition_givenIsNotNullOperator_shouldReturnIsNotNullCondition(QueryTestCase testCase)  {
         String jsonInput = String.format("""
                 {
                   "type": "%s",
@@ -97,7 +89,7 @@ class IsNotNullOperatorIntegrationTest extends OperatorIntegrationTest {
        ============================ */
     @Test
     @DisplayName("IsNotNullOperator should ignore value and return IS NOT NULL condition")
-    void parseJsonToCondition_givenIsNotNullOperatorWithAnyValue_shouldReturnIsNotNullCondition() throws Exception {
+    void parseJsonToCondition_givenIsNotNullOperatorWithAnyValue_shouldReturnIsNotNullCondition() {
         String jsonInput = """
             {
               "type": "StringQuery",

@@ -27,7 +27,6 @@ public abstract class FieldQuery implements Query {
     protected FieldQuery(String column, String operator, Object value, ValueType valueType) {
         this.column = column;
         this.operator = operator;
-//        this.value = value;
         this.value = ValueNormalizer.normalize(value, valueType);
         this.valueType = valueType;
     }

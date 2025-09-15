@@ -21,7 +21,6 @@ public class ReplaceableResolver {
         JsonNode root = contextDto.getJson();
         try {
             resolveNode(root, contextDto);
-            System.out.println(root.toPrettyString());
             return objectMapper.writeValueAsString(root);
         } catch (Exception e) {
             throw new QueryReplaceableException("Failed to process placeholders", e);

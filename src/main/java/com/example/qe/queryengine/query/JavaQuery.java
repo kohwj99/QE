@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 
 @Setter
 @Getter
@@ -40,10 +39,6 @@ public class JavaQuery implements Query{
     @Override
     public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
         RunConditionOperator op = operatorFactory.resolveRunCondition(operator, valueType.getClazz());
-        System.out.println("retrieved op "+op);
-        System.out.println("placeholder "+placeholder);
-        System.out.println("value "+value);
-
         return op.evaluate(placeholder,valueType.getClazz().cast(value));
     }
 

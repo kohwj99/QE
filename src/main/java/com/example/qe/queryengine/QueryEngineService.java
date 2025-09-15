@@ -1,6 +1,5 @@
 package com.example.qe.queryengine;
 
-import com.example.qe.queryengine.exception.QueryEngineException;
 import com.example.qe.queryengine.operator.ConditionParser;
 import com.example.qe.queryengine.query.QueryContextDto;
 import com.example.qe.queryengine.replaceable.ReplaceableResolver;
@@ -36,7 +35,7 @@ public class QueryEngineService {
         String replacedJson = replaceableResolver.processJsonPlaceholders(context);
         Condition condition = conditionParser.parseJsonToCondition(replacedJson);
 
-        System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
+//        System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
         return dsl.select()
                 .from(context.getTableName())
                 .where(condition)
@@ -47,7 +46,7 @@ public class QueryEngineService {
         String replacedJson = replaceableResolver.processJsonPlaceholders(context);
         Condition condition = conditionParser.parseJsonToCondition(replacedJson);
 
-        System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
+//        System.out.println(dsl.renderInlined(dsl.select().from(context.getTableName()).where(condition)));
         Result<Record> result = dsl.select()
                 .from(context.getTableName())
                 .where(condition)

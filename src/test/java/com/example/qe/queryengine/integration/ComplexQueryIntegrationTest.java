@@ -9,11 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ComplexQueryIntegrationTest extends OperatorIntegrationTest{
+
+class ComplexQueryIntegrationTest extends OperatorIntegrationTest{
 
     @Test
     @Order(1)
-    void parseJsonToCondition_givenAndQuery_shouldGenerateCorrectSql() throws Exception {
+    void parseJsonToCondition_givenAndQuery_shouldGenerateCorrectSql() {
         String json = """
         {
           "type": "AndQuery",
@@ -47,7 +48,7 @@ public class ComplexQueryIntegrationTest extends OperatorIntegrationTest{
 
     @Test
     @Order(2)
-    void parseJsonToCondition_givenNestedOrQuery_shouldGenerateCorrectSql() throws Exception {
+    void parseJsonToCondition_givenNestedOrQuery_shouldGenerateCorrectSql() {
         String json = """
         {
           "type": "OrQuery",
@@ -95,7 +96,7 @@ public class ComplexQueryIntegrationTest extends OperatorIntegrationTest{
 
     @Test
     @Order(3)
-    void parseJsonToCondition_givenMultiLayeredQuery_shouldGenerateCorrectSql() throws Exception {
+    void parseJsonToCondition_givenMultiLayeredQuery_shouldGenerateCorrectSql() {
         String json = """
         {
           "type": "AndQuery",

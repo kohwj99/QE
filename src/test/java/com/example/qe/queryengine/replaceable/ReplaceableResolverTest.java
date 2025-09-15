@@ -52,7 +52,7 @@ class ReplaceableResolverTest {
                 }
                 """;
         QueryContextDto context = makeContext(json);
-        when(factory.create(eq("[me]"))).thenReturn(new DummyReplaceable("resolved-me"));
+        when(factory.create("[me]")).thenReturn(new DummyReplaceable("resolved-me"));
 
         // Act
         String result = resolver.processJsonPlaceholders(context);
@@ -88,8 +88,8 @@ class ReplaceableResolverTest {
                 """;
         QueryContextDto context = makeContext(json);
 
-        when(factory.create(eq("[today]"))).thenReturn(new DummyReplaceable("2025-09-09"));
-        when(factory.create(eq("[me]"))).thenReturn(new DummyReplaceable("user-12345"));
+        when(factory.create("[today]")).thenReturn(new DummyReplaceable("2025-09-09"));
+        when(factory.create("[me]")).thenReturn(new DummyReplaceable("user-12345"));
 
         // Act
         String result = resolver.processJsonPlaceholders(context);
@@ -115,7 +115,7 @@ class ReplaceableResolverTest {
                 }
                 """;
         QueryContextDto context = makeContext(json);
-        when(factory.create(eq("[bad]"))).thenThrow(new RuntimeException("boom"));
+        when(factory.create("[bad]")).thenThrow(new RuntimeException("boom"));
 
         // Act & Assert
         assertThatThrownBy(() -> resolver.processJsonPlaceholders(context))
