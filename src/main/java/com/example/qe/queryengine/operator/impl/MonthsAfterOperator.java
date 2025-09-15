@@ -37,27 +37,9 @@ public class MonthsAfterOperator implements GenericOperator, RunConditionOperato
 
     @Override
     public Condition evaluate(Object placeholder, Object value) {
-        if (placeholder == null || value == null) {
-            throw new InvalidQueryException("Placeholder and value cannot be null");
-        }
-
-        LocalDate date;
-        if (placeholder instanceof LocalDate d) {
-            date = d;
-        } else {
-            date = LocalDate.parse(placeholder.toString());
-        }
-
-        if (!(value instanceof BigDecimal)) {
-            throw new InvalidQueryException("MonthsAfterOperator requires a numeric value (BigDecimal), but got: " + value.getClass());
-        }
-
-        int months = ((BigDecimal) value).intValue();
-        LocalDate targetDate = LocalDate.now().minusMonths(months);
-
-        if (date.equals(targetDate)) {
-            return DSL.condition("1 = 1");
-        }
-        return DSL.condition("1 = 0");
+        LocalDate date = LocalDate.parse((String) placeholder);
+        BigDecimal months = (BigDecimal) value;
+        LocalDate targetDate = LocalDate.now().minusMonths(months.intValue());
+        return date.equals(targetDate) ? DSL.condition("1 = 1") : DSL.condition("1 = 0");
     }
 }
