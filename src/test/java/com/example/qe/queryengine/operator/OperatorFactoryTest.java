@@ -61,7 +61,7 @@ class OperatorFactoryTest {
     @Test
     void resolve_givenUnknownOperatorName_shouldThrowOperatorNotFoundException() {
         // Arrange
-        when(registry.get("unknown", any(), any())).thenReturn(null);
+        when(registry.get(eq("unknown"), any(), any())).thenReturn(null);
 
         // Act & Assert
         Exception ex = assertThrows(OperatorNotFoundException.class,
