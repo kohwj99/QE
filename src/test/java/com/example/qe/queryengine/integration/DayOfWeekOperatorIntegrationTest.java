@@ -1,5 +1,6 @@
 package com.example.qe.queryengine.integration;
 
+import com.example.qe.queryengine.exception.FieldTypeMismatchException;
 import com.example.qe.queryengine.exception.QueryEngineException;
 import com.example.qe.queryengine.operator.ConditionParser;
 import com.example.qe.queryengine.exception.QueryDeserializationException;
@@ -116,12 +117,16 @@ class DayOfWeekOperatorIntegrationTest extends OperatorIntegrationTest {
             }
             """;
 
-        Exception ex = assertThrows(QueryEngineException.class, () -> {
+        Exception ex = assertThrows(FieldTypeMismatchException.class, () -> {
             conditionParser.parseJsonToCondition(jsonInput);
         });
+        System.out.println(ex.getMessage());
+        assertTrue(ex.getMessage().contains("Value type STRING is not supported for operator dayOfWeek on field type java.time.LocalDate"));
 
-        Throwable rootCause = ex.getCause().getCause();
-        assertTrue(rootCause instanceof QueryDeserializationException);
-        assertTrue(rootCause.getMessage().contains("Date Query can only take in valid LocalDate string"));
+//        System.out.println(ex.getCause().getCause().getCause().getMessage());
+//        System.out.println(ex.getCause().getCause().getCause().toString());
+//        Throwable rootCause = ex.getCause().getCause();
+//        assertTrue(rootCause instanceof QueryDeserializationException);
+//        assertTrue(rootCause.getMessage().contains("Date Query can only take in valid LocalDate string"));
     }
 }

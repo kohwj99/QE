@@ -3,6 +3,7 @@ package com.example.qe.queryengine.operator.impl;
 import com.example.qe.queryengine.exception.InvalidQueryException;
 import com.example.qe.queryengine.operator.GenericOperator;
 import com.example.qe.queryengine.operator.OperatorAnnotation;
+import com.example.qe.queryengine.operator.RunConditionOperator;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
         supportedValueTypes = {BigDecimal.class},
         description = "Checks if today is a given number of days after a date field"
 )
-public class DaysAfterOperator implements GenericOperator {
+public class DaysAfterOperator implements GenericOperator, RunConditionOperator {
 
     @Override
     public Condition apply(Field<?> field, Object value) {
@@ -39,5 +40,16 @@ public class DaysAfterOperator implements GenericOperator {
         long days = ((BigDecimal) value).longValue();
         LocalDate targetDate = LocalDate.now().minusDays(days);
         return DSL.condition("CAST({0} AS DATE) = {1}", field, targetDate);
+    }
+
+    @Override
+    public Condition evaluate(Object placeholder, Object value) {
+        LocalDate date = LocalDate.parse((String) placeholder);
+        BigDecimal days = (BigDecimal) value;
+        LocalDate targetDate = LocalDate.now().minusDays(days.longValue());
+        if (date.equals(targetDate)) {
+            return DSL.condition("1 = 1");
+        }
+        return DSL.condition("1 = 0");
     }
 }

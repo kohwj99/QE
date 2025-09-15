@@ -33,18 +33,18 @@ public class JavaQuery implements Query{
                         @JsonProperty("valueType") ValueType valueType) {
         this.placeholder = placeholder;
         this.operator = operator;
-        this.value = value;
+        this.value = ValueNormalizer.normalize(value, valueType);
         this.valueType = valueType;
     }
 
     @Override
     public Condition toCondition(DSLContext dsl, OperatorFactory operatorFactory) {
-        System.out.println("working here");
         RunConditionOperator op = operatorFactory.resolveRunCondition(operator, valueType.getClazz());
         System.out.println("retrieved op "+op);
         System.out.println("placeholder "+placeholder);
         System.out.println("value "+value);
-        return op.evaluate(placeholder,value);
+
+        return op.evaluate(placeholder,valueType.getClazz().cast(value));
     }
 
     public void validate() {

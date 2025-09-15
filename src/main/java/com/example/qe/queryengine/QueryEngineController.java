@@ -41,7 +41,7 @@ public class QueryEngineController {
     public ResponseEntity<List<Map<String, Object>>> testJsonStringInput(@RequestBody String json) throws JsonProcessingException {
 
         JsonNode jsonNode = JsonHelper.parseEscapedJsonString(json);
-        QueryContextDto context = QueryContextDto.builder().tableName("TestDataTypes").json(jsonNode).createdBy("Alice").spoofDate("1999-05-14").build();
+        QueryContextDto context = QueryContextDto.builder().tableName("TestDataTypes").json(jsonNode).createdBy("Diana").spoofDate("2025-09-14").build();
         List<Map<String, Object>> result = queryEngineService.executeQueryToDisplay(context);
         return ResponseEntity.ok(result);
     }

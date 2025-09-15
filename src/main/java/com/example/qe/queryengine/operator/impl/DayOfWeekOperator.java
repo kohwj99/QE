@@ -41,11 +41,8 @@ public class DayOfWeekOperator implements GenericOperator, RunConditionOperator 
 
     @Override
     public Condition evaluate(Object placeholder, Object value) {
-        // placeholder is expected to be a date
-        // value is 1 - 7, which is mon - sun
         LocalDate date = LocalDate.parse((String) placeholder);
         Integer dayOfWeek = date.getDayOfWeek().getValue();
-        System.out.println(dayOfWeek);
         if (dayOfWeek.equals(value)) {
             return DSL.condition("1 = 1");
         }
