@@ -20,11 +20,14 @@ class MonthEqualOperatorTest {
 
     private MonthEqualOperator operator;
     private Field<LocalDate> validField;
+    private String dateStr;
 
     @BeforeEach
     void setup() {
         operator = new MonthEqualOperator();
         validField = DSL.field("date_field", LocalDate.class);
+        LocalDate date = LocalDate.now();
+        dateStr = date.toString();
     }
 
     private String renderSql(Condition condition) {
@@ -93,5 +96,22 @@ class MonthEqualOperatorTest {
     void apply_givenBooleanValue_shouldThrowClassCastException() {
         assertThrows(ClassCastException.class,
                 () -> operator.apply(validField, true));
+    }
+
+    // -------------------- EVALUATE METHOD TESTS --------------------
+
+    @Test
+    void evaluate_givenMatchingMonth_shouldReturnTrueCondition() {
+        LocalDate today = LocalDate.now();
+        BigDecimal month = BigDecimal.valueOf(today.getMonthValue());
+        Condition condition = operator.evaluate(dateStr, month);
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingMonth_shouldReturnFalseCondition() {
+        BigDecimal month = BigDecimal.valueOf(0);
+        Condition condition = operator.evaluate(dateStr, month);
+        assertEquals("(1 = 0)", condition.toString());
     }
 }

@@ -20,11 +20,14 @@ class YearEqualOperatorTest {
 
     private YearEqualOperator operator;
     private Field<LocalDate> validField;
+    private String dateStr;
 
     @BeforeEach
     void setup() {
         operator = new YearEqualOperator();
         validField = DSL.field("date_field", LocalDate.class);
+        LocalDate date = LocalDate.now();
+        dateStr = date.toString();
     }
 
     private String renderSql(Condition condition) {
@@ -93,5 +96,22 @@ class YearEqualOperatorTest {
     void apply_givenBooleanValue_shouldThrowClassCastException() {
         assertThrows(ClassCastException.class,
                 () -> operator.apply(validField, true));
+    }
+
+    // -------------------- EVALUATE METHOD TESTS --------------------
+
+    @Test
+    void evaluate_givenMatchingYear_shouldReturnTrueCondition() {
+        LocalDate now = LocalDate.now();
+        BigDecimal year = BigDecimal.valueOf(now.getYear());
+        Condition condition = operator.evaluate(dateStr, year);
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingYear_shouldReturnFalseCondition() {
+        BigDecimal year = BigDecimal.valueOf(1900);
+        Condition condition = operator.evaluate(dateStr, year);
+        assertEquals("(1 = 0)", condition.toString());
     }
 }

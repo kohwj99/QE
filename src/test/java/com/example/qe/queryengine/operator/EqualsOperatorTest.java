@@ -16,10 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class EqualsOperatorTest {
 
     private EqualsOperator operator;
+    private String dateStr;
 
     @BeforeEach
     void setup() {
         operator = new EqualsOperator();
+        LocalDate date = LocalDate.now();
+        dateStr = date.toString();
     }
 
     private String renderSql(Condition condition) {
@@ -149,5 +152,57 @@ class EqualsOperatorTest {
         String sql = renderSql(condition);
 
         assertTrue(sql.contains("balance=-100.5"));
+    }
+
+    // -------------------- EVALUATE METHOD TESTS --------------------
+
+    @Test
+    void evaluate_givenMatchingString_shouldReturnTrueCondition() {
+        Condition condition = operator.evaluate("hello", "hello");
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingString_shouldReturnFalseCondition() {
+        Condition condition = operator.evaluate("hello", "world");
+        assertEquals("(1 = 0)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenMatchingBigDecimal_shouldReturnTrueCondition() {
+        Condition condition = operator.evaluate(BigDecimal.valueOf(42), BigDecimal.valueOf(42));
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingBigDecimal_shouldReturnFalseCondition() {
+        Condition condition = operator.evaluate(BigDecimal.valueOf(42), BigDecimal.valueOf(43));
+        assertEquals("(1 = 0)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenMatchingBoolean_shouldReturnTrueCondition() {
+        Condition condition = operator.evaluate(true, true);
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingBoolean_shouldReturnFalseCondition() {
+        Condition condition = operator.evaluate(true, false);
+        assertEquals("(1 = 0)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenMatchingLocalDate_shouldReturnTrueCondition() {
+        LocalDate today = LocalDate.now();
+        String todayStr = today.toString();
+        Condition condition = operator.evaluate(todayStr, dateStr);
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingLocalDate_shouldReturnFalseCondition() {
+        Condition condition = operator.evaluate("1900-09-14", dateStr);
+        assertEquals("(1 = 0)", condition.toString());
     }
 }

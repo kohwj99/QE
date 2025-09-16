@@ -20,11 +20,15 @@ class DaysBeforeOperatorTest {
 
     private DaysBeforeOperator operator;
     private Field<LocalDate> validField;
+    private String dateStr;
 
     @BeforeEach
     void setup() {
         operator = new DaysBeforeOperator();
         validField = DSL.field("date_field", LocalDate.class);
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(1);
+        dateStr = date.toString();
     }
 
     private String renderSql(Condition condition) {
@@ -96,5 +100,21 @@ class DaysBeforeOperatorTest {
     void apply_givenBooleanValue_shouldThrowInvalidQueryException() {
         assertThrows(InvalidQueryException.class,
                 () -> operator.apply(validField, true));
+    }
+
+    // -------------------- EVALUATE METHOD TESTS --------------------
+
+    @Test
+    void evaluate_givenMatchingDay_shouldReturnTrueCondition() {
+        BigDecimal days = BigDecimal.valueOf(1);
+        Condition condition = operator.evaluate(dateStr, days);
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingDay_shouldReturnFalseCondition() {
+        BigDecimal days = BigDecimal.valueOf(10);
+        Condition condition = operator.evaluate(dateStr, days);
+        assertEquals("(1 = 0)", condition.toString());
     }
 }

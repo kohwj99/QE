@@ -20,11 +20,15 @@ class MonthsBeforeOperatorTest {
 
     private MonthsBeforeOperator operator;
     private Field<LocalDate> validField;
+    private String dateStr;
 
     @BeforeEach
     void setup() {
         operator = new MonthsBeforeOperator();
         validField = DSL.field("date_field", LocalDate.class);
+        LocalDate date = LocalDate.now();
+        date = date.plusMonths(1);
+        dateStr = date.toString();
     }
 
     private String renderSql(Condition condition) {
@@ -96,5 +100,23 @@ class MonthsBeforeOperatorTest {
     void apply_givenBooleanValue_shouldThrowClassCastException() {
         assertThrows(ClassCastException.class,
                 () -> operator.apply(validField, true));
+    }
+
+    // -------------------- EVALUATE METHOD TESTS --------------------
+
+    @Test
+    void evaluate_givenMatchingMonth_shouldReturnTrueCondition() {
+        // today + 0 months = today, so condition should match
+        BigDecimal months = BigDecimal.valueOf(1);
+        Condition condition = operator.evaluate(dateStr, months);
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingMonth_shouldReturnFalseCondition() {
+        // DATE_STRING = 2025-09-14, months=1 -> target = today + 1 month
+        BigDecimal months = BigDecimal.valueOf(11);
+        Condition condition = operator.evaluate(dateStr, months);
+        assertEquals("(1 = 0)", condition.toString());
     }
 }

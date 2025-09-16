@@ -17,11 +17,15 @@ class YearsAfterOperatorTest {
 
     private YearsAfterOperator operator;
     private Field<LocalDate> validField;
+    private String dateStr;
 
     @BeforeEach
     void setup() {
         operator = new YearsAfterOperator();
         validField = DSL.field("date_field", LocalDate.class);
+        LocalDate date = LocalDate.now();
+        date = date.minusYears(1);
+        dateStr = date.toString();
     }
 
     // --- Positive case ---
@@ -84,5 +88,21 @@ class YearsAfterOperatorTest {
     void apply_givenBooleanValue_shouldThrowClassCastException() {
         assertThrows(ClassCastException.class,
                 () -> operator.apply(validField, true));
+    }
+
+    // -------------------- EVALUATE METHOD TESTS --------------------
+
+    @Test
+    void evaluate_givenMatchingYears_shouldReturnTrueCondition() {
+        BigDecimal years = BigDecimal.valueOf(1);
+        Condition condition = operator.evaluate(dateStr, years);
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingYears_shouldReturnFalseCondition() {
+        BigDecimal years = BigDecimal.valueOf(5);
+        Condition condition = operator.evaluate(dateStr, years);
+        assertEquals("(1 = 0)", condition.toString());
     }
 }

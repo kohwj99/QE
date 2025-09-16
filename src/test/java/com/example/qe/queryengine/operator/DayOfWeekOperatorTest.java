@@ -20,11 +20,14 @@ class DayOfWeekOperatorTest {
 
     private DayOfWeekOperator operator;
     private Field<LocalDate> validField;
+    private String dateStr;
 
     @BeforeEach
     void setup() {
         operator = new DayOfWeekOperator();
         validField = DSL.field("date_field", LocalDate.class);
+        LocalDate date = LocalDate.now();
+        dateStr = date.toString();
     }
 
     private void assertSqlContainsExpectedDay(Condition condition, int expectedDay) {
@@ -105,5 +108,24 @@ class DayOfWeekOperatorTest {
     void apply_givenBooleanValue_shouldThrowClassCastException() {
         assertThrows(ClassCastException.class,
                 () -> operator.apply(validField, true));
+    }
+
+    // -------------------- EVALUATE METHOD TESTS --------------------
+
+    @Test
+    void evaluate_givenMatchingDay_shouldReturnTrueCondition() {
+        LocalDate today = LocalDate.now();
+        int dayOfWeek = today.getDayOfWeek().getValue();
+        Condition condition = operator.evaluate(dateStr, BigDecimal.valueOf(dayOfWeek));
+        assertEquals("(1 = 1)", condition.toString());
+    }
+
+    @Test
+    void evaluate_givenNonMatchingDay_shouldReturnFalseCondition() {
+        LocalDate today = LocalDate.now();
+        today = today.plusDays(1);
+        int dayOfWeek = today.getDayOfWeek().getValue();
+        Condition condition = operator.evaluate(dateStr, BigDecimal.valueOf(dayOfWeek));
+        assertEquals("(1 = 0)", condition.toString());
     }
 }
