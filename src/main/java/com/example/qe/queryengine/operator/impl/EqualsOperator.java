@@ -30,8 +30,24 @@ public class EqualsOperator implements GenericOperator, RunConditionOperator {
 
     @Override
     public Condition evaluate(Object placeholder, Object value) {
+        if (placeholder == null && value == null) {
+            return DSL.condition("1 = 1");
+        }
+        if (placeholder == null || value == null) {
+            return DSL.condition("1 = 0");
+        }
 
-        if (placeholder.equals(value)) {
+        // Normalize placeholder to the type of value
+        Object normalizedPlaceholder = placeholder;
+        if (value instanceof LocalDate && placeholder instanceof String) {
+            normalizedPlaceholder = LocalDate.parse((String) placeholder);
+        } else if (value instanceof BigDecimal && placeholder instanceof Number) {
+            normalizedPlaceholder = new BigDecimal(placeholder.toString());
+        } else if (value instanceof Boolean && placeholder instanceof String) {
+            normalizedPlaceholder = Boolean.parseBoolean((String) placeholder);
+        }
+
+        if (value.equals(normalizedPlaceholder)) {
             return DSL.condition("1 = 1");
         }
         return DSL.condition("1 = 0");
