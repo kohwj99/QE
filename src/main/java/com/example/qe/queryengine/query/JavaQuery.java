@@ -16,7 +16,6 @@ import org.jooq.DSLContext;
 @JsonTypeName("DateQuery")
 public class JavaQuery implements Query{
 
-    //"e.g [today] dayOfWeek 1"
     protected String placeholder;
     protected String operator;
     protected Object value;
@@ -26,7 +25,7 @@ public class JavaQuery implements Query{
     }
 
     @JsonCreator
-    protected JavaQuery(@JsonProperty("column") String placeholder,
+    protected JavaQuery(@JsonProperty("placeholder") String placeholder,
                         @JsonProperty("operatorName") String operator,
                         @JsonProperty("value") Object value,
                         @JsonProperty("valueType") ValueType valueType) {

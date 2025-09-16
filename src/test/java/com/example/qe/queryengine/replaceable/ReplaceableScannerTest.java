@@ -49,7 +49,7 @@ class ReplaceableScannerTest {
         // Assert
         Map<String, Class<? extends Replaceable>> all = registry.getAll();
         assertThat(all).containsKey("[TEST_PLACEHOLDER]");
-        assertThat(all.get("[TEST_PLACEHOLDER]")).isEqualTo(ValidReplaceable.class);
+        assertThat(all).containsEntry("[TEST_PLACEHOLDER]", ValidReplaceable.class);
     }
 
     @Test

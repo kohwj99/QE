@@ -39,9 +39,17 @@ public class QueryEngineController {
     @PostMapping("/testJsonStringInput")
     public ResponseEntity<List<Map<String, Object>>> testJsonStringInput(@RequestBody String json) throws JsonProcessingException {
 
-        JsonNode jsonNode = JsonHelper.parseEscapedJsonString(json);
+        JsonNode jsonNode = JsonHelper.parseWrappedEscapedJsonString(json);
         QueryContextDto context = QueryContextDto.builder().tableName("TestDataTypes").json(jsonNode).createdBy("Diana").spoofDate("2025-09-14").build();
         List<Map<String, Object>> result = queryEngineService.executeQueryToDisplay(context);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/testJsonNodeInput")
+    public ResponseEntity<String> testJsonNodeInput(@RequestBody JsonNode json) throws JsonProcessingException {
+
+        String result = JsonHelper.toEscapedJsonString(json);
+        System.out.println(result);
         return ResponseEntity.ok(result);
     }
 }

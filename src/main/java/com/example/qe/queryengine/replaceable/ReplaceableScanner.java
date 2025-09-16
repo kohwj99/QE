@@ -12,7 +12,7 @@ import java.util.Set;
 @Component
 public class ReplaceableScanner {
 
-    final static String REPLACEABLE_BASE_PACKAGE = "com.example.qe.queryengine.replaceable.impl";
+    static final String REPLACEABLE_BASE_PACKAGE = "com.example.qe.queryengine.replaceable.impl";
 
     private final ReplaceableRegistry registry;
 
