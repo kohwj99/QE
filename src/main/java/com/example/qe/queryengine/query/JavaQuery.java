@@ -13,7 +13,7 @@ import org.jooq.DSLContext;
 
 @Setter
 @Getter
-@JsonTypeName("DateQuery")
+@JsonTypeName("JavaQuery")
 public class JavaQuery implements Query{
 
     protected String placeholder;

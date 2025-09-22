@@ -1,7 +1,9 @@
 package com.example.qe.queryengine.replaceable;
 
 import com.example.qe.queryengine.exception.QueryReplaceableException;
+import com.example.qe.queryengine.helper.JsonHelper;
 import com.example.qe.queryengine.query.QueryContextDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,10 +20,12 @@ public class ReplaceableResolver {
     }
 
     public String processJsonPlaceholders(QueryContextDto contextDto) {
-        JsonNode root = contextDto.getJson();
         try {
+            JsonNode root = JsonHelper.parseEscapedJsonString(contextDto.getJson());
             resolveNode(root, contextDto);
             return objectMapper.writeValueAsString(root);
+        } catch (JsonProcessingException e) {
+            throw new QueryReplaceableException("Unable to convert provided JSON string into Json node to process", e);
         } catch (Exception e) {
             throw new QueryReplaceableException("Failed to process placeholders", e);
         }

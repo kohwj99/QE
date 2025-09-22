@@ -55,28 +55,28 @@ public class QueryEngineService {
         return result.intoMaps();
     }
 
-    public List<Map<String, Object>> testStringJsonInput(String jsonInput) throws JsonProcessingException {
-        // parse the escaped JSON string
-        JsonNode jNode = parseEscapedJsonString(jsonInput);
-
-        QueryContextDto context = QueryContextDto.builder()
-                .json(jNode)
-                .tableName("TestDataTypes")
-                .createdBy("Alice")
-                .spoofDate("1999-05-14")
-                .build();
-
-        // process replaceables and parse to condition
-        String replacedJson = replaceableResolver.processJsonPlaceholders(context);
-        Condition condition = conditionParser.parseJsonToCondition(replacedJson);
-
-        Result<Record> result = dsl.select()
-                .from(context.getTableName())
-                .where(condition)
-                .fetch();
-
-        return result.intoMaps();
-    }
+//    public List<Map<String, Object>> testStringJsonInput(String jsonInput) throws JsonProcessingException {
+//        // parse the escaped JSON string
+//        JsonNode jNode = parseEscapedJsonString(jsonInput);
+//
+//        QueryContextDto context = QueryContextDto.builder()
+//                .json(jNode)
+//                .tableName("TestDataTypes")
+//                .createdBy("Alice")
+//                .spoofDate("1999-05-14")
+//                .build();
+//
+//        // process replaceables and parse to condition
+//        String replacedJson = replaceableResolver.processJsonPlaceholders(context);
+//        Condition condition = conditionParser.parseJsonToCondition(replacedJson);
+//
+//        Result<Record> result = dsl.select()
+//                .from(context.getTableName())
+//                .where(condition)
+//                .fetch();
+//
+//        return result.intoMaps();
+//    }
 
     public static JsonNode parseEscapedJsonString(String inputJsonString) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();

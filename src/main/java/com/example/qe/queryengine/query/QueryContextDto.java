@@ -1,6 +1,5 @@
 package com.example.qe.queryengine.query;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
 @Getter
@@ -10,7 +9,7 @@ import lombok.*;
 @Builder
 public class QueryContextDto {
     String tableName;
-    JsonNode json;
+    String json;
     String createdBy;
     String spoofDate;
 }
